@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="description" content="Calculadora dinámica interactiva de Máximo Común Divisor (MCD), Álgebra con signos de agrupación, Fracciones y Tutor Pedagógico Inteligente.">
+  <title>Jezuri Matemáticas • M.C.D., Álgebra y Fracciones</title>
+  
+  <!-- PWA & Mobile Web App Meta -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Jezuri Math">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Local SheetJS for offline Excel export -->
+  <script src="xlsx.full.min.js"></script>
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-container">
+        <div class="brand">
+          <div class="brand-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M3 9h18"/>
+              <path d="M9 21V9"/>
+              <path d="m14 13 4 4"/>
+              <path d="m18 13-4 4"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="brand-title">Tablas Dinámicas de M.C.D. y Álgebra</h1>
+            <p class="brand-subtitle">Máximo Común Divisor, Factores Primos y Resolver de Ecuaciones con Signos de Agrupación paso a paso</p>
+          </div>
+        </div>
+        
+        <div class="header-actions">
+          <button id="btnInstallApp" class="btn btn-primary btn-sm btn-install-app" title="Descargar e Instalar la App en tu Celular o Computadora" style="background: linear-gradient(135deg, #10b981, #059669); border-color: #059669;">
+            📲 <span class="install-btn-text">Instalar App</span>
+          </button>
+          <button id="btnHeaderGoEquations" class="btn btn-primary btn-sm btn-header-module" title="Ir al Resolver de Ecuaciones y Expresiones">
+            📐 Resolver Ecuaciones
+          </button>
+          <button id="btnHeaderGoRationals" class="btn btn-primary btn-sm btn-header-module" title="Ir a Adición y Sustracción de Racionales / Fracciones" style="background: linear-gradient(135deg, #f59e0b, #d97706); border-color: #d97706;">
+            🍕 Fracciones / Racionales
+          </button>
+          <button id="btnHeaderGoCompFrac" class="btn btn-primary btn-sm btn-header-module" title="Ir al Simplificador de Fracciones Compuestas" style="background: linear-gradient(135deg, #10b981, #059669); border-color: #059669;">
+            🪜 Fracciones Compuestas
+          </button>
+          <button id="btnHeaderGoAiTutor" class="btn btn-primary btn-sm btn-header-module" title="Consultar al Tutor Inteligente IA" style="background: linear-gradient(135deg, #8b5cf6, #6366f1); border-color: #6366f1;">
+            🤖 Tutor IA
+          </button>
+          <button id="themeToggleBtn" class="btn btn-icon" title="Cambiar tema (Claro / Oscuro)" aria-label="Cambiar tema">
+            <span class="theme-icon light-icon">☀️</span>
+            <span class="theme-icon dark-icon">🌙</span>
+          </button>
+          <a href="Tablas_Dinamicas_MCD.xlsx" download class="btn btn-secondary btn-sm btn-header-excel" id="btnDownloadTemplate" title="Descargar libro Excel preconfigurado">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span class="excel-btn-text">Excel Plantilla</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-content">
+
+      <!-- Master Navigation Hub: 4 Módulos Temáticos + Asistente Tutor IA -->
+      <nav class="module-nav-hub" aria-label="Módulos de Aprendizaje Matemático">
+        <button type="button" class="module-nav-btn active" data-mod="mcd" id="navModMcd">
+          <span class="module-icon">🎯</span>
+          <div class="module-info">
+            <span class="module-title">M.C.D. y Divisibilidad</span>
+            <span class="module-subtitle">Factores, Euclides y Divisores</span>
+          </div>
+          <span class="module-badge">Módulo 1</span>
+        </button>
+
+        <button type="button" class="module-nav-btn" data-mod="equations" id="navModEquations">
+          <span class="module-icon">✨</span>
+          <div class="module-info">
+            <span class="module-title">Álgebra y Ecuaciones</span>
+            <span class="module-subtitle">Signos ( ), [ ], { }, PEMDAS y Variables</span>
+          </div>
+          <span class="module-badge">Módulo 2</span>
+        </button>
+
+        <button type="button" class="module-nav-btn" data-mod="rationals" id="navModRationals">
+          <span class="module-icon">🍕</span>
+          <div class="module-info">
+            <span class="module-title">Fracciones Racionales</span>
+            <span class="module-subtitle">Suma, Resta, Mult, Div y m.c.m.</span>
+          </div>
+          <span class="module-badge">Módulo 3</span>
+        </button>
+
+        <button type="button" class="module-nav-btn" data-mod="compfrac" id="navModCompFrac">
+          <span class="module-icon">🪜</span>
+          <div class="module-info">
+            <span class="module-title">Fracciones Compuestas</span>
+            <span class="module-subtitle">Cascada, Pisos y Ley de Herradura</span>
+          </div>
+          <span class="module-badge">Módulo 4</span>
+        </button>
+
+        <button type="button" class="module-nav-btn ai-special-nav" data-mod="aitutor" id="navModAiTutor">
+          <span class="module-icon">🤖</span>
+          <div class="module-info">
+            <span class="module-title">Tutor Inteligente IA</span>
+            <span class="module-subtitle">Explicación Paso a Paso y Consultas</span>
+          </div>
+          <span class="module-badge ai-badge">Tutor IA</span>
+        </button>
+      </nav>
+
+      <!-- M.C.D. Contextual Controls Wrapper (se oculta automáticamente en Álgebra y Fracciones para evitar desorden) -->
+      <div id="mcdControlsWrapper" class="mcd-controls-wrapper">
+        <!-- Top Section: Mode Selector & Inputs -->
+        <section class="card control-card">
+          <div class="control-header">
+            <h2 class="section-heading">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 6v6l4 2"/>
+              </svg>
+              Selecciona la Cantidad de Números
+            </h2>
+          
+          <!-- Mode Tabs (2, 3, 4 números) -->
+          <div class="mode-pills" role="tablist">
+            <button class="mode-pill active" data-mode="2" role="tab" id="modeBtn2">2 Números</button>
+            <button class="mode-pill" data-mode="3" role="tab" id="modeBtn3">3 Números</button>
+            <button class="mode-pill" data-mode="4" role="tab" id="modeBtn4">4 Números</button>
+            <button class="mode-pill" data-mode="custom" role="tab" id="modeBtnCustom">Personalizado (+)</button>
+          </div>
+        </div>
+
+        <!-- Input Fields Grid -->
+        <div class="inputs-wrapper">
+          <form id="numbersForm" class="inputs-grid" onsubmit="event.preventDefault();">
+            <!-- Dynamic number inputs inserted here -->
+          </form>
+          
+          <!-- Add / Remove for custom mode -->
+          <div class="custom-controls" id="customControls" style="display: none;">
+            <button type="button" class="btn btn-ghost btn-sm" id="btnAddNumber">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Añadir número
+            </button>
+            <button type="button" class="btn btn-ghost btn-sm text-danger" id="btnRemoveNumber">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Quitar último
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Presets and Utility Buttons -->
+        <div class="presets-toolbar">
+          <div class="presets-label">
+            <span>Ejemplos rápidos:</span>
+          </div>
+          <div class="presets-list" id="presetsList">
+            <!-- Presets populated by JS depending on mode -->
+          </div>
+          <div class="util-actions">
+            <button type="button" class="btn btn-sm btn-ghost" id="btnRandom" title="Generar números aleatorios">
+              🎲 Aleatorio
+            </button>
+            <button type="button" class="btn btn-sm btn-ghost" id="btnReset" title="Restablecer valores">
+              ↺ Restablecer
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- KPI Summary Cards -->
+      <section class="kpi-grid">
+        <div class="kpi-card highlight-card">
+          <div class="kpi-icon">🎯</div>
+          <div class="kpi-details">
+            <span class="kpi-label">Máximo Común Divisor</span>
+            <div class="kpi-val" id="kpiMcd">--</div>
+            <span class="kpi-badge" id="kpiStatusBadge">Calculando...</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon">🔢</div>
+          <div class="kpi-details">
+            <span class="kpi-label">Factores Primos Comunes</span>
+            <div class="kpi-val text-sm font-mono" id="kpiCanonical">--</div>
+            <span class="kpi-sub">Menor exponente común</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon">📊</div>
+          <div class="kpi-details">
+            <span class="kpi-label">Pasos de División</span>
+            <div class="kpi-val" id="kpiSteps">--</div>
+            <span class="kpi-sub" id="kpiStepsSub">Rondas de división común</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon">⚡</div>
+          <div class="kpi-details">
+            <span class="kpi-label">Fórmula Excel</span>
+            <div class="kpi-val text-xs font-mono" id="kpiExcelFormula">=M.C.D(...)</div>
+            <span class="kpi-sub">Función nativa de hoja de cálculo</span>
+          </div>
+        </div>
+      </section>
+      </div> <!-- /#mcdControlsWrapper -->
+
+      <!-- Results View Tabs -->
+      <section class="card results-card">
+        <div class="results-header">
+          <div class="view-tabs" role="tablist">
+            <button class="view-tab active" data-tab="simultaneous" role="tab" id="tabBtnSimultaneous">
+              <span class="tab-badge">1</span>
+              Descomposición Simultánea
+            </button>
+            <button class="view-tab" data-tab="individual" role="tab" id="tabBtnIndividual">
+              <span class="tab-badge">2</span>
+              Factores Primos Individuales
+            </button>
+            <button class="view-tab" data-tab="factors" role="tab" id="tabBtnFactors">
+              <span class="tab-badge">3</span>
+              🌳 Descomponer en Factores
+            </button>
+            <button class="view-tab" data-tab="finder" role="tab" id="tabBtnFinder">
+              <span class="tab-badge">4</span>
+              Buscador y Criterios
+            </button>
+            <button class="view-tab" data-tab="euclid" role="tab" id="tabBtnEuclid">
+              <span class="tab-badge">5</span>
+              Algoritmo de Euclides
+            </button>
+            <button class="view-tab" data-tab="narrative" role="tab" id="tabBtnNarrative">
+              <span class="tab-badge">6</span>
+              Explicación Paso a Paso
+            </button>
+            <button class="view-tab" data-tab="divisors" role="tab" id="tabBtnDivisors">
+              <span class="tab-badge">7</span>
+              Conjuntos de Divisores
+            </button>
+            <button class="view-tab" data-tab="equations" role="tab" id="tabBtnEquations" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(139, 92, 246, 0.15)); border-color: rgba(139, 92, 246, 0.35);">
+              <span class="tab-badge" style="background: var(--color-purple); color: #fff;">8</span>
+              ✨ Ecuaciones y Signos
+            </button>
+            <button class="view-tab" data-tab="rationals" role="tab" id="tabBtnRationals" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.14), rgba(217, 119, 6, 0.16)); border-color: rgba(245, 158, 11, 0.38);">
+              <span class="tab-badge" style="background: var(--color-amber); color: #000; font-weight: 700;">9</span>
+              🍕 Racionales (Fracciones)
+            </button>
+            <button class="view-tab" data-tab="compfrac" role="tab" id="tabBtnCompFrac" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(5, 150, 105, 0.16)); border-color: rgba(16, 185, 129, 0.38);">
+              <span class="tab-badge" style="background: var(--color-emerald); color: #fff; font-weight: 700;">10</span>
+              🪜 Fracciones Compuestas
+            </button>
+            <button class="view-tab" data-tab="aitutor" role="tab" id="tabBtnAiTutor" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.16), rgba(99, 102, 241, 0.2)); border-color: rgba(139, 92, 246, 0.45);">
+              <span class="tab-badge" style="background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; font-weight: 700;">IA</span>
+              🤖 Tutor Inteligente
+            </button>
+          </div>
+
+          <!-- Result Export Actions -->
+          <div class="export-actions">
+            <button type="button" class="btn btn-secondary btn-sm" id="btnCopySolution" title="Copiar informe explicativo al portapapeles">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              Copiar Explicación
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" id="btnExportDynamicExcel" title="Exportar estos números a un nuevo archivo Excel (.xlsx)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+              Exportar Excel Actual
+            </button>
+            <button type="button" class="btn btn-ghost btn-sm" id="btnPrint" title="Imprimir tabla o guardar como PDF">
+              🖨️ Imprimir
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 1: Simultaneous Factorization -->
+        <div class="tab-pane active" id="paneSimultaneous">
+          <div class="pane-intro">
+            <div>
+              <h3 class="pane-title">Tabla Clásica de Descomposición Simultánea</h3>
+              <p class="pane-desc">
+                Se dividen los números <strong>al mismo tiempo</strong> únicamente entre factores primos que sean divisores <strong>comunes de todos</strong> ellos. Cada paso explica detalladamente por qué se elige el número primo y qué regla de divisibilidad se aplicó.
+              </p>
+            </div>
+            
+            <!-- Step Player Controls -->
+            <div class="player-controls">
+              <button class="player-btn" id="playerPrev" title="Paso anterior">⏮</button>
+              <button class="player-btn play-btn" id="playerPlay" title="Reproducir animación paso a paso">▶ Reproducir</button>
+              <button class="player-btn" id="playerNext" title="Siguiente paso">⏭</button>
+              <button class="player-btn" id="playerReset" title="Ver todos los pasos">Mostrar Todo</button>
+              <button class="player-btn" id="btnAiExplainMcd" title="Consultar explicación al Tutor IA" style="background: rgba(139, 92, 246, 0.15); border-color: rgba(139, 92, 246, 0.4); color: #a78bfa;">🤖 Explicación IA</button>
+            </div>
+          </div>
+
+          <div class="table-container" id="simultaneousTableContainer">
+            <!-- Dynamic Simultaneous Table rendered here -->
+          </div>
+
+          <!-- Step-by-step reasoning breakdown per row -->
+          <div class="simultaneous-step-details" id="simultaneousStepDetails">
+            <!-- Injected by JS: Why each prime was chosen, which rules applied -->
+          </div>
+
+          <!-- Step explanation & final formula box -->
+          <div class="explanation-box" id="simultaneousExplanation" style="margin-top: 1rem;">
+            <!-- Explanation injected by JS -->
+          </div>
+        </div>
+
+        <!-- TAB 2: Individual Prime Factorization -->
+        <div class="tab-pane" id="paneIndividual">
+          <div class="pane-intro">
+            <div>
+              <h3 class="pane-title">Descomposición Vertical Individual en Factores Primos</h3>
+              <p class="pane-desc">
+                Tabla clásica vertical para cada número. A la izquierda se escriben los cocientes sucesivos hasta llegar a 1, y a la derecha los factores primos divisores. Al final se seleccionan las <strong>bases comunes con el menor exponente</strong>.
+              </p>
+            </div>
+          </div>
+
+          <!-- Side-by-side vertical tables container -->
+          <div class="individual-tables-grid" id="individualTablesContainer">
+            <!-- Vertical tables injected by JS -->
+          </div>
+
+          <!-- Canonical Powers Comparison Matrix -->
+          <div style="margin-top: 1.5rem;">
+            <h4 style="margin-bottom: 0.75rem;">Matriz de Comparación de Exponentes (Regla del Menor Exponente)</h4>
+            <div class="table-container" id="powersTableContainer">
+              <!-- Canonical powers matrix table -->
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: Descomponer en Factores (Árbol y Pares de Factores) -->
+        <div class="tab-pane" id="paneFactors">
+          <div class="pane-intro">
+            <div>
+              <h3 class="pane-title">Función para Descomponer en Factores</h3>
+              <p class="pane-desc">
+                Descompone cualquier número en sus factores multiplicativos mediante el <strong>Árbol de Factores (Factor Tree)</strong> interactivo, la <strong>Tabla de Pares de Factores ($a \times b = N$)</strong> y su <strong>Forma Canónica</strong>.
+              </p>
+            </div>
+          </div>
+
+          <!-- Selector de número y opciones del árbol -->
+          <div class="finder-control-bar">
+            <div class="finder-input-group">
+              <label for="factorDecomposeInput" class="input-label">Número a Descomponer:</label>
+              <div class="finder-input-wrapper">
+                <input type="number" id="factorDecomposeInput" min="2" max="99999999" class="number-input-field" value="48" style="max-width: 200px;">
+                <button type="button" class="btn btn-primary" id="btnDecomposeNow">Descomponer</button>
+              </div>
+            </div>
+
+            <div class="finder-quick-picks">
+              <span class="text-dim" style="font-size: 0.8rem;">Cargar desde los números activos:</span>
+              <div class="presets-list" id="factorQuickPickBtns">
+                <!-- Buttons for Num A, Num B, etc. -->
+              </div>
+            </div>
+
+            <div class="tree-type-selector">
+              <span class="text-dim" style="font-size: 0.8rem;">Estilo del Árbol:</span>
+              <div class="mode-pills" style="padding: 0.2rem;">
+                <button type="button" class="mode-pill active" id="btnTreeBalanced" data-tree-mode="balanced">Equilibrado (Raíz)</button>
+                <button type="button" class="mode-pill" id="btnTreePrimes" data-tree-mode="primeFirst">Por Primos (2 × ...)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contenedor de Resultados de Factorización -->
+          <div id="factorDecomposeResultsContainer">
+            <!-- Dynamic Factor Tree, Factor Pairs & Properties injected by JS -->
+          </div>
+        </div>
+
+        <!-- TAB 4: Prime Factor Finder & Divisibility Inspector -->
+        <div class="tab-pane" id="paneFinder">
+          <div class="pane-intro">
+            <div>
+              <h3 class="pane-title">Buscador de Factores Primos y Reglas de Divisibilidad</h3>
+              <p class="pane-desc">
+                Inspecciona cómo encontrar los factores primos de cualquier número paso a paso mediante divisiones sucesivas y verificación de criterios de divisibilidad (2, 3, 5, 7, 11...).
+              </p>
+            </div>
+          </div>
+
+          <!-- Inspector Input and Quick Selector -->
+          <div class="finder-control-bar">
+            <div class="finder-input-group">
+              <label for="finderInput" class="input-label">Número a Analizar:</label>
+              <div class="finder-input-wrapper">
+                <input type="number" id="finderInput" min="2" max="99999999" class="number-input-field" value="48" style="max-width: 220px;">
+                <button type="button" class="btn btn-primary" id="btnAnalyzeFinder">Analizar Factores</button>
+              </div>
+            </div>
+
+            <div class="finder-quick-picks">
+              <span class="text-dim" style="font-size: 0.8rem;">Cargar desde los números actuales:</span>
+              <div class="presets-list" id="finderQuickPicks">
+                <!-- Buttons for Num A, Num B, Num C, Num D dynamically created -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Inspector Content: Factor Tree + Divisibility Rules -->
+          <div class="finder-results-grid" id="finderResultsContainer">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+
+        <!-- TAB 4: Euclidean Algorithm -->
+        <div class="tab-pane" id="paneEuclid">
+          <div class="pane-intro">
+            <div>
+              <h3 class="pane-title">Tabla del Algoritmo de Euclides (Divisiones Sucesivas)</h3>
+              <p class="pane-desc">
+                Método geométrico de Euclides basado en la propiedad: <code>MCD(a, b) = MCD(b, a mod b)</code>. Para 3 o 4 números se encadenan las divisiones: <code>MCD(a, b, c) = MCD(MCD(a, b), c)</code>.
+              </p>
+            </div>
+          </div>
+
+          <div id="euclidContentContainer">
+            <!-- Dynamic Euclidean Table(s) rendered here -->
+          </div>
+        </div>
+
+        <!-- TAB 5: Step-by-Step Complete Narrative Explanation -->
+        <div class="tab-pane" id="paneNarrative">
+          <div class="pane-intro">
+            <div>
+              <h3 class="pane-title">Explicación Didáctica Paso a Paso (Informe Completo)</h3>
+              <p class="pane-desc">
+                Informe pedagógico completo redactado en lenguaje claro con cada deducción aritmética explicada. Ideal para clases, tareas o sustentaciones.
+              </p>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" id="btnCopyNarrative">
+              📋 Copiar Este Informe
+            </button>
+          </div>
+
+          <div class="narrative-container" id="narrativeContentContainer">
+            <!-- Step by step timeline / cards injected by JS -->
+          </div>
+        </div>
+
+        <!-- TAB 6: Divisor Sets -->
+        <div class="tab-pane" id="paneDivisors">
+          <div class="pane-intro">
+            <div>
+              <h3 class="pane-title">Tabla Comparativa de Conjuntos de Divisores</h3>
+              <p class="pane-desc">
+                Lista de todos los divisores positivos de cada número. Los divisores compartidos por todos los números se destacan, siendo el mayor de ellos el <strong>M.C.D.</strong>
+              </p>
+            </div>
+          </div>
+
+          <div class="divisors-wrapper" id="divisorsContentContainer">
+            <!-- Divisors chips & intersection -->
+          </div>
+        </div>
+
+        <!-- TAB 8: Equations & Grouping Symbols Solver -->
+        <div class="tab-pane" id="paneEquations">
+          <div class="pane-intro">
+            <div>
+              <h3 class="pane-title">Resolver de Ecuaciones y Expresiones con Signos de Agrupación</h3>
+              <p class="pane-desc">
+                Evalúa y resuelve paso a paso expresiones y ecuaciones algebraicas con <strong>llaves { }</strong>, <strong>corchetes [ ]</strong> y <strong>paréntesis ( )</strong>. Utiliza el <strong>panel de signos lateral</strong> para editar rápidamente la expresión y el <strong>botón inteligente</strong> que añade automáticamente el paréntesis, corchete o llave según lo que ocupe el nivel de anidación.
+              </p>
+            </div>
+          </div>
+
+          <!-- Presets rápidos -->
+          <div class="eq-presets-bar">
+            <span class="text-dim" style="font-size: 0.85rem; font-weight: 500;">Ejemplos recomendados:</span>
+            <div class="eq-presets-list" id="eqPresetsList">
+              <button type="button" class="eq-preset-chip active" id="btnPresetUser">
+                ✨ 6[(7a - 5) + 1 - 5b] + 3(a + 2)
+              </button>
+              <button type="button" class="eq-preset-chip" id="btnPresetImage">
+                ⭐ {xyz - [2x + y(z + y) ÷ w]} ÷ 2w
+              </button>
+              <button type="button" class="eq-preset-chip" id="btnPresetBaldor2">
+                Baldor #2: [(a - b) + (a + b)] - [(a - b) - (a + b)]
+              </button>
+              <button type="button" class="eq-preset-chip" id="btnPresetBaldor3">
+                Baldor #3: 2(a + b) - 3(a - b) + 4(a^2 - b^2)
+              </button>
+              <button type="button" class="eq-preset-chip" id="btnPresetBaldor4">
+                Baldor #4: 3a - [2b + (a - c)]
+              </button>
+              <button type="button" class="eq-preset-chip" id="btnPresetArithmetic">
+                Aritmética: 50 - { 12 + [ 8 - (3 + 2) × 2 ] ÷ 2 }
+              </button>
+              <button type="button" class="eq-preset-chip" id="btnPresetLinear">
+                Ecuación: 2x - [3 + (x - 1)] = 8
+              </button>
+            </div>
+          </div>
+
+          <!-- Workspace: Editor Left, Keypad Panel Right -->
+          <div class="eq-workspace-grid">
+            
+            <!-- LEFT: Equation & Variables Editor -->
+            <div class="eq-main-editor">
+              
+              <!-- Expression Input Card -->
+              <div class="eq-card">
+                <div class="eq-card-header">
+                  <label for="eqExpressionInput" class="eq-label">
+                    <span class="eq-label-icon">✍️</span>
+                    Expresión Algebraica o Ecuación:
+                  </label>
+                  <div class="eq-smart-status" id="eqSmartStatus" title="Indica qué signo de agrupación se añadirá si pulsas en el botón de paréntesis">
+                    <span class="status-indicator"></span>
+                    <span id="eqSmartStatusText">Nivel detectado: { } Llaves</span>
+                  </div>
+                </div>
+
+                <div class="eq-input-wrapper">
+                  <input 
+                    type="text" 
+                    id="eqExpressionInput" 
+                    class="eq-input-field" 
+                    value="6[(7a - 5) + 1 - 5b] + 3(a + 2)" 
+                    placeholder="Ej: 6[(7a - 5) + 1 - 5b] + 3(a + 2)"
+                    autocomplete="off"
+                    spellcheck="false"
+                  >
+                  <button type="button" class="btn-clear-input" id="btnEqClear" title="Borrar expresión">✕</button>
+                </div>
+
+                <!-- Live Math Highlight Preview -->
+                <div class="eq-preview-wrapper">
+                  <div class="eq-preview-label">Visualización con jerarquía de colores:</div>
+                  <div class="eq-live-preview font-mono" id="eqLivePreview">
+                    <!-- Rendered with colorful brackets -->
+                  </div>
+                </div>
+
+                <!-- Mode selector -->
+                <div class="eq-mode-bar">
+                  <span class="text-dim" style="font-size: 0.8rem;">Modo de cálculo:</span>
+                  <div class="mode-pills" style="padding: 0.2rem;">
+                    <button type="button" class="mode-pill active" id="btnModeNumeric" data-eq-mode="numeric">
+                      🔢 Valor Numérico (Sustituir variables)
+                    </button>
+                    <button type="button" class="mode-pill" id="btnModeSimplify" data-eq-mode="simplify">
+                      ✂️ Simplificar (Suprimir signos de agrupación)
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Variables Inputs Card (Numeric mode) -->
+              <div class="eq-card" id="eqVariablesCard">
+                <div class="eq-card-header">
+                  <span class="eq-label">
+                    <span class="eq-label-icon">🧩</span>
+                    Valores Numéricos de las Variables:
+                  </span>
+                  <span class="badge-accent" id="eqVarsCountBadge">4 variables detectadas</span>
+                </div>
+
+                <!-- Dynamic variable inputs (e.g. x=6, y=4, z=4, w=2) -->
+                <div class="eq-variables-grid" id="eqVariablesGrid">
+                  <!-- Injected by JS -->
+                </div>
+
+                <!-- Quick paste string for variables -->
+                <div class="eq-vars-quick-paste">
+                  <label for="eqVarsStringInput" class="text-dim" style="font-size: 0.8rem;">O ingresa directamente en texto (ej. <code>x = 6, y = z = 4, w = 2</code>):</label>
+                  <div style="display: flex; gap: 0.5rem; margin-top: 0.35rem;">
+                    <input type="text" id="eqVarsStringInput" class="number-input-field" value="x = 6, y = z = 4, w = 2" placeholder="x = 6, y = z = 4, w = 2" style="font-size: 0.88rem;">
+                    <button type="button" class="btn btn-secondary btn-sm" id="btnApplyVarsString">Aplicar Valores</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Solve Action Buttons -->
+              <div class="eq-actions-row">
+                <button type="button" class="btn btn-primary" id="btnSolveEquation">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14"/>
+                    <path d="m12 5 7 7-7 7"/>
+                  </svg>
+                  Resolver Explicado Paso a Paso
+                </button>
+                <button type="button" class="btn btn-secondary" id="btnAiExplainEquation" style="border-color: rgba(139, 92, 246, 0.4); background: rgba(139, 92, 246, 0.1); color: #a78bfa;">
+                  🤖 Explicación del Tutor IA
+                </button>
+                <button type="button" class="btn btn-ghost" id="btnResetEquation" title="Restablecer valores originales">
+                  ↺ Restablecer
+                </button>
+              </div>
+
+            </div>
+
+            <!-- RIGHT: Side Symbols Keypad ("Signos en un lado") -->
+            <aside class="eq-keypad-panel">
+              <div class="keypad-header">
+                <div class="keypad-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="4" y="2" width="16" height="20" rx="2"/>
+                    <line x1="8" y1="6" x2="16" y2="6"/>
+                    <line x1="16" y1="14" x2="16" y2="18"/>
+                    <path d="M16 10h.01"/>
+                    <path d="M12 10h.01"/>
+                    <path d="M8 10h.01"/>
+                    <path d="M12 14h.01"/>
+                    <path d="M8 14h.01"/>
+                    <path d="M12 18h.01"/>
+                    <path d="M8 18h.01"/>
+                  </svg>
+                  Panel de Signos
+                </div>
+                <span class="keypad-badge">Edición Rápida</span>
+              </div>
+
+              <!-- Smart Grouping Feature -->
+              <div class="keypad-section">
+                <div class="keypad-section-label">
+                  <span>Signos de Agrupación Inteligentes:</span>
+                </div>
+                
+                <!-- Primary requested Smart Parenthesis Button -->
+                <button type="button" class="btn-smart-bracket" id="btnSmartGrouping" title="Añade automáticamente paréntesis, corchete o llave según el nivel de anidación que ocupe">
+                  <div class="smart-bracket-icon">
+                    <span class="bracket-badge-p">(</span>
+                    <span class="bracket-badge-b">[</span>
+                    <span class="bracket-badge-c">{</span>
+                  </div>
+                  <div class="smart-bracket-info">
+                    <strong>Auto ( [ {</strong>
+                    <small id="smartGroupingPreview">Agrupa según lo que ocupe</small>
+                  </div>
+                </button>
+
+                <!-- Close pending bracket button -->
+                <button type="button" class="btn-close-bracket" id="btnSmartClose" title="Cerrar el signo de agrupación que esté abierto actualmente">
+                  <span>Cerrar signo pendiente</span>
+                  <code id="pendingCloseSymbol">) / ] / }</code>
+                </button>
+
+                <!-- Explicit bracket pairs -->
+                <div class="keypad-grid-3">
+                  <button type="button" class="keypad-btn bracket-btn" data-insert="()" title="Insertar paréntesis ordinarios ( )">( )</button>
+                  <button type="button" class="keypad-btn bracket-btn" data-insert="[]" title="Insertar corchetes [ ]">[ ]</button>
+                  <button type="button" class="keypad-btn bracket-btn" data-insert="{}" title="Insertar llaves { }">{ }</button>
+                </div>
+
+                <!-- Individual bracket singles -->
+                <div class="keypad-grid-6">
+                  <button type="button" class="keypad-btn" data-insert="(" title="Abre paréntesis">(</button>
+                  <button type="button" class="keypad-btn" data-insert=")" title="Cierra paréntesis">)</button>
+                  <button type="button" class="keypad-btn" data-insert="[" title="Abre corchete">[</button>
+                  <button type="button" class="keypad-btn" data-insert="]" title="Cierra corchete">]</button>
+                  <button type="button" class="keypad-btn" data-insert="{" title="Abre llave">{</button>
+                  <button type="button" class="keypad-btn" data-insert="}" title="Cierra llave">}</button>
+                </div>
+              </div>
+
+              <!-- Operators section -->
+              <div class="keypad-section">
+                <div class="keypad-section-label">
+                  <span>Operadores:</span>
+                </div>
+                <div class="keypad-grid-4">
+                  <button type="button" class="keypad-btn op-btn" data-insert=" + " title="Suma">+</button>
+                  <button type="button" class="keypad-btn op-btn" data-insert=" - " title="Resta">−</button>
+                  <button type="button" class="keypad-btn op-btn" data-insert=" · " title="Multiplicación">×</button>
+                  <button type="button" class="keypad-btn op-btn" data-insert=" ÷ " title="División">÷</button>
+                  <button type="button" class="keypad-btn op-btn" data-insert="^" title="Potencia">^</button>
+                  <button type="button" class="keypad-btn op-btn" data-insert="/" title="Barra división">/</button>
+                  <button type="button" class="keypad-btn op-btn" data-insert=" = " title="Signo igual">=</button>
+                  <button type="button" class="keypad-btn op-btn" data-insert="√" title="Raíz cuadrada">√</button>
+                </div>
+              </div>
+
+              <!-- Variables section -->
+              <div class="keypad-section">
+                <div class="keypad-section-label">
+                  <span>Variables:</span>
+                </div>
+                <div class="keypad-grid-4">
+                  <button type="button" class="keypad-btn var-btn" data-insert="x">x</button>
+                  <button type="button" class="keypad-btn var-btn" data-insert="y">y</button>
+                  <button type="button" class="keypad-btn var-btn" data-insert="z">z</button>
+                  <button type="button" class="keypad-btn var-btn" data-insert="w">w</button>
+                  <button type="button" class="keypad-btn var-btn" data-insert="a">a</button>
+                  <button type="button" class="keypad-btn var-btn" data-insert="b">b</button>
+                  <button type="button" class="keypad-btn var-btn" data-insert="c">c</button>
+                  <button type="button" class="keypad-btn var-btn" data-insert="n">n</button>
+                </div>
+              </div>
+
+              <!-- Numbers & Cursor section -->
+              <div class="keypad-section">
+                <div class="keypad-section-label">
+                  <span>Números y Edición:</span>
+                </div>
+                <div class="keypad-grid-4">
+                  <button type="button" class="keypad-btn num-btn" data-insert="7">7</button>
+                  <button type="button" class="keypad-btn num-btn" data-insert="8">8</button>
+                  <button type="button" class="keypad-btn num-btn" data-insert="9">9</button>
+                  <button type="button" class="keypad-btn util-btn" id="btnKeypadBackspace" title="Borrar carácter">⌫</button>
+
+                  <button type="button" class="keypad-btn num-btn" data-insert="4">4</button>
+                  <button type="button" class="keypad-btn num-btn" data-insert="5">5</button>
+                  <button type="button" class="keypad-btn num-btn" data-insert="6">6</button>
+                  <button type="button" class="keypad-btn util-btn" id="btnKeypadClearAll" title="Limpiar todo">AC</button>
+
+                  <button type="button" class="keypad-btn num-btn" data-insert="1">1</button>
+                  <button type="button" class="keypad-btn num-btn" data-insert="2">2</button>
+                  <button type="button" class="keypad-btn num-btn" data-insert="3">3</button>
+                  <button type="button" class="keypad-btn util-btn" id="btnKeypadLeft" title="Mover cursor a la izquierda">←</button>
+
+                  <button type="button" class="keypad-btn num-btn" data-insert="0">0</button>
+                  <button type="button" class="keypad-btn num-btn" data-insert=".">.</button>
+                  <button type="button" class="keypad-btn util-btn" data-insert=" " title="Espacio">␣</button>
+                  <button type="button" class="keypad-btn util-btn" id="btnKeypadRight" title="Mover cursor a la derecha">→</button>
+                </div>
+              </div>
+
+            </aside>
+
+          </div>
+
+          <!-- Step-by-Step Resolution Results -->
+          <div class="eq-results-container" id="eqResultsContainer" style="margin-top: 1.5rem;">
+            <!-- Rendered by JS -->
+          </div>
+
+        </div>
+
+        <!-- TAB 9: Adición y Sustracción de Racionales (Fracciones) -->
+        <div class="tab-pane" id="paneRationals">
+          <div class="pane-intro">
+            <div>
+              <h3 class="pane-title">Adición y Sustracción de Números Racionales (Fracciones)</h3>
+              <p class="pane-desc">
+                Resuelve sumas y restas de fracciones <strong>homogéneas</strong> y <strong>heterogéneas</strong>, números mixtos y enteros. Incluye cálculo del <strong>M.C.M. con tabla simultánea de factores primos</strong>, método alternativo de <strong>productos cruzados (mariposa)</strong> para 2 fracciones, amplificación didáctica y <strong>simplificación irreducible con M.C.D.</strong>
+              </p>
+            </div>
+          </div>
+
+          <!-- Quick Presets Toolbar for Rationals -->
+          <div class="eq-presets-bar rat-presets-bar">
+            <span class="presets-label">Ejemplos rápidos:</span>
+            <div class="presets-list" id="ratPresetsList">
+              <button type="button" class="btn btn-sm btn-ghost rat-preset-btn" data-expr="7/9 - 2/9">
+                🔹 Homogéneas (7/9 − 2/9)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost rat-preset-btn" data-expr="3/4 + 5/6">
+                ⭐ Heterogéneas (3/4 + 5/6)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost rat-preset-btn" data-expr="7/12 - 5/18">
+                ✨ Resta con Reducción (7/12 − 5/18)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost rat-preset-btn" data-expr="2/3 - 1/4 + 5/12">
+                🔸 3 Términos (2/3 − 1/4 + 5/12)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost rat-preset-btn" data-expr="2 1/3 + 3/4 - 1 1/2">
+                🍰 Números Mixtos (2 ⅓ + ¾ − 1 ½)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost rat-preset-btn" data-expr="3 - 4/5 + 1/2">
+                🔢 Con Enteros (3 − 4/5 + 1/2)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost rat-preset-btn" data-expr="3/8 - 5/12 + 7/16">
+                📚 Baldor Ej. 138 (3/8 − 5/12 + 7/16)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost rat-preset-btn" data-expr="1/2 + 2/3 - 3/4 + 5/6">
+                🎯 4 Fracciones (1/2 + 2/3 − 3/4 + 5/6)
+              </button>
+            </div>
+          </div>
+
+          <!-- Main Workspace: Left Builder/Expression + Right Keypad -->
+          <div class="eq-workspace-grid rat-workspace-grid">
+            
+            <!-- Left: Fraction Editor & Builder -->
+            <div class="eq-main-col">
+              
+              <div class="eq-card">
+                <div class="eq-card-header" style="justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                  <span class="eq-label">
+                    <span class="eq-label-icon">🍕</span>
+                    Operación con Números Racionales:
+                  </span>
+                  
+                  <!-- Switch between Visual Builder and Direct Expression -->
+                  <div class="rat-input-mode-tabs" role="tablist">
+                    <button type="button" class="rat-mode-tab active" id="btnRatModeVisual">🎛️ Constructor de Tarjetas</button>
+                    <button type="button" class="rat-mode-tab" id="btnRatModeText">✍️ Expresión Escrita</button>
+                  </div>
+                </div>
+
+                <!-- Mode 1: Visual Interactive Fraction Cards Builder -->
+                <div id="ratVisualBuilderContainer" class="rat-builder-area">
+                  <div class="rat-builder-hint">
+                    Añade o edita cada término fraccionario. Puedes incluir números mixtos (entero opcional) y alternar sumas o restas:
+                  </div>
+
+                  <div class="rat-terms-list" id="ratTermsList">
+                    <!-- Populated dynamically by JS -->
+                  </div>
+
+                  <div class="rat-builder-actions">
+                    <button type="button" class="btn btn-secondary btn-sm" id="btnAddFractionCard">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                      + Añadir Fracción
+                    </button>
+                    <button type="button" class="btn btn-ghost btn-sm" id="btnClearFractionCards">
+                      ↺ Vaciar Términos
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Mode 2: Direct Text Input Area -->
+                <div id="ratTextExpressionContainer" class="rat-text-area" style="display: none;">
+                  <div class="eq-input-group">
+                    <input type="text" id="ratExpressionInput" class="number-input-field eq-math-input" 
+                           value="3/4 + 5/6 - 1/2" 
+                           placeholder="Ej. 3/4 + 5/6 - 1/2 o 2 1/3 + 3/4" 
+                           autocomplete="off" spellcheck="false">
+                  </div>
+                  <div class="text-dim" style="font-size: 0.8rem; margin-top: 0.25rem;">
+                    💡 Puedes escribir fracciones normales (<code>3/4</code>), números mixtos (<code>2 1/3</code>) y números enteros (<code>5</code>).
+                  </div>
+                </div>
+
+                <!-- Live Mathematical Preview Box -->
+                <div class="rat-math-preview-card" id="ratMathPreviewCard">
+                  <div class="rat-preview-label">Vista Previa Matemática:</div>
+                  <div class="rat-math-formula" id="ratMathPreview">
+                    <!-- Dynamically rendered math fraction formula -->
+                  </div>
+                </div>
+
+                <!-- Actions Row -->
+                <div class="eq-actions-row" style="margin-top: 1rem;">
+                  <button type="button" class="btn btn-primary" id="btnSolveRationals">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M5 12h14"/>
+                      <path d="m12 5 7 7-7 7"/>
+                    </svg>
+                    Calcular y Explicar Paso a Paso
+                  </button>
+                  <button type="button" class="btn btn-secondary" id="btnAiExplainRationals" style="border-color: rgba(139, 92, 246, 0.4); background: rgba(139, 92, 246, 0.1); color: #a78bfa;">
+                    🤖 Explicación del Tutor IA
+                  </button>
+                  <button type="button" class="btn btn-ghost" id="btnResetRationals" title="Restablecer ejemplo base">
+                    ↺ Restablecer
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- Right: Side keypad for quick fractions -->
+            <aside class="eq-keypad-panel rat-keypad-panel">
+              <div class="keypad-header">
+                <div class="keypad-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                  </svg>
+                  Atajos de Fracciones
+                </div>
+                <span class="keypad-badge">Racionales</span>
+              </div>
+
+              <!-- Fraction common templates -->
+              <div class="keypad-section">
+                <div class="keypad-section-label">
+                  <span>Fracciones Frecuentes:</span>
+                </div>
+                <div class="keypad-grid-3">
+                  <button type="button" class="keypad-btn rat-insert-btn" data-insert="1/2">½ (1/2)</button>
+                  <button type="button" class="keypad-btn rat-insert-btn" data-insert="1/3">⅓ (1/3)</button>
+                  <button type="button" class="keypad-btn rat-insert-btn" data-insert="1/4">¼ (1/4)</button>
+                  <button type="button" class="keypad-btn rat-insert-btn" data-insert="2/3">⅔ (2/3)</button>
+                  <button type="button" class="keypad-btn rat-insert-btn" data-insert="3/4">¾ (3/4)</button>
+                  <button type="button" class="keypad-btn rat-insert-btn" data-insert="5/6">⅚ (5/6)</button>
+                </div>
+              </div>
+
+              <!-- Operators -->
+              <div class="keypad-section">
+                <div class="keypad-section-label">
+                  <span>Signos de Operación:</span>
+                </div>
+                <div class="keypad-grid-3">
+                  <button type="button" class="keypad-btn op-btn rat-insert-btn" data-insert=" + " title="Adición (Suma)">+ Suma</button>
+                  <button type="button" class="keypad-btn op-btn rat-insert-btn" data-insert=" - " title="Sustracción (Resta)">− Resta</button>
+                  <button type="button" class="keypad-btn op-btn rat-insert-btn" data-insert="/" title="Barra fraccionaria">/ Fracción</button>
+                </div>
+              </div>
+
+              <!-- Quick numbers -->
+              <div class="keypad-section">
+                <div class="keypad-section-label">
+                  <span>Dígitos y Edición:</span>
+                </div>
+                <div class="keypad-grid-4">
+                  <button type="button" class="keypad-btn num-btn rat-insert-btn" data-insert="7">7</button>
+                  <button type="button" class="keypad-btn num-btn rat-insert-btn" data-insert="8">8</button>
+                  <button type="button" class="keypad-btn num-btn rat-insert-btn" data-insert="9">9</button>
+                  <button type="button" class="keypad-btn util-btn" id="btnRatBackspace" title="Borrar">⌫</button>
+
+                  <button type="button" class="keypad-btn num-btn rat-insert-btn" data-insert="4">4</button>
+                  <button type="button" class="keypad-btn num-btn rat-insert-btn" data-insert="5">5</button>
+                  <button type="button" class="keypad-btn num-btn rat-insert-btn" data-insert="6">6</button>
+                  <button type="button" class="keypad-btn util-btn" id="btnRatClearText" title="Limpiar texto">AC</button>
+
+                  <button type="button" class="keypad-btn num-btn rat-insert-btn" data-insert="1">1</button>
+                  <button type="button" class="keypad-btn num-btn rat-insert-btn" data-insert="2">2</button>
+                  <button type="button" class="keypad-btn num-btn rat-insert-btn" data-insert="3">3</button>
+                  <button type="button" class="keypad-btn util-btn rat-insert-btn" data-insert=" " title="Espacio">␣</button>
+
+                  <button type="button" class="keypad-btn num-btn rat-insert-btn" data-insert="0" style="grid-column: span 4;">0</button>
+                </div>
+              </div>
+
+            </aside>
+
+          </div>
+
+          <!-- KPI Summary Cards for Rationals -->
+          <div class="kpi-grid rat-kpi-grid" id="ratKpiGrid" style="margin-top: 1.5rem;">
+            <div class="kpi-card highlight-card" style="border-color: rgba(245, 158, 11, 0.4); background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(17, 24, 39, 0.8));">
+              <div class="kpi-icon">🎯</div>
+              <div class="kpi-details">
+                <span class="kpi-label">Fracción Irreducible</span>
+                <div class="kpi-val" id="kpiRatResult">--</div>
+                <span class="kpi-badge" id="kpiRatStatusBadge">Calculando...</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon">🔢</div>
+              <div class="kpi-details">
+                <span class="kpi-label">M.C.M. Denominadores</span>
+                <div class="kpi-val text-sm font-mono" id="kpiRatLcm">--</div>
+                <span class="kpi-sub">Denominador común mínimo</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon">🍰</div>
+              <div class="kpi-details">
+                <span class="kpi-label">Número Mixto</span>
+                <div class="kpi-val" id="kpiRatMixed">--</div>
+                <span class="kpi-sub" id="kpiRatMixedSub">Entero + Fracción propia</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon">📐</div>
+              <div class="kpi-details">
+                <span class="kpi-label">Valor Decimal</span>
+                <div class="kpi-val text-sm font-mono" id="kpiRatDecimal">--</div>
+                <span class="kpi-sub" id="kpiRatType">Clasificación</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step-by-Step Pedagogical Resolution Container -->
+          <div class="rat-results-container" id="ratResultsContainer" style="margin-top: 1.5rem;">
+            <!-- Injected dynamically by JS with step cards, LCM table, butterfly diagram and SVG visualization -->
+          </div>
+
+        </div>
+
+        <!-- TAB 10: FRACCIONES COMPUESTAS Y CONTINUAS -->
+        <div class="tab-pane" id="paneCompfrac">
+          <div class="pane-intro">
+            <div>
+              <h3 class="pane-title">Simplificador de Fracciones Compuestas y Continuas</h3>
+              <p class="pane-desc">
+                Simplifica paso a paso fracciones compuestas, complejas y escalonadas (en cascada o continuas) aplicando la <strong>Ley de la Herradura (Extremos y Medios)</strong>, el <strong>Mínimo Común Múltiplo (m.c.m.)</strong> y la simplificación por <strong>Máximo Común Divisor (M.C.D.)</strong> de abajo hacia arriba.
+              </p>
+            </div>
+          </div>
+
+          <!-- Presets rápidos -->
+          <div class="eq-presets-bar">
+            <span class="text-dim" style="font-size: 0.85rem; font-weight: 500;">Ejemplos recomendados:</span>
+            <div class="eq-presets-list" id="compFracPresetsList">
+              <button type="button" class="eq-preset-chip active" id="btnPresetComp41">
+                ⭐ Ejercicio 41: 5 / (2 - (-3)/(-7 + 2/(1/2 - (-2/3))))
+              </button>
+              <button type="button" class="eq-preset-chip" id="btnPresetComp41Mul">
+                📌 Variante Producto: 5 / (2 - (-3)/(-7 + 2/(1/2 · (-2/3))))
+              </button>
+              <button type="button" class="eq-preset-chip" id="btnPresetCompBaldor">
+                📚 Baldor Herradura: (1/2 + 2/3) / (3/4 - 1/6)
+              </button>
+              <button type="button" class="eq-preset-chip" id="btnPresetCompStair">
+                🪜 Fracción Continua: 1 / (1 + 1 / (1 + 1/2))
+              </button>
+              <button type="button" class="eq-preset-chip" id="btnPresetCompIntegers">
+                🎯 Enteros y Fracciones: (3 - 1/2) / (2 + 3/4)
+              </button>
+              <button type="button" class="eq-preset-chip" id="btnPresetCompTier4">
+                💎 Escalonada 4 Pisos: 2 + 1 / (3 + 1 / (4 + 1/5))
+              </button>
+            </div>
+          </div>
+
+          <!-- Workspace: Editor Left, Keypad Panel Right -->
+          <div class="eq-workspace-grid">
+            
+            <!-- LEFT: Equation Editor & Steps -->
+            <div class="eq-main-editor">
+              
+              <!-- Expression Input Card -->
+              <div class="eq-card">
+                <div class="eq-card-header">
+                  <label for="compFracExpressionInput" class="eq-label">
+                    <span class="eq-label-icon">✍️</span>
+                    Expresión de la Fracción Compuesta:
+                  </label>
+                  <span class="text-dim" style="font-size: 0.8rem;">
+                    Escribe con barras <code>/</code> y paréntesis <code>( )</code> para definir los pisos
+                  </span>
+                </div>
+
+                <div class="eq-input-wrapper">
+                  <input 
+                    type="text" 
+                    id="compFracExpressionInput" 
+                    class="eq-input-field font-mono" 
+                    value="5 / (2 - (-3) / (-7 + 2 / (1/2 - (-2/3))))" 
+                    placeholder="Ej: 5 / (2 - (-3) / (-7 + 2 / (1/2 - (-2/3))))"
+                    autocomplete="off"
+                    spellcheck="false"
+                  >
+                  <button type="button" class="btn-clear-input" id="btnCompFracClear" title="Borrar expresión">✕</button>
+                </div>
+
+                <!-- Live Math Stacked Fraction Preview -->
+                <div class="eq-preview-wrapper" style="margin-top: 1rem;">
+                  <div class="eq-preview-label">Visualización matemática vertical (en pisos):</div>
+                  <div class="comp-live-preview" id="compFracLivePreview">
+                    <!-- Rendered with stacked fraction bars -->
+                  </div>
+                </div>
+
+                <!-- Action Buttons Row -->
+                <div class="eq-actions-row" style="margin-top: 1.25rem;">
+                  <button type="button" class="btn btn-primary" id="btnSolveCompFrac" style="background: linear-gradient(135deg, #10b981, #059669); border-color: #059669;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M5 12h14"/>
+                      <path d="m12 5 7 7-7 7"/>
+                    </svg>
+                    Simplificar Paso a Paso
+                  </button>
+                  <button type="button" class="btn btn-secondary" id="btnAiExplainCompFrac" style="border-color: rgba(139, 92, 246, 0.4); background: rgba(139, 92, 246, 0.1); color: #a78bfa;">
+                    🤖 Explicación del Tutor IA
+                  </button>
+                  <button type="button" class="btn btn-ghost" id="btnResetCompFrac" title="Restablecer ejercicio 41">
+                    ↺ Restablecer Ejemplo
+                  </button>
+                </div>
+              </div>
+
+              <!-- Step-by-Step Pedagogical Resolution Container -->
+              <div class="comp-results-container" id="compFracResultsContainer" style="margin-top: 1.5rem;">
+                <!-- Dynamically filled with KPI bar, cards, action highlights and final result -->
+              </div>
+
+            </div>
+
+            <!-- RIGHT: Side keypad for quick compound fraction editing -->
+            <aside class="eq-keypad-panel">
+              <div class="keypad-header" style="border-bottom-color: rgba(16, 185, 129, 0.2);">
+                <div class="keypad-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+                    <path d="M8 7h8"/>
+                    <path d="M8 12h8"/>
+                  </svg>
+                  Atajos de Fracciones
+                </div>
+                <span class="keypad-badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">Compuestas</span>
+              </div>
+
+              <!-- Quick Tier Templates -->
+              <div class="keypad-section">
+                <div class="keypad-section-label">
+                  <span>Estructuras y Pisos:</span>
+                </div>
+                <div class="keypad-grid-2">
+                  <button type="button" class="keypad-btn comp-insert-btn" data-insert="1 / ( )" title="Piso 1/(...)">1 / ( )</button>
+                  <button type="button" class="keypad-btn comp-insert-btn" data-insert="( ) / ( )" title="Doble fracción">( ) / ( )</button>
+                  <button type="button" class="keypad-btn comp-insert-btn" data-insert="1/2" title="Fracción 1/2">½</button>
+                  <button type="button" class="keypad-btn comp-insert-btn" data-insert="2/3" title="Fracción 2/3">⅔</button>
+                  <button type="button" class="keypad-btn comp-insert-btn" data-insert="3/4" title="Fracción 3/4">¾</button>
+                  <button type="button" class="keypad-btn comp-insert-btn" data-insert="1/4" title="Fracción 1/4">¼</button>
+                </div>
+              </div>
+
+              <!-- Operators -->
+              <div class="keypad-section">
+                <div class="keypad-section-label">
+                  <span>Signos de Operación:</span>
+                </div>
+                <div class="keypad-grid-3">
+                  <button type="button" class="keypad-btn op-btn comp-insert-btn" data-insert=" + ">+ Suma</button>
+                  <button type="button" class="keypad-btn op-btn comp-insert-btn" data-insert=" - ">− Resta</button>
+                  <button type="button" class="keypad-btn op-btn comp-insert-btn" data-insert=" * ">· Mult</button>
+                  <button type="button" class="keypad-btn op-btn comp-insert-btn" data-insert=" / ">/ Barra</button>
+                  <button type="button" class="keypad-btn op-btn comp-insert-btn" data-insert="(">(</button>
+                  <button type="button" class="keypad-btn op-btn comp-insert-btn" data-insert=")">)</button>
+                </div>
+              </div>
+
+              <!-- Number Keypad -->
+              <div class="keypad-section">
+                <div class="keypad-section-label">
+                  <span>Números:</span>
+                </div>
+                <div class="keypad-grid-3">
+                  <button type="button" class="keypad-btn num-btn comp-insert-btn" data-insert="7">7</button>
+                  <button type="button" class="keypad-btn num-btn comp-insert-btn" data-insert="8">8</button>
+                  <button type="button" class="keypad-btn num-btn comp-insert-btn" data-insert="9">9</button>
+                  <button type="button" class="keypad-btn num-btn comp-insert-btn" data-insert="4">4</button>
+                  <button type="button" class="keypad-btn num-btn comp-insert-btn" data-insert="5">5</button>
+                  <button type="button" class="keypad-btn num-btn comp-insert-btn" data-insert="6">6</button>
+                  <button type="button" class="keypad-btn num-btn comp-insert-btn" data-insert="1">1</button>
+                  <button type="button" class="keypad-btn num-btn comp-insert-btn" data-insert="2">2</button>
+                  <button type="button" class="keypad-btn num-btn comp-insert-btn" data-insert="3">3</button>
+                  <button type="button" class="keypad-btn num-btn comp-insert-btn" data-insert="0">0</button>
+                  <button type="button" class="keypad-btn util-btn" id="btnCompKeypadBackspace" title="Borrar un carácter">⌫</button>
+                  <button type="button" class="keypad-btn util-btn" id="btnCompKeypadClearAll" title="Borrar todo">C</button>
+                </div>
+              </div>
+
+            </aside>
+          </div>
+        </div>
+
+        <!-- TAB 11: TUTOR PEDAGÓGICO INTELIGENTE IA (JEZURI AI) -->
+        <div class="tab-pane" id="paneAitutor">
+          <div class="ai-tutor-banner">
+            <div class="ai-banner-left">
+              <div class="ai-avatar-lg">
+                <span>🤖</span>
+                <span class="ai-pulse-dot"></span>
+              </div>
+              <div>
+                <h3 class="pane-title" style="display: flex; align-items: center; gap: 0.6rem;">
+                  Profesor Jezuri AI — Tutor Pedagógico Inteligente
+                  <span class="ai-online-badge">En línea y analizando</span>
+                </h3>
+                <p class="pane-desc">
+                  Tu asistente personal de matemáticas. Te explica <strong>cómo se desarrolló tu problema</strong>, por qué cambió cada signo, qué estrategia se aplicó y cómo verificar tus resultados sin trucos oscuros.
+                </p>
+              </div>
+            </div>
+            
+            <div class="ai-banner-actions">
+              <button type="button" class="btn btn-secondary btn-sm" id="btnAiAnalyzeCurrent">
+                🔄 Sincronizar con Ejercicio Activo
+              </button>
+            </div>
+          </div>
+
+          <!-- Active Problem Context Selector -->
+          <div class="ai-context-bar">
+            <span class="text-dim" style="font-size: 0.85rem; font-weight: 600;">Seleccionar problema para consultar:</span>
+            <div class="ai-context-pills" id="aiContextPills">
+              <button type="button" class="ai-pill active" data-context="current" id="aiPillCurrent">
+                📌 Ejercicio en Pantalla
+              </button>
+              <button type="button" class="ai-pill" data-context="compfrac" id="aiPillCompFrac">
+                🪜 Fracciones Compuestas (Ej. 41)
+              </button>
+              <button type="button" class="ai-pill" data-context="equations" id="aiPillEquations">
+                ✨ Ecuación con Corchetes y Variables
+              </button>
+              <button type="button" class="ai-pill" data-context="rationals" id="aiPillRationals">
+                🍕 Suma/Resta con m.c.m.
+              </button>
+              <button type="button" class="ai-pill" data-context="mcd" id="aiPillMcd">
+                🎯 M.C.D. y Euclides
+              </button>
+            </div>
+          </div>
+
+          <!-- Main AI Grid: Left Diagnostic Cards, Right Interactive Chat -->
+          <div class="ai-workspace-grid">
+            
+            <!-- LEFT COLUMN: Diagnostic, Strategy, Pitfalls & Verification -->
+            <div class="ai-left-column">
+              
+              <!-- Detected Problem Card -->
+              <div class="ai-card" id="aiActiveProblemCard">
+                <div class="ai-card-header">
+                  <div class="ai-card-title">
+                    <span>🔍</span>
+                    <span>Problema Analizado:</span>
+                  </div>
+                  <span class="ai-type-badge" id="aiDetectedTypeBadge">Fracción Compuesta</span>
+                </div>
+                <div class="ai-problem-display font-mono" id="aiDetectedProblemFormula">
+                  5 / (2 - (-3)/(-7 + 2/(1/2 - (-2/3))))
+                </div>
+                <div class="ai-problem-meta" id="aiDetectedMeta">
+                  Resultado Obtenido: <strong style="color: #10b981;">185/53</strong> (3 enteros y 26/53 ≈ 3.490566)
+                </div>
+              </div>
+
+              <!-- Pedagogical Strategy Breakdown -->
+              <div class="ai-card">
+                <div class="ai-card-header">
+                  <div class="ai-card-title">
+                    <span>🧠</span>
+                    <span>¿Cómo se desarrolló y por qué se llegó a este resultado?</span>
+                  </div>
+                </div>
+                <div class="ai-strategy-content" id="aiStrategyContent">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+
+              <!-- Critical Pitfalls & Common Student Traps -->
+              <div class="ai-card" style="border-left: 3px solid var(--color-amber);">
+                <div class="ai-card-header">
+                  <div class="ai-card-title">
+                    <span>⚠️</span>
+                    <span>Puntos Críticos: Dónde no equivocarse</span>
+                  </div>
+                  <span class="keypad-badge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">Cuidado</span>
+                </div>
+                <div class="ai-pitfalls-content" id="aiPitfallsContent">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+
+              <!-- Verification / Checking Your Work -->
+              <div class="ai-card" style="border-left: 3px solid #10b981;">
+                <div class="ai-card-header">
+                  <div class="ai-card-title">
+                    <span>✅</span>
+                    <span>Comprobación: Cómo verificar por tu cuenta</span>
+                  </div>
+                </div>
+                <div class="ai-verify-content" id="aiVerifyContent">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: Interactive Chat & Instant FAQs -->
+            <div class="ai-right-column">
+              <div class="ai-chat-card">
+                
+                <div class="ai-chat-header">
+                  <div class="ai-chat-title">
+                    <span class="ai-sparkle">✨</span>
+                    <span>Pregunta lo que quieras al Tutor IA</span>
+                  </div>
+                  <span class="text-dim" style="font-size: 0.78rem;">Responde en lenguaje claro y paso a paso</span>
+                </div>
+
+                <!-- Instant FAQ Chips -->
+                <div class="ai-quick-queries">
+                  <div class="quick-queries-label">Preguntas frecuentes con 1 clic:</div>
+                  <div class="quick-chips-grid" id="aiQuickChipsGrid">
+                    <button type="button" class="ai-query-chip" data-query="por_que_resultado">
+                      ❓ ¿Por qué da este resultado?
+                    </button>
+                    <button type="button" class="ai-query-chip" data-query="ley_signos">
+                      ⚡ ¿Cómo funciona la regla de signos aquí?
+                    </button>
+                    <button type="button" class="ai-query-chip" data-query="ley_herradura">
+                      🧲 ¿Cómo se aplica la Ley de la Herradura?
+                    </button>
+                    <button type="button" class="ai-query-chip" data-query="orden_abajo_arriba">
+                      🪜 ¿Por qué se resuelve de abajo hacia arriba?
+                    </button>
+                    <button type="button" class="ai-query-chip" data-query="analogia">
+                      💡 Explícamelo con una analogía simple
+                    </button>
+                    <button type="button" class="ai-query-chip" data-query="como_comprobar">
+                      🔍 ¿Cómo comprobar mi respuesta?
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Chat History Messages Stream -->
+                <div class="ai-chat-messages" id="aiChatMessages">
+                  <!-- Messages populated by JS -->
+                </div>
+
+                <!-- Chat Input Form -->
+                <form class="ai-chat-form" id="aiChatForm" onsubmit="event.preventDefault();">
+                  <div class="ai-input-wrapper">
+                    <input 
+                      type="text" 
+                      id="aiChatInput" 
+                      class="ai-input-field" 
+                      placeholder="Escribe tu duda (ej: ¿por qué cambió el signo?, ¿de dónde salió el 37?)..."
+                      autocomplete="off"
+                    >
+                    <button type="submit" class="btn btn-primary" id="btnAiSend">
+                      <span>Enviar</span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                      </svg>
+                    </button>
+                  </div>
+                </form>
+
+                <!-- Practice Problem Generator -->
+                <div class="ai-practice-box" style="margin-top: 1rem;">
+                  <button type="button" class="btn btn-ghost btn-sm" id="btnAiGeneratePractice" style="width: 100%;">
+                    🎯 Generar ejercicio similar de práctica para entrenar
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Educational Cheat Sheet & Excel Formulas Section -->
+      <section class="card edu-card">
+        <h2 class="section-heading">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+          Guía Rápida: Fórmulas en Excel y Criterios de Divisibilidad
+        </h2>
+        
+        <div class="edu-grid">
+          <div class="edu-item">
+            <h3>📗 En Excel (Español)</h3>
+            <p>La función nativa para 2, 3 o 4 números es:</p>
+            <code>=M.C.D(A1; B1)</code>
+            <code>=M.C.D(A1; B1; C1)</code>
+            <code>=M.C.D(A1; B1; C1; D1)</code>
+            <small>También admite rangos continuos: <code>=M.C.D(A1:D1)</code></small>
+          </div>
+
+          <div class="edu-item">
+            <h3>📘 En Excel (Inglés)</h3>
+            <p>En versiones en inglés o Google Sheets en inglés:</p>
+            <code>=GCD(A1, B1)</code>
+            <code>=GCD(A1, B1, C1)</code>
+            <code>=GCD(A1, B1, C1, D1)</code>
+            <small>GCD = <em>Greatest Common Divisor</em></small>
+          </div>
+
+          <div class="edu-item">
+            <h3>🔍 Criterios para Encontrar Factores Primos</h3>
+            <p>
+              • <strong>Primo 2:</strong> La última cifra es par (0, 2, 4, 6, 8).<br>
+              • <strong>Primo 3:</strong> La suma de sus dígitos es múltiplo de 3.<br>
+              • <strong>Primo 5:</strong> La última cifra termina en 0 o 5.<br>
+              • <strong>Primo 7:</strong> (Número sin última cifra) − (2 × última cifra) = múltiplo de 7.
+            </p>
+          </div>
+
+          <div class="edu-item">
+            <h3>⚖️ Regla de Oro: MCD vs MCM</h3>
+            <p>
+              • <strong>MCD:</strong> Solo se divide si el factor primo divide a <strong>TODOS</strong>.<br>
+              • <strong>MCM:</strong> Se divide si el factor divide a <strong>AL MENOS UNO</strong>.<br>
+              • Para 2 números se cumple: <code>A × B = MCD(A, B) × MCM(A, B)</code>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Generador de Tablas Dinámicas de Máximo Común Divisor (M.C.D.) • Incluye buscador de factores primos, explicación paso a paso y exportación a Excel</p>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toastNotification" role="alert" aria-live="polite"></div>
+
+    <!-- Floating AI Tutor Quick Trigger Button -->
+    <button type="button" class="ai-floating-btn" id="btnFloatingAiTutor" title="Abrir Tutor Inteligente IA">
+      <span class="ai-floating-icon">🤖</span>
+      <span class="ai-floating-label">Tutor IA</span>
+      <span class="ai-floating-pulse"></span>
+    </button>
+  </div>
+
+  <!-- PWA Install Modal / Diálogo de Instalación en Celular y PC -->
+  <div class="modal-overlay" id="installModalOverlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="installModalTitle">
+    <div class="modal-card" id="installModalCard">
+      <button class="modal-close-btn" id="btnCloseInstallModal" aria-label="Cerrar ventana de instalación">✕</button>
+      
+      <div class="install-modal-header">
+        <img src="icons/icon-192.png" alt="Logo Jezuri Matemáticas" class="install-app-icon" width="68" height="68">
+        <div>
+          <h2 class="install-modal-title" id="installModalTitle">Instalar Jezuri Matemáticas</h2>
+          <p class="install-modal-subtitle">Aplicación Web Progresiva (PWA)</p>
+        </div>
+      </div>
+
+      <div class="install-benefits">
+        <div class="install-benefit-item">
+          <span class="benefit-icon">⚡</span>
+          <div>
+            <strong>100% Offline y Rápida</strong>
+            <p>Calcula y practica sin gastar datos ni depender de conexión a internet.</p>
+          </div>
+        </div>
+        <div class="install-benefit-item">
+          <span class="benefit-icon">📱</span>
+          <div>
+            <strong>Diseño Adaptado para Celulares</strong>
+            <p>Se abre a pantalla completa como una app nativa desde tu pantalla de inicio.</p>
+          </div>
+        </div>
+        <div class="install-benefit-item">
+          <span class="benefit-icon">🎓</span>
+          <div>
+            <strong>Tutor IA y Herramientas Completas</strong>
+            <p>M.C.D., Fracciones, Ecuaciones y Tutor Pedagógico siempre a la mano.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Area for Chrome / Android / Desktop (Native Prompt) -->
+      <div id="installNativeArea" class="install-action-area">
+        <button id="btnNativeInstallTrigger" class="btn btn-primary btn-block btn-lg" style="background: linear-gradient(135deg, #10b981, #059669); font-size: 1.05rem; padding: 0.85rem 1.25rem;">
+          📲 Instalar Aplicación Ahora
+        </button>
+        <p class="install-note-sub">No ocupa casi espacio en tu teléfono (< 1 MB) y no requiere tienda de apps.</p>
+      </div>
+
+      <!-- Instruction Area for iOS Safari -->
+      <div id="installIosArea" class="install-action-area" style="display: none;">
+        <div class="ios-install-box">
+          <p class="ios-box-title">📲 Cómo instalar en iPhone o iPad:</p>
+          <ol class="ios-steps-list">
+            <li>Toca el botón <strong>Compartir</strong> <span class="ios-icon-chip">⎋</span> en la barra inferior de Safari.</li>
+            <li>Desliza la lista de opciones y presiona <strong>«Añadir a pantalla de inicio»</strong> <span class="ios-icon-chip">➕</span>.</li>
+            <li>Toca <strong>«Añadir»</strong> en la esquina superior derecha. ¡Listo!</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Already installed status -->
+      <div id="installAlreadyInstalled" class="install-action-area" style="display: none;">
+        <div class="already-installed-notice">
+          <span style="font-size: 1.8rem;">🎉</span>
+          <div>
+            <strong>¡Jezuri ya está instalada!</strong>
+            <p>Puedes abrirla desde el ícono en tu pantalla de inicio.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Mini Install Bar (visible on mobile if not installed) -->
+  <div class="mobile-install-banner" id="mobileInstallBanner" style="display: none;">
+    <div class="mobile-install-info">
+      <img src="icons/icon-192.png" alt="App Icon" width="36" height="36" class="mobile-banner-icon">
+      <div class="mobile-banner-text">
+        <strong>Jezuri Matemáticas</strong>
+        <span>Instala la app para usarla offline</span>
+      </div>
+    </div>
+    <div class="mobile-banner-actions">
+      <button class="btn btn-primary btn-sm" id="btnBannerInstall">Instalar</button>
+      <button class="btn-banner-close" id="btnBannerClose" aria-label="Cerrar aviso">✕</button>
+    </div>
+  </div>
+
+  <!-- Main JavaScript Logic -->
+  <script src="app.js"></script>
+</body>
+</html>

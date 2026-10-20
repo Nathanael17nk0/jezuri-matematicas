@@ -1,0 +1,74 @@
+{
+  "name": "Jezuri Matemáticas — M.C.D., Álgebra y Fracciones",
+  "short_name": "Jezuri Math",
+  "description": "Calculadora didáctica interactiva de M.C.D., Álgebra con signos de agrupación, Fracciones y Tutor Pedagógico IA",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0b0f19",
+  "theme_color": "#0f172a",
+  "lang": "es",
+  "categories": ["education", "math", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "M.C.D. y Divisibilidad",
+      "short_name": "M.C.D.",
+      "description": "Calcular Máximo Común Divisor y factores primos",
+      "url": "./index.html#mcd",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Álgebra y Ecuaciones",
+      "short_name": "Álgebra",
+      "description": "Resolver expresiones con paréntesis y llaves",
+      "url": "./index.html#equations",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Fracciones Racionales",
+      "short_name": "Fracciones",
+      "description": "Suma, resta y simplificación de fracciones",
+      "url": "./index.html#rationals",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Tutor Pedagógico IA",
+      "short_name": "Tutor IA",
+      "description": "Consultar al asistente inteligente",
+      "url": "./index.html#aitutor",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
