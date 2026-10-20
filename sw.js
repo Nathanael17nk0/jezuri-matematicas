@@ -1,5 +1,5 @@
-// Service Worker for Jezuri Math PWA
-const CACHE_NAME = 'jezuri-math-v1.1';
+// Service Worker for Perrito Math PWA
+const CACHE_NAME = 'perrito-math-v2.0';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -13,7 +13,8 @@ const STATIC_ASSETS = [
   './icons/icon-maskable-192.png',
   './icons/icon-maskable-512.png',
   './icons/apple-touch-icon.png',
-  './icons/icon.svg'
+  './icons/favicon.png',
+  './icons/perrito-avatar.png'
 ];
 
 // Install Event - Pre-cache shell assets

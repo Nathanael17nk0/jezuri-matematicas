@@ -1,7 +1,7 @@
 {
-  "name": "Jezuri Matemáticas — M.C.D., Álgebra y Fracciones",
-  "short_name": "Jezuri Math",
-  "description": "Calculadora didáctica interactiva de M.C.D., Álgebra con signos de agrupación, Fracciones y Tutor Pedagógico IA",
+  "name": "Perrito Math — M.C.D., Álgebra y Fracciones",
+  "short_name": "Perrito Math",
+  "description": "Aprende matemáticas con Perrito Math: M.C.D., Ecuaciones con signos de agrupación, Fracciones y Tutor Pedagógico con IA",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -36,9 +36,9 @@
       "purpose": "maskable"
     },
     {
-      "src": "icons/icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
+      "src": "icons/favicon.png",
+      "sizes": "64x64",
+      "type": "image/png"
     }
   ],
   "shortcuts": [
@@ -64,9 +64,9 @@
       "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Tutor Pedagógico IA",
-      "short_name": "Tutor IA",
-      "description": "Consultar al asistente inteligente",
+      "name": "Profesor Perrito IA",
+      "short_name": "Perrito IA",
+      "description": "Consultar al tutor inteligente Perrito Math",
       "url": "./index.html#aitutor",
       "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     }

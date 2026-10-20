@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-  <meta name="description" content="Calculadora dinámica interactiva de Máximo Común Divisor (MCD), Álgebra con signos de agrupación, Fracciones y Tutor Pedagógico Inteligente.">
-  <title>Jezuri Matemáticas • M.C.D., Álgebra y Fracciones</title>
+  <meta name="description" content="Calculadora matemática interactiva Perrito Math: Máximo Común Divisor (MCD), Álgebra con signos de agrupación, Fracciones y Tutor Pedagógico Inteligente.">
+  <title>Perrito Math 🐶 • M.C.D., Álgebra y Fracciones</title>
   
   <!-- PWA & Mobile Web App Meta -->
   <link rel="manifest" href="manifest.json">
@@ -13,9 +13,9 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Jezuri Math">
+  <meta name="apple-mobile-web-app-title" content="Perrito Math">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="icon" type="image/png" sizes="64x64" href="icons/favicon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 
   <!-- Google Fonts -->
@@ -35,23 +35,17 @@
     <header class="app-header">
       <div class="header-container">
         <div class="brand">
-          <div class="brand-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <path d="M3 9h18"/>
-              <path d="M9 21V9"/>
-              <path d="m14 13 4 4"/>
-              <path d="m18 13-4 4"/>
-            </svg>
+          <div class="brand-avatar-box">
+            <img src="icons/perrito-avatar.png" alt="Perrito Math" class="brand-puppy-img" width="46" height="46">
           </div>
           <div>
-            <h1 class="brand-title">Tablas Dinámicas de M.C.D. y Álgebra</h1>
-            <p class="brand-subtitle">Máximo Común Divisor, Factores Primos y Resolver de Ecuaciones con Signos de Agrupación paso a paso</p>
+            <h1 class="brand-title">Perrito Math 🐶</h1>
+            <p class="brand-subtitle">Máximo Común Divisor, Álgebra y Fracciones con el Profesor Perrito IA</p>
           </div>
         </div>
         
         <div class="header-actions">
-          <button id="btnInstallApp" class="btn btn-primary btn-sm btn-install-app" title="Descargar e Instalar la App en tu Celular o Computadora" style="background: linear-gradient(135deg, #10b981, #059669); border-color: #059669;">
+          <button id="btnInstallApp" class="btn btn-primary btn-sm btn-install-app" title="Descargar e Instalar Perrito Math en tu Celular o Computadora" style="background: linear-gradient(135deg, #10b981, #059669); border-color: #059669;">
             📲 <span class="install-btn-text">Instalar App</span>
           </button>
           <button id="btnHeaderGoEquations" class="btn btn-primary btn-sm btn-header-module" title="Ir al Resolver de Ecuaciones y Expresiones">
@@ -63,8 +57,8 @@
           <button id="btnHeaderGoCompFrac" class="btn btn-primary btn-sm btn-header-module" title="Ir al Simplificador de Fracciones Compuestas" style="background: linear-gradient(135deg, #10b981, #059669); border-color: #059669;">
             🪜 Fracciones Compuestas
           </button>
-          <button id="btnHeaderGoAiTutor" class="btn btn-primary btn-sm btn-header-module" title="Consultar al Tutor Inteligente IA" style="background: linear-gradient(135deg, #8b5cf6, #6366f1); border-color: #6366f1;">
-            🤖 Tutor IA
+          <button id="btnHeaderGoAiTutor" class="btn btn-primary btn-sm btn-header-module" title="Consultar al Profesor Perrito IA" style="background: linear-gradient(135deg, #8b5cf6, #6366f1); border-color: #6366f1;">
+            🐶 Perrito IA
           </button>
           <button id="themeToggleBtn" class="btn btn-icon" title="Cambiar tema (Claro / Oscuro)" aria-label="Cambiar tema">
             <span class="theme-icon light-icon">☀️</span>
@@ -124,10 +118,10 @@
         </button>
 
         <button type="button" class="module-nav-btn ai-special-nav" data-mod="aitutor" id="navModAiTutor">
-          <span class="module-icon">🤖</span>
+          <span class="module-icon">🐶</span>
           <div class="module-info">
-            <span class="module-title">Tutor Inteligente IA</span>
-            <span class="module-subtitle">Explicación Paso a Paso y Consultas</span>
+            <span class="module-title">Profesor Perrito IA</span>
+            <span class="module-subtitle">Explicación paso a paso con amor perruno</span>
           </div>
           <span class="module-badge ai-badge">Tutor IA</span>
         </button>
@@ -1180,21 +1174,21 @@
           </div>
         </div>
 
-        <!-- TAB 11: TUTOR PEDAGÓGICO INTELIGENTE IA (JEZURI AI) -->
+        <!-- TAB 11: TUTOR PEDAGÓGICO INTELIGENTE IA (PROFESOR PERRITO MATH) -->
         <div class="tab-pane" id="paneAitutor">
           <div class="ai-tutor-banner">
             <div class="ai-banner-left">
-              <div class="ai-avatar-lg">
-                <span>🤖</span>
-                <span class="ai-pulse-dot"></span>
+              <div class="ai-avatar-lg" style="overflow: hidden; border-radius: 50%; padding: 0; border: 2.5px solid #8b5cf6; background: #1e1b4b; width: 62px; height: 62px; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;">
+                <img src="icons/perrito-avatar.png" alt="Profesor Perrito Math" width="60" height="60" style="border-radius: 50%; object-fit: cover; display: block;">
+                <span class="ai-pulse-dot" style="bottom: 2px; right: 2px;"></span>
               </div>
               <div>
                 <h3 class="pane-title" style="display: flex; align-items: center; gap: 0.6rem;">
-                  Profesor Jezuri AI — Tutor Pedagógico Inteligente
-                  <span class="ai-online-badge">En línea y analizando</span>
+                  Profesor Perrito Math 🐶 — Tutor Pedagógico Inteligente
+                  <span class="ai-online-badge">En línea y listo para enseñarte</span>
                 </h3>
                 <p class="pane-desc">
-                  Tu asistente personal de matemáticas. Te explica <strong>cómo se desarrolló tu problema</strong>, por qué cambió cada signo, qué estrategia se aplicó y cómo verificar tus resultados sin trucos oscuros.
+                  ¡Guau! Soy tu profesor perrito de matemáticas. Te explico con calma <strong>cómo se resolvió tu problema</strong>, por qué cambió cada signo, qué regla se aplicó y cómo comprobar tus resultados paso a paso.
                 </p>
               </div>
             </div>
@@ -1430,9 +1424,9 @@
     <div class="toast" id="toastNotification" role="alert" aria-live="polite"></div>
 
     <!-- Floating AI Tutor Quick Trigger Button -->
-    <button type="button" class="ai-floating-btn" id="btnFloatingAiTutor" title="Abrir Tutor Inteligente IA">
-      <span class="ai-floating-icon">🤖</span>
-      <span class="ai-floating-label">Tutor IA</span>
+    <button type="button" class="ai-floating-btn" id="btnFloatingAiTutor" title="Abrir Profesor Perrito IA">
+      <span class="ai-floating-icon">🐶</span>
+      <span class="ai-floating-label">Perrito IA</span>
       <span class="ai-floating-pulse"></span>
     </button>
   </div>
@@ -1443,10 +1437,10 @@
       <button class="modal-close-btn" id="btnCloseInstallModal" aria-label="Cerrar ventana de instalación">✕</button>
       
       <div class="install-modal-header">
-        <img src="icons/icon-192.png" alt="Logo Jezuri Matemáticas" class="install-app-icon" width="68" height="68">
+        <img src="icons/icon-192.png" alt="Logo Perrito Math" class="install-app-icon" width="68" height="68" style="object-fit: cover;">
         <div>
-          <h2 class="install-modal-title" id="installModalTitle">Instalar Jezuri Matemáticas</h2>
-          <p class="install-modal-subtitle">Aplicación Web Progresiva (PWA)</p>
+          <h2 class="install-modal-title" id="installModalTitle">Instalar Perrito Math 🐶</h2>
+          <p class="install-modal-subtitle">Tu app de matemáticas con el perrito profesor</p>
         </div>
       </div>
 
@@ -1466,10 +1460,10 @@
           </div>
         </div>
         <div class="install-benefit-item">
-          <span class="benefit-icon">🎓</span>
+          <span class="benefit-icon">🐶</span>
           <div>
-            <strong>Tutor IA y Herramientas Completas</strong>
-            <p>M.C.D., Fracciones, Ecuaciones y Tutor Pedagógico siempre a la mano.</p>
+            <strong>Profesor Perrito y Herramientas Completas</strong>
+            <p>M.C.D., Fracciones, Ecuaciones y Tutor Pedagógico con IA siempre a mano.</p>
           </div>
         </div>
       </div>
@@ -1477,9 +1471,9 @@
       <!-- Action Area for Chrome / Android / Desktop (Native Prompt) -->
       <div id="installNativeArea" class="install-action-area">
         <button id="btnNativeInstallTrigger" class="btn btn-primary btn-block btn-lg" style="background: linear-gradient(135deg, #10b981, #059669); font-size: 1.05rem; padding: 0.85rem 1.25rem;">
-          📲 Instalar Aplicación Ahora
+          📲 Instalar Perrito Math Ahora
         </button>
-        <p class="install-note-sub">No ocupa casi espacio en tu teléfono (< 1 MB) y no requiere tienda de apps.</p>
+        <p class="install-note-sub">No ocupa espacio en tu teléfono (< 1 MB) y se instala de forma segura.</p>
       </div>
 
       <!-- Instruction Area for iOS Safari -->
@@ -1499,7 +1493,7 @@
         <div class="already-installed-notice">
           <span style="font-size: 1.8rem;">🎉</span>
           <div>
-            <strong>¡Jezuri ya está instalada!</strong>
+            <strong>¡Perrito Math ya está instalada! 🐶</strong>
             <p>Puedes abrirla desde el ícono en tu pantalla de inicio.</p>
           </div>
         </div>
@@ -1510,10 +1504,10 @@
   <!-- Mobile Bottom Mini Install Bar (visible on mobile if not installed) -->
   <div class="mobile-install-banner" id="mobileInstallBanner" style="display: none;">
     <div class="mobile-install-info">
-      <img src="icons/icon-192.png" alt="App Icon" width="36" height="36" class="mobile-banner-icon">
+      <img src="icons/icon-192.png" alt="Perrito Math Icon" width="38" height="38" class="mobile-banner-icon" style="object-fit: cover;">
       <div class="mobile-banner-text">
-        <strong>Jezuri Matemáticas</strong>
-        <span>Instala la app para usarla offline</span>
+        <strong>Perrito Math 🐶</strong>
+        <span>Instala la app para aprender matemáticas offline</span>
       </div>
     </div>
     <div class="mobile-banner-actions">

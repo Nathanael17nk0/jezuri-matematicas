@@ -4970,9 +4970,9 @@
       state.aiState.messages = [
         {
           sender: 'bot',
-          text: `👋 ¡Hola! Soy tu <strong>Profesor Jezuri AI</strong>. He analizado tu <strong>${ctx.typeName}</strong>:<br><br>
+          text: `🐾 ¡Guau! ¡Hola! Soy tu <strong>Profesor Perrito Math 🐶</strong>. He analizado tu <strong>${ctx.typeName}</strong>:<br><br>
                  📌 <code>${ctx.formula}</code><br><br>
-                 ¿Tienes dudas sobre cómo se llegó al resultado, por qué cambió algún signo, o cómo aplicar la ley de la herradura? Haz clic en las preguntas rápidas de arriba o escribe tu consulta abajo y te lo explico con gusto.`
+                 ¿Tienes dudas sobre cómo se llegó al resultado, por qué cambió algún signo, o cómo resolverlo paso a paso? Haz clic en las preguntas rápidas de arriba o escribe tu consulta abajo y te lo explico con mucho cariño perruno.`
         }
       ];
     }
@@ -4991,7 +4991,7 @@
       if (msg.sender === 'bot') {
         bubble.innerHTML = `
           <div class="ai-msg-sender">
-            <span>🤖</span> Profesor Jezuri AI
+            <span>🐶</span> Profesor Perrito Math
           </div>
           <div class="ai-msg-text">${msg.text}</div>
         `;
@@ -5734,7 +5734,7 @@
         mobileInstallBanner.style.display = 'none';
         document.body.classList.remove('has-mobile-banner');
       }
-      showToast('¡Jezuri se instaló correctamente en tu dispositivo! 🚀');
+      showToast('¡Perrito Math se instaló correctamente en tu dispositivo! 🐶🚀');
     });
 
     function openInstallModal() {
