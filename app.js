@@ -103,6 +103,7 @@
     // Tab buttons & Panes
     viewTabs: document.querySelectorAll('.view-tab'),
     tabPanes: document.querySelectorAll('.tab-pane'),
+    mobileTabSelect: document.getElementById('mobileTabSelect'),
     // Containers
     simultaneousTableContainer: document.getElementById('simultaneousTableContainer'),
     simultaneousStepDetails: document.getElementById('simultaneousStepDetails'),
@@ -5267,6 +5268,11 @@
       });
     }
 
+    // Sync Mobile Tab Select dropdown
+    if (elements.mobileTabSelect && elements.mobileTabSelect.value !== tabId) {
+      elements.mobileTabSelect.value = tabId;
+    }
+
     // Update Panes
     if (elements.tabPanes) {
       elements.tabPanes.forEach(pane => {
@@ -5568,6 +5574,12 @@
         switchTab(tabId);
       });
     });
+
+    if (elements.mobileTabSelect) {
+      elements.mobileTabSelect.addEventListener('change', (e) => {
+        switchTab(e.target.value);
+      });
+    }
 
     if (elements.moduleNavBtns) {
       elements.moduleNavBtns.forEach(btn => {

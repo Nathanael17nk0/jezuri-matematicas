@@ -236,50 +236,88 @@
       <!-- Results View Tabs -->
       <section class="card results-card">
         <div class="results-header">
+          <!-- Mobile Tab Selector Bar (shown on mobile, hidden on desktop) -->
+          <div class="mobile-tab-selector-bar">
+            <label for="mobileTabSelect" class="mobile-tab-select-label">
+              <span class="mobile-tab-select-icon">📑</span>
+              <span class="mobile-tab-select-title">Ver Método:</span>
+            </label>
+            <div class="mobile-tab-select-box">
+              <select id="mobileTabSelect" class="mobile-tab-select" aria-label="Seleccionar método o vista de resultados">
+                <optgroup label="── Métodos de M.C.D. ──">
+                  <option value="simultaneous" selected>1. Descomposición Simultánea</option>
+                  <option value="individual">2. Factores Primos Individuales</option>
+                  <option value="factors">3. 🌳 Árbol de Factores</option>
+                  <option value="finder">4. Buscador y Criterios</option>
+                  <option value="euclid">5. Algoritmo de Euclides</option>
+                  <option value="narrative">6. Explicación Paso a Paso</option>
+                  <option value="divisors">7. Conjuntos de Divisores</option>
+                </optgroup>
+                <optgroup label="── Otros Módulos ──">
+                  <option value="equations">8. ✨ Álgebra y Ecuaciones</option>
+                  <option value="rationals">9. 🍕 Fracciones Racionales</option>
+                  <option value="compfrac">10. 🪜 Fracciones Compuestas</option>
+                  <option value="aitutor">IA. 🤖 Profesor Perrito IA</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+
           <div class="view-tabs" role="tablist">
-            <button class="view-tab active" data-tab="simultaneous" role="tab" id="tabBtnSimultaneous">
+            <button class="view-tab active" data-tab="simultaneous" role="tab" id="tabBtnSimultaneous" title="Descomposición Simultánea">
               <span class="tab-badge">1</span>
-              Descomposición Simultánea
+              <span class="tab-text-full">Descomposición Simultánea</span>
+              <span class="tab-text-short">Simultánea</span>
             </button>
-            <button class="view-tab" data-tab="individual" role="tab" id="tabBtnIndividual">
+            <button class="view-tab" data-tab="individual" role="tab" id="tabBtnIndividual" title="Factores Primos Individuales">
               <span class="tab-badge">2</span>
-              Factores Primos Individuales
+              <span class="tab-text-full">Factores Primos Individuales</span>
+              <span class="tab-text-short">Primos Indiv.</span>
             </button>
-            <button class="view-tab" data-tab="factors" role="tab" id="tabBtnFactors">
+            <button class="view-tab" data-tab="factors" role="tab" id="tabBtnFactors" title="Descomponer en Factores">
               <span class="tab-badge">3</span>
-              🌳 Descomponer en Factores
+              <span class="tab-text-full">🌳 Descomponer en Factores</span>
+              <span class="tab-text-short">🌳 Árbol</span>
             </button>
-            <button class="view-tab" data-tab="finder" role="tab" id="tabBtnFinder">
+            <button class="view-tab" data-tab="finder" role="tab" id="tabBtnFinder" title="Buscador y Criterios">
               <span class="tab-badge">4</span>
-              Buscador y Criterios
+              <span class="tab-text-full">Buscador y Criterios</span>
+              <span class="tab-text-short">Criterios</span>
             </button>
-            <button class="view-tab" data-tab="euclid" role="tab" id="tabBtnEuclid">
+            <button class="view-tab" data-tab="euclid" role="tab" id="tabBtnEuclid" title="Algoritmo de Euclides">
               <span class="tab-badge">5</span>
-              Algoritmo de Euclides
+              <span class="tab-text-full">Algoritmo de Euclides</span>
+              <span class="tab-text-short">Euclides</span>
             </button>
-            <button class="view-tab" data-tab="narrative" role="tab" id="tabBtnNarrative">
+            <button class="view-tab" data-tab="narrative" role="tab" id="tabBtnNarrative" title="Explicación Paso a Paso">
               <span class="tab-badge">6</span>
-              Explicación Paso a Paso
+              <span class="tab-text-full">Explicación Paso a Paso</span>
+              <span class="tab-text-short">Paso a Paso</span>
             </button>
-            <button class="view-tab" data-tab="divisors" role="tab" id="tabBtnDivisors">
+            <button class="view-tab" data-tab="divisors" role="tab" id="tabBtnDivisors" title="Conjuntos de Divisores">
               <span class="tab-badge">7</span>
-              Conjuntos de Divisores
+              <span class="tab-text-full">Conjuntos de Divisores</span>
+              <span class="tab-text-short">Divisores</span>
             </button>
-            <button class="view-tab" data-tab="equations" role="tab" id="tabBtnEquations" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(139, 92, 246, 0.15)); border-color: rgba(139, 92, 246, 0.35);">
+            <button class="view-tab" data-tab="equations" role="tab" id="tabBtnEquations" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(139, 92, 246, 0.15)); border-color: rgba(139, 92, 246, 0.35);" title="Álgebra y Ecuaciones">
               <span class="tab-badge" style="background: var(--color-purple); color: #fff;">8</span>
-              ✨ Ecuaciones y Signos
+              <span class="tab-text-full">✨ Ecuaciones y Signos</span>
+              <span class="tab-text-short">✨ Ecuaciones</span>
             </button>
-            <button class="view-tab" data-tab="rationals" role="tab" id="tabBtnRationals" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.14), rgba(217, 119, 6, 0.16)); border-color: rgba(245, 158, 11, 0.38);">
+            <button class="view-tab" data-tab="rationals" role="tab" id="tabBtnRationals" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.14), rgba(217, 119, 6, 0.16)); border-color: rgba(245, 158, 11, 0.38);" title="Fracciones y Racionales">
               <span class="tab-badge" style="background: var(--color-amber); color: #000; font-weight: 700;">9</span>
-              🍕 Racionales (Fracciones)
+              <span class="tab-text-full">🍕 Racionales (Fracciones)</span>
+              <span class="tab-text-short">🍕 Fracciones</span>
             </button>
-            <button class="view-tab" data-tab="compfrac" role="tab" id="tabBtnCompFrac" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(5, 150, 105, 0.16)); border-color: rgba(16, 185, 129, 0.38);">
+            <button class="view-tab" data-tab="compfrac" role="tab" id="tabBtnCompFrac" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(5, 150, 105, 0.16)); border-color: rgba(16, 185, 129, 0.38);" title="Fracciones Compuestas">
               <span class="tab-badge" style="background: var(--color-emerald); color: #fff; font-weight: 700;">10</span>
-              🪜 Fracciones Compuestas
+              <span class="tab-text-full">🪜 Fracciones Compuestas</span>
+              <span class="tab-text-short">🪜 Compuestas</span>
             </button>
-            <button class="view-tab" data-tab="aitutor" role="tab" id="tabBtnAiTutor" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.16), rgba(99, 102, 241, 0.2)); border-color: rgba(139, 92, 246, 0.45);">
+            <button class="view-tab" data-tab="aitutor" role="tab" id="tabBtnAiTutor" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.16), rgba(99, 102, 241, 0.2)); border-color: rgba(139, 92, 246, 0.45);" title="Profesor Perrito IA">
               <span class="tab-badge" style="background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; font-weight: 700;">IA</span>
-              🤖 Tutor Inteligente
+              <span class="tab-text-full">🤖 Tutor Inteligente</span>
+              <span class="tab-text-short">🤖 Tutor IA</span>
             </button>
           </div>
 
