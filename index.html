@@ -85,56 +85,87 @@
     <!-- Main Content Container -->
     <main class="main-content">
 
-      <!-- Master Navigation Hub: 4 Módulos Temáticos + Asistente Tutor IA -->
+      <!-- Master Navigation Hub: 8 Módulos Temáticos Especializados (Prepa y Universidad) -->
       <nav class="module-nav-hub" aria-label="Módulos de Aprendizaje Matemático">
         <button type="button" class="module-nav-btn active" data-mod="mcd" id="navModMcd">
           <span class="module-icon">🎯</span>
           <div class="module-info">
-            <span class="module-title">M.C.D. y Divisibilidad</span>
-            <span class="module-subtitle">Factores, Euclides y Divisores</span>
+            <span class="module-title">M.C.D. y m.c.m.</span>
+            <span class="module-subtitle">Factores, Euclides, Divisores y Múltiplos</span>
           </div>
           <span class="module-badge">Módulo 1</span>
         </button>
 
         <button type="button" class="module-nav-btn" data-mod="equations" id="navModEquations">
-          <span class="module-icon">✨</span>
+          <span class="module-icon">⚖️</span>
           <div class="module-info">
-            <span class="module-title">Álgebra y Ecuaciones</span>
-            <span class="module-subtitle">Signos ( ), [ ], { }, PEMDAS y Variables</span>
+            <span class="module-title">Ecuaciones y Sistemas</span>
+            <span class="module-subtitle">1er Grado, Cuadráticas 2º, 2x2 y 3x3</span>
           </div>
           <span class="module-badge">Módulo 2</span>
+        </button>
+
+        <button type="button" class="module-nav-btn" data-mod="factorization" id="navModFactorization">
+          <span class="module-icon">🧩</span>
+          <div class="module-info">
+            <span class="module-title">Factorización</span>
+            <span class="module-subtitle">Factor Común, Trinomios y Cuadrados</span>
+          </div>
+          <span class="module-badge">Módulo 3</span>
         </button>
 
         <button type="button" class="module-nav-btn" data-mod="rationals" id="navModRationals">
           <span class="module-icon">🍕</span>
           <div class="module-info">
-            <span class="module-title">Fracciones Racionales</span>
-            <span class="module-subtitle">Suma, Resta, Mult, Div y m.c.m.</span>
-          </div>
-          <span class="module-badge">Módulo 3</span>
-        </button>
-
-        <button type="button" class="module-nav-btn" data-mod="compfrac" id="navModCompFrac">
-          <span class="module-icon">🪜</span>
-          <div class="module-info">
-            <span class="module-title">Fracciones Compuestas</span>
-            <span class="module-subtitle">Cascada, Pisos y Ley de Herradura</span>
+            <span class="module-title">Fracciones y Racionales</span>
+            <span class="module-subtitle">Operaciones directas y Cascada/Herradura</span>
           </div>
           <span class="module-badge">Módulo 4</span>
+        </button>
+
+        <button type="button" class="module-nav-btn" data-mod="grapher" id="navModGrapher">
+          <span class="module-icon">📈</span>
+          <div class="module-info">
+            <span class="module-title">Graficador 2D</span>
+            <span class="module-subtitle">Raíces, Vértice, Ejes y Tabla</span>
+          </div>
+          <span class="module-badge">Módulo 5</span>
+        </button>
+
+        <button type="button" class="module-nav-btn" data-mod="calculus" id="navModCalculus">
+          <span class="module-icon">🧮</span>
+          <div class="module-info">
+            <span class="module-title">Cálculo y Límites</span>
+            <span class="module-subtitle">Derivadas paso a paso e Indet. 0/0</span>
+          </div>
+          <span class="module-badge">Módulo 6</span>
+        </button>
+
+        <button type="button" class="module-nav-btn" data-mod="quiz" id="navModQuiz">
+          <span class="module-icon">🏆</span>
+          <div class="module-info">
+            <span class="module-title">Entrenador Exámenes</span>
+            <span class="module-subtitle">Admisión UNAM/IPN/UAM y Quizzes</span>
+          </div>
+          <span class="module-badge">Módulo 7</span>
         </button>
 
         <button type="button" class="module-nav-btn ai-special-nav" data-mod="aitutor" id="navModAiTutor">
           <span class="module-icon">🐶</span>
           <div class="module-info">
             <span class="module-title">Profesor Perrito IA</span>
-            <span class="module-subtitle">Explicación paso a paso con amor perruno</span>
+            <span class="module-subtitle">Tutor Pedagógico y Cuaderno</span>
           </div>
-          <span class="module-badge ai-badge">Tutor IA</span>
+          <span class="module-badge ai-badge">Tutor & Cuaderno</span>
         </button>
       </nav>
 
-      <!-- M.C.D. Contextual Controls Wrapper (se oculta automáticamente en Álgebra y Fracciones para evitar desorden) -->
-      <div id="mcdControlsWrapper" class="mcd-controls-wrapper">
+      <!-- ==========================================
+           MÓDULO 1: M.C.D. Y M.C.M. (DIVISIBILIDAD)
+           ========================================== -->
+      <div id="moduleMcd" class="math-module active">
+        <!-- M.C.D. Contextual Controls Wrapper -->
+        <div id="mcdControlsWrapper" class="mcd-controls-wrapper">
         <!-- Top Section: Mode Selector & Inputs -->
         <section class="card control-card">
           <div class="control-header">
@@ -222,6 +253,15 @@
           </div>
         </div>
 
+        <div class="kpi-card highlight-card-amber">
+          <div class="kpi-icon">🔄</div>
+          <div class="kpi-details">
+            <span class="kpi-label">Mínimo Común Múltiplo</span>
+            <div class="kpi-val font-mono" id="kpiLcm">--</div>
+            <span class="kpi-sub">m.c.m. simultáneo</span>
+          </div>
+        </div>
+
         <div class="kpi-card">
           <div class="kpi-icon">⚡</div>
           <div class="kpi-details">
@@ -252,12 +292,6 @@
                   <option value="euclid">5. Algoritmo de Euclides</option>
                   <option value="narrative">6. Explicación Paso a Paso</option>
                   <option value="divisors">7. Conjuntos de Divisores</option>
-                </optgroup>
-                <optgroup label="── Otros Módulos ──">
-                  <option value="equations">8. ✨ Álgebra y Ecuaciones</option>
-                  <option value="rationals">9. 🍕 Fracciones Racionales</option>
-                  <option value="compfrac">10. 🪜 Fracciones Compuestas</option>
-                  <option value="aitutor">IA. 🤖 Profesor Perrito IA</option>
                 </optgroup>
               </select>
             </div>
@@ -298,26 +332,6 @@
               <span class="tab-badge">7</span>
               <span class="tab-text-full">Conjuntos de Divisores</span>
               <span class="tab-text-short">Divisores</span>
-            </button>
-            <button class="view-tab" data-tab="equations" role="tab" id="tabBtnEquations" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(139, 92, 246, 0.15)); border-color: rgba(139, 92, 246, 0.35);" title="Álgebra y Ecuaciones">
-              <span class="tab-badge" style="background: var(--color-purple); color: #fff;">8</span>
-              <span class="tab-text-full">✨ Ecuaciones y Signos</span>
-              <span class="tab-text-short">✨ Ecuaciones</span>
-            </button>
-            <button class="view-tab" data-tab="rationals" role="tab" id="tabBtnRationals" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.14), rgba(217, 119, 6, 0.16)); border-color: rgba(245, 158, 11, 0.38);" title="Fracciones y Racionales">
-              <span class="tab-badge" style="background: var(--color-amber); color: #000; font-weight: 700;">9</span>
-              <span class="tab-text-full">🍕 Racionales (Fracciones)</span>
-              <span class="tab-text-short">🍕 Fracciones</span>
-            </button>
-            <button class="view-tab" data-tab="compfrac" role="tab" id="tabBtnCompFrac" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(5, 150, 105, 0.16)); border-color: rgba(16, 185, 129, 0.38);" title="Fracciones Compuestas">
-              <span class="tab-badge" style="background: var(--color-emerald); color: #fff; font-weight: 700;">10</span>
-              <span class="tab-text-full">🪜 Fracciones Compuestas</span>
-              <span class="tab-text-short">🪜 Compuestas</span>
-            </button>
-            <button class="view-tab" data-tab="aitutor" role="tab" id="tabBtnAiTutor" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.16), rgba(99, 102, 241, 0.2)); border-color: rgba(139, 92, 246, 0.45);" title="Profesor Perrito IA">
-              <span class="tab-badge" style="background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; font-weight: 700;">IA</span>
-              <span class="tab-text-full">🤖 Tutor Inteligente</span>
-              <span class="tab-text-short">🤖 Tutor IA</span>
             </button>
           </div>
 
@@ -534,9 +548,37 @@
             <!-- Divisors chips & intersection -->
           </div>
         </div>
+      </section> <!-- /.results-card -->
+    </div> <!-- /#moduleMcd -->
 
-        <!-- TAB 8: Equations & Grouping Symbols Solver -->
-        <div class="tab-pane" id="paneEquations">
+    <!-- ==========================================
+         MÓDULO 2: ECUACIONES Y SISTEMAS
+         ========================================== -->
+    <div id="moduleEquations" class="math-module" style="display: none;">
+      <div class="module-header-banner">
+        <div class="module-header-main">
+          <div class="module-header-icon icon-equations">⚖️</div>
+          <div>
+            <h2 class="module-header-title">Ecuaciones y Sistemas de Ecuaciones</h2>
+            <p class="module-header-desc">
+              Resuelve ecuaciones lineales con signos de agrupación y balanza, ecuaciones cuadráticas completas (fórmula general / chicharronera) y sistemas lineales 2x2 y 3x3 por determinantes (Cramer / Sarrus).
+            </p>
+          </div>
+        </div>
+        <span class="module-header-tag">Álgebra & Balanza</span>
+      </div>
+
+      <!-- Submodule Tabs for Equations -->
+      <div class="submodule-nav-bar" role="tablist">
+        <button type="button" class="submodule-btn active" data-color="purple" data-sub="eq-linear" id="tabSubEqLinear">⚖️ 1er Grado (Signos & Balanza)</button>
+        <button type="button" class="submodule-btn" data-color="purple" data-sub="eq-quadratic" id="tabSubEqQuadratic">📐 2º Grado (Cuadráticas & Chicharronera)</button>
+        <button type="button" class="submodule-btn" data-color="purple" data-sub="eq-2x2" id="tabSubEq2x2">🔢 Sistemas 2x2 (Cramer)</button>
+        <button type="button" class="submodule-btn" data-color="purple" data-sub="eq-3x3" id="tabSubEq3x3">🏛️ Sistemas 3x3 (Sarrus)</button>
+      </div>
+
+      <!-- SUB-PANE 1: 1er Grado (Signos de agrupación, PEMDAS y Balanza) -->
+      <div class="submodule-pane active" id="subpaneEqLinear">
+        <div class="tab-pane active" id="paneEquations">
           <div class="pane-intro">
             <div>
               <h3 class="pane-title">Resolver de Ecuaciones y Expresiones con Signos de Agrupación</h3>
@@ -808,9 +850,308 @@
           </div>
 
         </div>
+      </div> <!-- /#subpaneEqLinear -->
 
-        <!-- TAB 9: Adición y Sustracción de Racionales (Fracciones) -->
-        <div class="tab-pane" id="paneRationals">
+      <!-- SUB-PANE 2: Ecuaciones Cuadráticas (2º Grado) -->
+      <div class="submodule-pane" id="subpaneEqQuadratic">
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <h3 class="pane-title" style="margin-bottom: 0.5rem;">📐 Ecuación Cuadrática Completa: ax² + bx + c = 0</h3>
+          <p class="pane-desc">
+            Calcula las raíces reales o complejas utilizando la <strong>Fórmula General («Chicharronera»)</strong>, analiza el <strong>discriminante Δ = b² - 4ac</strong>, determina las coordenadas del <strong>vértice (h, k)</strong>, la concavidad de la parábola y su <strong>forma factorizada</strong>.
+          </p>
+
+          <!-- Inputs for a, b, c -->
+          <div class="quad-inputs-row">
+            <div class="quad-input-group">
+              <label for="quadInputA" class="sr-only">Coeficiente a</label>
+              <input type="number" id="quadInputA" value="1" step="any" placeholder="a">
+              <span class="quad-symbol">x² +</span>
+            </div>
+            <div class="quad-input-group">
+              <label for="quadInputB" class="sr-only">Coeficiente b</label>
+              <input type="number" id="quadInputB" value="-5" step="any" placeholder="b">
+              <span class="quad-symbol">x +</span>
+            </div>
+            <div class="quad-input-group">
+              <label for="quadInputC" class="sr-only">Coeficiente c</label>
+              <input type="number" id="quadInputC" value="6" step="any" placeholder="c">
+              <span class="quad-symbol">= 0</span>
+            </div>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="eq-presets-bar" style="margin-bottom: 1rem;">
+            <span class="text-dim" style="font-size: 0.85rem; font-weight: 500;">Ejemplos clásicos:</span>
+            <div class="eq-presets-list">
+              <button type="button" class="btn btn-sm btn-ghost quad-preset-btn" data-a="1" data-b="-5" data-c="6">
+                🔹 x² - 5x + 6 = 0 (Enteras: 2 y 3)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost quad-preset-btn" data-a="2" data-b="5" data-c="-3">
+                🔹 2x² + 5x - 3 = 0 (Fracción: 0.5 y -3)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost quad-preset-btn" data-a="1" data-b="-4" data-c="4">
+                🔹 x² - 4x + 4 = 0 (Raíz doble x=2)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost quad-preset-btn" data-a="1" data-b="0" data-c="-9">
+                🔹 x² - 9 = 0 (Pura: ±3)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost quad-preset-btn" data-a="1" data-b="0" data-c="4">
+                🔹 x² + 4 = 0 (Complejas: ±2i)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost quad-preset-btn" data-a="1" data-b="-2" data-c="5">
+                🔹 x² - 2x + 5 = 0 (Complejas: 1 ± 2i)
+              </button>
+            </div>
+          </div>
+
+          <div class="util-actions" style="margin-bottom: 1.25rem;">
+            <button type="button" class="btn btn-primary" id="btnSolveQuadratic">
+              🚀 Resolver Ecuación Cuadrática
+            </button>
+            <button type="button" class="btn btn-secondary" id="btnRandomQuadratic">
+              🎲 Aleatoria
+            </button>
+            <button type="button" class="btn btn-ghost" id="btnSaveQuadraticToNotebook">
+              📝 Guardar en Cuaderno
+            </button>
+          </div>
+
+          <!-- Output Container -->
+          <div id="quadResultsContainer">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-PANE 3: Sistemas de Ecuaciones 2x2 (Regla de Cramer) -->
+      <div class="submodule-pane" id="subpaneEq2x2">
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <h3 class="pane-title" style="margin-bottom: 0.5rem;">🔢 Sistema de Ecuaciones Lineales 2x2 (Regla de Cramer)</h3>
+          <p class="pane-desc">
+            Resuelve sistemas de dos ecuaciones con dos incógnitas (x, y) mediante <strong>determinantes (Regla de Cramer)</strong> y método de eliminación, con clasificación de compatibilidad y comprobación paso a paso.
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: 0.75rem; align-items: center; padding: 1.25rem; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); margin-bottom: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
+              <span style="font-weight: 700; color: #a78bfa;">Ec 1:</span>
+              <input type="number" id="sys2xA1" value="2" style="width: 70px; height: 42px; text-align: center; border-radius: 8px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-main); font-weight: 700;">
+              <span style="font-weight: 700;">x +</span>
+              <input type="number" id="sys2xB1" value="1" style="width: 70px; height: 42px; text-align: center; border-radius: 8px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-main); font-weight: 700;">
+              <span style="font-weight: 700;">y =</span>
+              <input type="number" id="sys2xC1" value="7" style="width: 75px; height: 42px; text-align: center; border-radius: 8px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-main); font-weight: 700;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
+              <span style="font-weight: 700; color: #a78bfa;">Ec 2:</span>
+              <input type="number" id="sys2xA2" value="1" style="width: 70px; height: 42px; text-align: center; border-radius: 8px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-main); font-weight: 700;">
+              <span style="font-weight: 700;">x +</span>
+              <input type="number" id="sys2xB2" value="-1" style="width: 70px; height: 42px; text-align: center; border-radius: 8px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-main); font-weight: 700;">
+              <span style="font-weight: 700;">y =</span>
+              <input type="number" id="sys2xC2" value="1" style="width: 75px; height: 42px; text-align: center; border-radius: 8px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-main); font-weight: 700;">
+            </div>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="eq-presets-bar" style="margin-bottom: 1rem;">
+            <span class="text-dim" style="font-size: 0.85rem; font-weight: 500;">Ejemplos clásicos:</span>
+            <div class="eq-presets-list">
+              <button type="button" class="btn btn-sm btn-ghost sys2x-preset-btn" data-vals="2,1,7,1,-1,1">
+                🔹 2x + y = 7 & x - y = 1 (Sol: x=2.67, y=1.67)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost sys2x-preset-btn" data-vals="3,2,12,5,-3,1">
+                🔹 3x + 2y = 12 & 5x - 3y = 1 (Sol: x=2, y=3)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost sys2x-preset-btn" data-vals="1,2,5,3,-1,1">
+                🔹 x + 2y = 5 & 3x - y = 1 (Sol: x=1, y=2)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost sys2x-preset-btn" data-vals="4,3,18,2,-1,4">
+                🔹 4x + 3y = 18 & 2x - y = 4 (Sol: x=3, y=2)
+              </button>
+            </div>
+          </div>
+
+          <div class="util-actions" style="margin-bottom: 1.25rem;">
+            <button type="button" class="btn btn-primary" id="btnSolveSystem2x2">
+              🚀 Resolver Sistema 2x2
+            </button>
+            <button type="button" class="btn btn-ghost" id="btnSaveSys2xToNotebook">
+              📝 Guardar en Cuaderno
+            </button>
+          </div>
+
+          <!-- Output Container -->
+          <div id="sys2x2ResultsContainer">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-PANE 4: Sistemas de Ecuaciones 3x3 (Regla de Sarrus) -->
+      <div class="submodule-pane" id="subpaneEq3x3">
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <h3 class="pane-title" style="margin-bottom: 0.5rem;">🏛️ Sistema de Ecuaciones Lineales 3x3 (Regla de Sarrus)</h3>
+          <p class="pane-desc">
+            Resuelve sistemas de 3 ecuaciones con 3 incógnitas (x, y, z) evaluando determinantes de orden 3 por la <strong>Regla de Sarrus</strong> y la <strong>Regla de Cramer</strong>.
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: 0.75rem; align-items: center; padding: 1.25rem; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); margin-bottom: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; justify-content: center;">
+              <span style="font-weight: 700; color: #a78bfa;">Ec 1:</span>
+              <input type="number" id="sys3A1" value="1" style="width: 58px; height: 38px; text-align: center; border-radius: 6px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-main); font-weight: 700;"> x +
+              <input type="number" id="sys3B1" value="1" style="width: 58px; height: 38px; text-align: center; border-radius: 6px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-main); font-weight: 700;"> y +
+              <input type="number" id="sys3C1" value="1" style="width: 58px; height: 38px; text-align: center; border-radius: 6px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-main); font-weight: 700;"> z =
+              <input type="number" id="sys3D1" value="6" style="width: 62px; height: 38px; text-align: center; border-radius: 6px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-main); font-weight: 700;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; justify-content: center;">
+              <span style="font-weight: 700; color: #a78bfa;">Ec 2:</span>
+              <input type="number" id="sys3A2" value="2" style="width: 58px; height: 38px; text-align: center; border-radius: 6px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-main); font-weight: 700;"> x +
+              <input type="number" id="sys3B2" value="-1" style="width: 58px; height: 38px; text-align: center; border-radius: 6px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-main); font-weight: 700;"> y +
+              <input type="number" id="sys3C2" value="1" style="width: 58px; height: 38px; text-align: center; border-radius: 6px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-main); font-weight: 700;"> z =
+              <input type="number" id="sys3D2" value="3" style="width: 62px; height: 38px; text-align: center; border-radius: 6px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-main); font-weight: 700;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; justify-content: center;">
+              <span style="font-weight: 700; color: #a78bfa;">Ec 3:</span>
+              <input type="number" id="sys3A3" value="1" style="width: 58px; height: 38px; text-align: center; border-radius: 6px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-main); font-weight: 700;"> x +
+              <input type="number" id="sys3B3" value="-2" style="width: 58px; height: 38px; text-align: center; border-radius: 6px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-main); font-weight: 700;"> y +
+              <input type="number" id="sys3C3" value="3" style="width: 58px; height: 38px; text-align: center; border-radius: 6px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-main); font-weight: 700;"> z =
+              <input type="number" id="sys3D3" value="6" style="width: 62px; height: 38px; text-align: center; border-radius: 6px; border: 1px solid var(--border-medium); background: var(--bg-surface); color: var(--text-main); font-weight: 700;">
+            </div>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="eq-presets-bar" style="margin-bottom: 1rem;">
+            <span class="text-dim" style="font-size: 0.85rem; font-weight: 500;">Ejemplos clásicos:</span>
+            <div class="eq-presets-list">
+              <button type="button" class="btn btn-sm btn-ghost sys3x-preset-btn" data-vals="1,1,1,6,2,-1,1,3,1,-2,3,6">
+                🔹 x+y+z=6, 2x-y+z=3, x-2y+3z=6 (Sol: x=1, y=2, z=3)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost sys3x-preset-btn" data-vals="2,1,-1,8,-3,-1,2,-11,-2,1,2,-3">
+                🔹 2x+y-z=8, -3x-y+2z=-11, -2x+y+2z=-3 (Sol: x=2, y=3, z=-1)
+              </button>
+            </div>
+          </div>
+
+          <div class="util-actions" style="margin-bottom: 1.25rem;">
+            <button type="button" class="btn btn-primary" id="btnSolveSystem3x3">
+              🚀 Resolver Sistema 3x3
+            </button>
+            <button type="button" class="btn btn-ghost" id="btnSaveSys3xToNotebook">
+              📝 Guardar en Cuaderno
+            </button>
+          </div>
+
+          <!-- Output Container -->
+          <div id="sys3x3ResultsContainer">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+    </div> <!-- /#moduleEquations -->
+
+    <!-- ==========================================
+         MÓDULO 3: FACTORIZACIÓN DE POLINOMIOS
+         ========================================== -->
+    <div id="moduleFactorization" class="math-module" style="display: none;">
+      <div class="module-header-banner">
+        <div class="module-header-main">
+          <div class="module-header-icon icon-factorization">🧩</div>
+          <div>
+            <h2 class="module-header-title">Factorización Completa de Polinomios</h2>
+            <p class="module-header-desc">
+              Identifica y factoriza polinomios paso a paso: Factor Común, Diferencia de Cuadrados, Trinomios x²+bx+c y ax²+bx+c, y Suma/Diferencia de Cubos, con comprobación automática por propiedad distributiva.
+            </p>
+          </div>
+        </div>
+        <span class="module-header-tag">Prepa & Universidad</span>
+      </div>
+
+      <div class="card" style="margin-bottom: 1.5rem;">
+        <div class="control-header">
+          <h3 class="section-heading">
+            <span style="font-size: 1.3rem;">✍️</span> Ingresa el Polinomio a Factorizar
+          </h3>
+        </div>
+
+        <div class="fact-input-bar">
+          <label for="factPolyInput" class="sr-only">Polinomio a factorizar</label>
+          <input type="text" id="factPolyInput" class="fact-input-field" value="x^2 - 7x + 12" placeholder="Ej: x^2 - 9, x^2 - 7x + 12, 2x^2 + 7x + 3, x^3 - 8">
+          <button type="button" class="btn btn-primary" id="btnFactorizePoly">
+            🚀 Factorizar Polinomio
+          </button>
+          <button type="button" class="btn btn-secondary" id="btnRandomPoly">
+            🎲 Aleatorio
+          </button>
+          <button type="button" class="btn btn-ghost" id="btnSavePolyToNotebook">
+            📝 Guardar en Cuaderno
+          </button>
+        </div>
+
+        <!-- Presets Bar for Factorization -->
+        <div class="eq-presets-bar" style="margin-bottom: 1.25rem;">
+          <span class="text-dim" style="font-size: 0.85rem; font-weight: 600;">Casos de estudio frecuentes:</span>
+          <div class="eq-presets-list" id="factPresetsList">
+            <button type="button" class="btn btn-sm btn-ghost fact-preset-btn" data-poly="x^2 - 16">
+              🔹 Dif. Cuadrados: x² - 16
+            </button>
+            <button type="button" class="btn btn-sm btn-ghost fact-preset-btn" data-poly="4x^2 - 25">
+              🔹 Dif. Cuadrados: 4x² - 25
+            </button>
+            <button type="button" class="btn btn-sm btn-ghost fact-preset-btn" data-poly="x^2 - 7x + 12">
+              🔹 Trinomio: x² - 7x + 12
+            </button>
+            <button type="button" class="btn btn-sm btn-ghost fact-preset-btn" data-poly="x^2 + 5x + 6">
+              🔹 Trinomio: x² + 5x + 6
+            </button>
+            <button type="button" class="btn btn-sm btn-ghost fact-preset-btn" data-poly="2x^2 + 7x + 3">
+              🔹 Trinomio ax²+bx+c: 2x² + 7x + 3
+            </button>
+            <button type="button" class="btn btn-sm btn-ghost fact-preset-btn" data-poly="3x^2 - 5x - 2">
+              🔹 Trinomio ax²+bx+c: 3x² - 5x - 2
+            </button>
+            <button type="button" class="btn btn-sm btn-ghost fact-preset-btn" data-poly="x^3 - 8">
+              🔹 Diferencia de Cubos: x³ - 8
+            </button>
+            <button type="button" class="btn btn-sm btn-ghost fact-preset-btn" data-poly="x^3 + 27">
+              🔹 Suma de Cubos: x³ + 27
+            </button>
+            <button type="button" class="btn btn-sm btn-ghost fact-preset-btn" data-poly="6x^3 + 9x^2">
+              🔹 Factor Común: 6x³ + 9x²
+            </button>
+          </div>
+        </div>
+
+        <!-- Output Container -->
+        <div id="factResultsContainer">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div> <!-- /#moduleFactorization -->
+
+    <!-- ==========================================
+         MÓDULO 4: FRACCIONES Y RACIONALES
+         ========================================== -->
+    <div id="moduleRationals" class="math-module" style="display: none;">
+      <div class="module-header-banner">
+        <div class="module-header-main">
+          <div class="module-header-icon icon-rationals">🍕</div>
+          <div>
+            <h2 class="module-header-title">Fracciones y Números Racionales</h2>
+            <p class="module-header-desc">
+              Operaciones completas de números racionales con m.c.m. de denominadores, productos cruzados (mariposa), y simplificación de fracciones compuestas y continuas en cascada con la Ley de la Herradura.
+            </p>
+          </div>
+        </div>
+        <span class="module-header-tag">Racionales & Cascada</span>
+      </div>
+
+      <!-- Submodule Tabs for Rationals -->
+      <div class="submodule-nav-bar" role="tablist">
+        <button type="button" class="submodule-btn active" data-color="amber" data-sub="rat-simple" id="tabSubRatSimple">🍕 Fracciones Aritméticas (m.c.m. & Operaciones)</button>
+        <button type="button" class="submodule-btn" data-color="amber" data-sub="rat-compound" id="tabSubRatCompound">🪜 Fracciones Compuestas en Cascada (Ley de Herradura)</button>
+      </div>
+
+      <!-- SUB-PANE 1: Fracciones Aritméticas -->
+      <div class="submodule-pane active" id="subpaneRatSimple">
+        <div class="tab-pane active" id="paneRationals">
           <div class="pane-intro">
             <div>
               <h3 class="pane-title">Adición y Sustracción de Números Racionales (Fracciones)</h3>
@@ -1048,9 +1389,11 @@
           </div>
 
         </div>
+      </div> <!-- /#subpaneRatSimple -->
 
-        <!-- TAB 10: FRACCIONES COMPUESTAS Y CONTINUAS -->
-        <div class="tab-pane" id="paneCompfrac">
+      <!-- SUB-PANE 2: Fracciones Compuestas en Cascada (Ley de Herradura) -->
+      <div class="submodule-pane" id="subpaneRatCompound">
+        <div class="tab-pane active" id="paneCompfrac">
           <div class="pane-intro">
             <div>
               <h3 class="pane-title">Simplificador de Fracciones Compuestas y Continuas</h3>
@@ -1217,9 +1560,399 @@
             </aside>
           </div>
         </div>
+      </div> <!-- /#subpaneRatCompound -->
+    </div> <!-- /#moduleRationals -->
 
+    <!-- ==========================================
+         MÓDULO 5: GRAFICADOR 2D INTERACTIVO
+         ========================================== -->
+    <div id="moduleGrapher" class="math-module" style="display: none;">
+      <div class="module-header-banner">
+        <div class="module-header-main">
+          <div class="module-header-icon icon-grapher">📈</div>
+          <div>
+            <h2 class="module-header-title">Graficador 2D Interactivo de Funciones</h2>
+            <p class="module-header-desc">
+              Visualiza curvas y funciones matemáticas 100% offline. Localiza raíces y ceros (f(x)=0), corte con el eje Y, vértice y analiza la tabla de valores en tiempo real con zoom y desplazamiento.
+            </p>
+          </div>
+        </div>
+        <span class="module-header-tag">Plano Cartesiano 100% Offline</span>
+      </div>
+
+      <div class="card" style="margin-bottom: 1.5rem;">
+        <div class="control-header">
+          <h3 class="section-heading">
+            <span style="font-size: 1.3rem;">📐</span> Función Matemática a Graficar
+          </h3>
+        </div>
+
+        <div class="fact-input-bar">
+          <label for="grapherFnInput" class="sr-only">Función f(x)</label>
+          <span style="font-family: var(--font-mono); font-size: 1.25rem; font-weight: 700; align-self: center; color: #34d399;">f(x) =</span>
+          <input type="text" id="grapherFnInput" class="fact-input-field" value="x^2 - 4x + 3" placeholder="Ej: x^2 - 4, 2x - 3, -x^2 + 6x - 5, x^3 - 3x">
+          <button type="button" class="btn btn-primary" id="btnPlotGraph">
+            📈 Graficar Función
+          </button>
+          <button type="button" class="btn btn-secondary" id="btnRandomGraph">
+            🎲 Aleatoria
+          </button>
+          <button type="button" class="btn btn-ghost" id="btnSaveGraphToNotebook">
+            📝 Guardar en Cuaderno
+          </button>
+        </div>
+
+        <!-- Presets Bar for Grapher -->
+        <div class="eq-presets-bar" style="margin-bottom: 1.25rem;">
+          <span class="text-dim" style="font-size: 0.85rem; font-weight: 600;">Funciones de referencia:</span>
+          <div class="eq-presets-list" id="grapherPresetsList">
+            <button type="button" class="btn btn-sm btn-ghost graph-preset-btn" data-fn="x^2 - 4">
+              🔹 Parábola centrada: x² - 4
+            </button>
+            <button type="button" class="btn btn-sm btn-ghost graph-preset-btn" data-fn="x^2 - 4x + 3">
+              🔹 Parábola raíces 1 y 3: x² - 4x + 3
+            </button>
+            <button type="button" class="btn btn-sm btn-ghost graph-preset-btn" data-fn="-x^2 + 4x">
+              🔹 Parábola invertida: -x² + 4x
+            </button>
+            <button type="button" class="btn btn-sm btn-ghost graph-preset-btn" data-fn="2x - 1">
+              🔹 Recta lineal: 2x - 1
+            </button>
+            <button type="button" class="btn btn-sm btn-ghost graph-preset-btn" data-fn="x^3 - 3x">
+              🔹 Polinomio cúbico: x³ - 3x
+            </button>
+            <button type="button" class="btn btn-sm btn-ghost graph-preset-btn" data-fn="1/x">
+              🔹 Hipérbola racional: 1/x
+            </button>
+          </div>
+        </div>
+
+        <!-- Canvas Card -->
+        <div class="grapher-canvas-card">
+          <div class="grapher-toolbar">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span class="grapher-coords-badge" id="grapherCoordsIndicator">Cursor: (x: 0.00, y: 0.00)</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <button type="button" class="btn btn-sm btn-ghost" id="btnGraphZoomIn" title="Acercar zoom">🔍+ Zoom</button>
+              <button type="button" class="btn btn-sm btn-ghost" id="btnGraphZoomOut" title="Alejar zoom">🔍- Zoom</button>
+              <button type="button" class="btn btn-sm btn-ghost" id="btnGraphReset" title="Recentrar vista">↺ Centrar</button>
+              <button type="button" class="btn btn-sm btn-secondary" id="btnGraphDownload" title="Guardar gráfico como imagen">📸 Exportar PNG</button>
+            </div>
+          </div>
+          <canvas id="grapherCanvas" width="700" height="420" aria-label="Gráfico 2D de la función"></canvas>
+        </div>
+
+        <!-- Analytical Stats Cards -->
+        <div class="grapher-stats-grid" id="grapherStatsContainer">
+          <div class="grapher-stat-card">
+            <span class="grapher-stat-title">🎯 Raíces / Ceros (f(x)=0)</span>
+            <div class="grapher-stat-val text-primary" id="statGraphRoots">x = 1, x = 3</div>
+          </div>
+          <div class="grapher-stat-card">
+            <span class="grapher-stat-title">📍 Corte con Eje Y (f(0))</span>
+            <div class="grapher-stat-val" id="statGraphYIntercept">(0, 3)</div>
+          </div>
+          <div class="grapher-stat-card">
+            <span class="grapher-stat-title">🏔️ Vértice / Extremo</span>
+            <div class="grapher-stat-val" id="statGraphVertex">(2, -1)</div>
+          </div>
+          <div class="grapher-stat-card">
+            <span class="grapher-stat-title">📈 Tipo de Curva</span>
+            <div class="grapher-stat-val" id="statGraphType">Parábola cóncava hacia arriba</div>
+          </div>
+        </div>
+
+        <!-- Table of Values -->
+        <div id="grapherTableContainer">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div> <!-- /#moduleGrapher -->
+
+    <!-- ==========================================
+         MÓDULO 6: CÁLCULO Y LÍMITES
+         ========================================== -->
+    <div id="moduleCalculus" class="math-module" style="display: none;">
+      <div class="module-header-banner">
+        <div class="module-header-main">
+          <div class="module-header-icon icon-calculus">🧮</div>
+          <div>
+            <h2 class="module-header-title">Cálculo Diferencial y Límites</h2>
+            <p class="module-header-desc">
+              Resuelve derivadas polinómicas paso a paso por regla de potencias y evalúa límites indeterminados 0/0 factorizando y cancelando el factor indeterminado.
+            </p>
+          </div>
+        </div>
+        <span class="module-header-tag">Cálculo Prepa & Universidad</span>
+      </div>
+
+      <!-- Submodule Tabs for Calculus -->
+      <div class="submodule-nav-bar" role="tablist">
+        <button type="button" class="submodule-btn active" data-color="cyan" data-sub="calc-deriv" id="tabSubCalcDeriv">⚡ Derivadas Paso a Paso</button>
+        <button type="button" class="submodule-btn" data-color="cyan" data-sub="calc-limits" id="tabSubCalcLimits">🎯 Límites e Indeterminación 0/0</button>
+      </div>
+
+      <!-- SUB-PANE 1: Derivadas Polinómicas -->
+      <div class="submodule-pane active" id="subpaneCalcDeriv">
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <h3 class="pane-title" style="margin-bottom: 0.5rem;">⚡ Derivada de una Función Polinómica: d/dx [f(x)]</h3>
+          <p class="pane-desc">
+            Calcula la derivada paso a paso aplicando la <strong>Regla de la Potencia</strong>: <code>d/dx[c · xⁿ] = c · n · xⁿ⁻¹</code>. Opcionalmente evalúa la derivada en un punto x₀ para obtener la <strong>pendiente de la recta tangente (m)</strong>.
+          </p>
+
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.25rem; align-items: flex-end;">
+            <div style="flex: 1; min-width: 240px;">
+              <label for="calcDerivInput" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">
+                Función f(x):
+              </label>
+              <input type="text" id="calcDerivInput" class="fact-input-field" value="4x^3 - 6x^2 + 5x - 9" style="width: 100%;">
+            </div>
+            <div style="width: 140px;">
+              <label for="calcDerivX0" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">
+                Evaluar en x₀ (opcional):
+              </label>
+              <input type="number" id="calcDerivX0" class="fact-input-field" value="2" step="any" style="width: 100%; text-align: center;">
+            </div>
+            <button type="button" class="btn btn-primary" id="btnComputeDeriv" style="height: 48px;">
+              🚀 Calcular Derivada
+            </button>
+            <button type="button" class="btn btn-ghost" id="btnSaveDerivToNotebook" style="height: 48px;">
+              📝 Guardar en Cuaderno
+            </button>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="eq-presets-bar" style="margin-bottom: 1rem;">
+            <span class="text-dim" style="font-size: 0.85rem; font-weight: 500;">Ejemplos clásicos:</span>
+            <div class="eq-presets-list">
+              <button type="button" class="btn btn-sm btn-ghost calc-deriv-preset-btn" data-fn="4x^3 - 6x^2 + 5x - 9" data-x0="2">
+                🔹 4x³ - 6x² + 5x - 9 en x=2
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost calc-deriv-preset-btn" data-fn="5x^4 - 2x^3 + 8x - 1" data-x0="1">
+                🔹 5x⁴ - 2x³ + 8x - 1 en x=1
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost calc-deriv-preset-btn" data-fn="-x^2 + 10x - 25" data-x0="5">
+                🔹 -x² + 10x - 25 en x=5 (Vértice m=0)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost calc-deriv-preset-btn" data-fn="3x^5 - x" data-x0="-1">
+                🔹 3x⁵ - x en x=-1
+              </button>
+            </div>
+          </div>
+
+          <!-- Output Container -->
+          <div id="calcDerivResultsContainer">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-PANE 2: Límites Indeterminados 0/0 -->
+      <div class="submodule-pane" id="subpaneCalcLimits">
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <h3 class="pane-title" style="margin-bottom: 0.5rem;">🎯 Límites Algebraicos e Indeterminación 0/0</h3>
+          <p class="pane-desc">
+            Evalúa límites racionales cuando <code>x → a</code>. Si la sustitución directa produce la <strong>forma indeterminada 0/0</strong>, factoriza el numerador y denominador, cancela el factor conflictivo <code>(x - a)</code> y halla el valor exacto del límite.
+          </p>
+
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.25rem; align-items: flex-end;">
+            <div style="flex: 1; min-width: 180px;">
+              <label for="calcLimitNum" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">
+                Numerador P(x):
+              </label>
+              <input type="text" id="calcLimitNum" class="fact-input-field" value="x^2 - 4" style="width: 100%;">
+            </div>
+            <div style="flex: 1; min-width: 180px;">
+              <label for="calcLimitDen" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">
+                Denominador Q(x):
+              </label>
+              <input type="text" id="calcLimitDen" class="fact-input-field" value="x - 2" style="width: 100%;">
+            </div>
+            <div style="width: 120px;">
+              <label for="calcLimitA" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">
+                Cuando x → a:
+              </label>
+              <input type="number" id="calcLimitA" class="fact-input-field" value="2" step="any" style="width: 100%; text-align: center;">
+            </div>
+            <button type="button" class="btn btn-primary" id="btnComputeLimit" style="height: 48px;">
+              🚀 Evaluar Límite
+            </button>
+            <button type="button" class="btn btn-ghost" id="btnSaveLimitToNotebook" style="height: 48px;">
+              📝 Guardar en Cuaderno
+            </button>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="eq-presets-bar" style="margin-bottom: 1rem;">
+            <span class="text-dim" style="font-size: 0.85rem; font-weight: 500;">Ejemplos clásicos:</span>
+            <div class="eq-presets-list">
+              <button type="button" class="btn btn-sm btn-ghost calc-limit-preset-btn" data-num="x^2 - 4" data-den="x - 2" data-a="2">
+                🔹 lim (x² - 4)/(x - 2) cuando x→2 (Sol: 4)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost calc-limit-preset-btn" data-num="x^2 - 5x + 6" data-den="x - 3" data-a="3">
+                🔹 lim (x² - 5x + 6)/(x - 3) cuando x→3 (Sol: 1)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost calc-limit-preset-btn" data-num="x^2 + 3x + 2" data-den="x + 1" data-a="-1">
+                🔹 lim (x² + 3x + 2)/(x + 1) cuando x→-1 (Sol: 1)
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost calc-limit-preset-btn" data-num="x^2 - 16" data-den="x^2 - 3x - 4" data-a="4">
+                🔹 lim (x² - 16)/(x² - 3x - 4) cuando x→4 (Sol: 8/5)
+              </button>
+            </div>
+          </div>
+
+          <!-- Output Container -->
+          <div id="calcLimitResultsContainer">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+    </div> <!-- /#moduleCalculus -->
+
+    <!-- ==========================================
+         MÓDULO 7: ENTRENADOR DE EXÁMENES (QUIZZES)
+         ========================================== -->
+    <div id="moduleQuiz" class="math-module" style="display: none;">
+      <div class="module-header-banner">
+        <div class="module-header-main">
+          <div class="module-header-icon icon-quiz">🏆</div>
+          <div>
+            <h2 class="module-header-title">Entrenador de Exámenes y Quizzes</h2>
+            <p class="module-header-desc">
+              Prepárate para tus exámenes de preparatoria y admisión universitaria (UNAM, IPN, UAM, Exani-II) con ejercicios tipo examen explicados paso a paso con amor por el Profesor Perrito.
+            </p>
+          </div>
+        </div>
+        <span class="module-header-tag">Simulador Admisión</span>
+      </div>
+
+      <!-- Quiz Setup Screen -->
+      <div class="card" id="quizSetupScreen" style="margin-bottom: 1.5rem;">
+        <h3 class="pane-title" style="margin-bottom: 0.75rem;">⚙️ Configura tu Sesión de Entrenamiento</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+          <div>
+            <label for="quizCategorySelect" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">
+              Materia / Tema:
+            </label>
+            <select id="quizCategorySelect" class="fact-input-field" style="width: 100%;">
+              <option value="all" selected>🌟 Todas las Materias (Mixto)</option>
+              <option value="Álgebra">✨ Álgebra y Ecuaciones</option>
+              <option value="Factorización">🧩 Factorización</option>
+              <option value="Fracciones">🍕 Fracciones y Racionales</option>
+              <option value="Cálculo">🧮 Cálculo y Límites</option>
+              <option value="Divisibilidad">🎯 M.C.D. y m.c.m.</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="quizModeSelect" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">
+              Modo de Juego:
+            </label>
+            <select id="quizModeSelect" class="fact-input-field" style="width: 100%;">
+              <option value="practice" selected>📖 Modo Práctica (Con explicaciones y sin prisas)</option>
+              <option value="timed">⏱️ Modo Examen (60 segundos por pregunta)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="util-actions">
+          <button type="button" class="btn btn-primary btn-lg" id="btnStartQuiz">
+            ▶️ Iniciar Test (5 Preguntas)
+          </button>
+          <button type="button" class="btn btn-secondary" id="btnQuickSingleQuiz">
+            🎲 Pregunta Rápida Aleatoria
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Quiz Runner Container -->
+      <div class="quiz-runner-card" id="quizRunnerCard" style="display: none;">
+        <div class="quiz-header-bar">
+          <span class="quiz-progress-text" id="quizProgressText">Pregunta 1 de 5</span>
+          <span class="notebook-card-topic topic-equations" id="quizTopicBadge">Álgebra</span>
+          <span class="quiz-timer-pill" id="quizTimerPill" style="display: none;">
+            ⏱️ <span id="quizTimerCount">60</span>s
+          </span>
+        </div>
+
+        <div class="quiz-question-box" id="quizQuestionPrompt">
+          ¿Cuál es la pregunta?
+        </div>
+
+        <div class="quiz-options-grid" id="quizOptionsGrid">
+          <!-- 4 option buttons dynamically inserted -->
+        </div>
+
+        <!-- Feedback Card -->
+        <div id="quizFeedbackCard" style="display: none;">
+          <!-- Rendered on answer click -->
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+          <button type="button" class="btn btn-primary" id="btnQuizNext" style="display: none;">
+            Siguiente Pregunta ➡️
+          </button>
+          <button type="button" class="btn btn-ghost" id="btnQuizExit">
+            ✕ Abandonar Test
+          </button>
+        </div>
+      </div>
+
+      <!-- Quiz Summary / Results Screen -->
+      <div class="card" id="quizSummaryCard" style="display: none; text-align: center; padding: 2.5rem 1.5rem; margin-bottom: 1.5rem;">
+        <div style="font-size: 3.5rem; margin-bottom: 0.5rem;" id="quizSummaryEmoji">🏆</div>
+        <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem;" id="quizSummaryTitle">¡Excelente trabajo!</h2>
+        <p style="color: var(--text-muted); max-width: 500px; margin: 0 auto 1.5rem;" id="quizSummaryDesc">Has completado el test con gran desempeño.</p>
+        
+        <div style="display: inline-flex; gap: 1.5rem; margin-bottom: 2rem; background: var(--bg-surface-elevated); padding: 1rem 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-subtle);">
+          <div>
+            <div style="font-size: 1.8rem; font-weight: 800; color: #10b981;" id="quizScoreText">5/5</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Aciertos</div>
+          </div>
+          <div style="width: 1px; background: var(--border-subtle);"></div>
+          <div>
+            <div style="font-size: 1.8rem; font-weight: 800; color: #3b82f6;" id="quizPercentText">100%</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Precisión</div>
+          </div>
+        </div>
+
+        <div>
+          <button type="button" class="btn btn-primary btn-lg" id="btnQuizRestart">
+            🔄 Hacer Otro Test
+          </button>
+        </div>
+      </div>
+    </div> <!-- /#moduleQuiz -->
+
+    <!-- ==========================================
+         MÓDULO 8: PROFESOR PERRITO IA Y CUADERNO
+         ========================================== -->
+    <div id="moduleAitutor" class="math-module" style="display: none;">
+      <div class="module-header-banner">
+        <div class="module-header-main">
+          <div class="module-header-icon icon-aitutor">🐶</div>
+          <div>
+            <h2 class="module-header-title">Profesor Perrito IA y Cuaderno de Tareas</h2>
+            <p class="module-header-desc">
+              Tu tutor matemático interactivo offline y tu cuaderno digital con ejercicios guardados para repasar cuando quieras sin conexión a internet.
+            </p>
+          </div>
+        </div>
+        <span class="module-header-tag ai-badge">Tutor & Cuaderno</span>
+      </div>
+
+      <!-- Submodule Tabs for AI Tutor & Notebook -->
+      <div class="submodule-nav-bar" role="tablist">
+        <button type="button" class="submodule-btn active" data-color="purple" data-sub="ai-chat" id="tabSubAiChat">🐶 Chat Pedagógico con Perrito IA</button>
+        <button type="button" class="submodule-btn" data-color="purple" data-sub="ai-notebook" id="tabSubAiNotebook">📝 Cuaderno de Tareas (<span id="notebookCountBadge">0</span>)</button>
+      </div>
+
+      <!-- SUB-PANE 1: Chat Pedagógico -->
+      <div class="submodule-pane active" id="subpaneAiChat">
         <!-- TAB 11: TUTOR PEDAGÓGICO INTELIGENTE IA (PROFESOR PERRITO MATH) -->
-        <div class="tab-pane" id="paneAitutor">
+        <div class="tab-pane active" id="paneAitutor">
           <div class="ai-tutor-banner">
             <div class="ai-banner-left">
               <div class="ai-avatar-lg" style="overflow: hidden; border-radius: 50%; padding: 0; border: 2.5px solid #8b5cf6; background: #1e1b4b; width: 62px; height: 62px; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;">
@@ -1405,7 +2138,46 @@
 
           </div>
         </div>
-      </section>
+      </div> <!-- /#subpaneAiChat -->
+
+      <!-- SUB-PANE 2: Cuaderno de Tareas (Ejercicios Guardados) -->
+      <div class="submodule-pane" id="subpaneAiNotebook">
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <div class="notebook-toolbar">
+            <div>
+              <h3 class="pane-title" style="margin-bottom: 0.25rem;">📝 Cuaderno de Tareas y Ejercicios Guardados</h3>
+              <p class="pane-desc" style="margin-bottom: 0;">Repasa tus problemas resueltos paso a paso en cualquier momento 100% offline.</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-secondary btn-sm" id="btnPrintNotebook">
+                🖨️ Imprimir Cuaderno
+              </button>
+              <button type="button" class="btn btn-ghost btn-sm text-danger" id="btnClearNotebook">
+                🗑️ Vaciar Cuaderno
+              </button>
+            </div>
+          </div>
+
+          <!-- Filter Pills -->
+          <div class="eq-presets-bar" style="margin-bottom: 1.25rem;">
+            <span class="text-dim" style="font-size: 0.85rem; font-weight: 500;">Filtrar por materia:</span>
+            <div class="eq-presets-list" id="notebookFilterPills">
+              <button type="button" class="btn btn-sm btn-ghost active notebook-filter-btn" data-filter="all">Todas</button>
+              <button type="button" class="btn btn-sm btn-ghost notebook-filter-btn" data-filter="Ecuaciones">Ecuaciones</button>
+              <button type="button" class="btn btn-sm btn-ghost notebook-filter-btn" data-filter="Factorización">Factorización</button>
+              <button type="button" class="btn btn-sm btn-ghost notebook-filter-btn" data-filter="Fracciones">Fracciones</button>
+              <button type="button" class="btn btn-sm btn-ghost notebook-filter-btn" data-filter="Cálculo">Cálculo</button>
+              <button type="button" class="btn btn-sm btn-ghost notebook-filter-btn" data-filter="MCD">M.C.D.</button>
+            </div>
+          </div>
+
+          <!-- Cards Grid -->
+          <div class="notebook-cards-grid" id="notebookCardsContainer">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+    </div> <!-- /#moduleAitutor -->
 
       <!-- Educational Cheat Sheet & Excel Formulas Section -->
       <section class="card edu-card">
@@ -1560,6 +2332,8 @@
     </div>
   </div>
 
+  <!-- Academic Engines & Offline Algorithms -->
+  <script src="academic-modules.js"></script>
   <!-- Main JavaScript Logic -->
   <script src="app.js"></script>
 </body>

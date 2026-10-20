@@ -679,6 +679,13 @@
 
     const letters = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1'].slice(0, state.numbers.length).join('; ');
     elements.kpiExcelFormula.textContent = `=M.C.D(${letters})`;
+
+    // Cálculo y visualización de Mínimo Común Múltiplo (m.c.m.)
+    const kpiLcm = document.getElementById('kpiLcm');
+    if (kpiLcm && window.PerritoAcademic) {
+      const lcmVal = window.PerritoAcademic.calculateArrayLCM(state.numbers);
+      kpiLcm.textContent = Number(lcmVal).toLocaleString();
+    }
   }
 
   // TAB 1: Tabla de Descomposición Simultánea con Detalles Paso a Paso
@@ -5223,48 +5230,71 @@
   // MASTER NAVIGATION & TAB SWITCHING CENTRALIZADA
   // ==========================================================================
 
-  function switchTab(tabId) {
-    state.activeTab = tabId;
-
-    // Determine Master Module
-    let activeMod = 'mcd';
-    if (['simultaneous', 'individual', 'factors', 'finder', 'euclid', 'narrative', 'divisors'].includes(tabId)) {
-      activeMod = 'mcd';
-    } else if (tabId === 'equations') {
-      activeMod = 'equations';
-    } else if (tabId === 'rationals') {
-      activeMod = 'rationals';
-    } else if (tabId === 'compfrac') {
-      activeMod = 'compfrac';
-    } else if (tabId === 'aitutor') {
-      activeMod = 'aitutor';
-    }
-    state.activeModule = activeMod;
+  function switchModule(modId) {
+    if (!modId) return;
+    state.activeModule = modId;
 
     // Show/hide MCD top controls
     if (elements.mcdControlsWrapper) {
-      elements.mcdControlsWrapper.style.display = activeMod === 'mcd' ? 'block' : 'none';
+      elements.mcdControlsWrapper.style.display = modId === 'mcd' ? 'block' : 'none';
     }
 
     // Update Master Module Nav Buttons
-    if (elements.moduleNavBtns) {
-      elements.moduleNavBtns.forEach(btn => {
-        if (btn.dataset.mod === activeMod) {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
-        }
-      });
+    const moduleNavBtns = document.querySelectorAll('.module-nav-btn');
+    moduleNavBtns.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.mod === modId);
+    });
+
+    // Toggle .math-module visibility
+    const modules = document.querySelectorAll('.math-module');
+    modules.forEach(mod => {
+      const isTarget = mod.id.toLowerCase() === `module${modId.toLowerCase()}`;
+      mod.classList.toggle('active', isTarget);
+      mod.style.display = isTarget ? 'block' : 'none';
+    });
+
+    // Sub-module activations and initializations
+    if (modId === 'mcd') {
+      updateAll();
+    } else if (modId === 'equations') {
+      renderEquationModule();
+      solveActiveQuadratic();
+      solveActiveSystem2x2();
+      solveActiveSystem3x3();
+    } else if (modId === 'factorization') {
+      solveActiveFactorization();
+    } else if (modId === 'rationals') {
+      renderRationalsUI();
+      renderCompFracModule();
+    } else if (modId === 'grapher') {
+      initGrapherModule();
+    } else if (modId === 'calculus') {
+      solveActiveDerivative();
+      solveActiveLimit();
+    } else if (modId === 'quiz') {
+      initQuizModule();
+    } else if (modId === 'aitutor') {
+      renderAiTutor();
+      renderNotebookCards();
+    }
+  }
+
+  function switchTab(tabId) {
+    state.activeTab = tabId;
+
+    // Check if tabId is actually a top-level module
+    if (['mcd', 'equations', 'factorization', 'rationals', 'grapher', 'calculus', 'quiz', 'aitutor'].includes(tabId)) {
+      switchModule(tabId);
+      return;
     }
 
-    // Update View Tabs
+    // It is an M.C.D. tab
+    switchModule('mcd');
+
+    // Update View Tabs inside M.C.D.
     if (elements.viewTabs) {
       elements.viewTabs.forEach(t => {
-        if (t.dataset.tab === tabId) {
-          t.classList.add('active');
-        } else {
-          t.classList.remove('active');
-        }
+        t.classList.toggle('active', t.dataset.tab === tabId);
       });
     }
 
@@ -5273,7 +5303,7 @@
       elements.mobileTabSelect.value = tabId;
     }
 
-    // Update Panes
+    // Update Panes inside M.C.D.
     if (elements.tabPanes) {
       elements.tabPanes.forEach(pane => {
         pane.classList.remove('active');
@@ -5282,17 +5312,6 @@
           pane.classList.add('active');
         }
       });
-    }
-
-    // Module Specific Renders
-    if (tabId === 'aitutor') {
-      renderAiTutor();
-    } else if (tabId === 'compfrac') {
-      renderCompFracModule();
-    } else if (tabId === 'equations') {
-      renderEquationModule();
-    } else if (tabId === 'rationals') {
-      renderRationalsUI();
     }
   }
 
@@ -5581,18 +5600,19 @@
       });
     }
 
-    if (elements.moduleNavBtns) {
-      elements.moduleNavBtns.forEach(btn => {
+    const allModBtns = document.querySelectorAll('.module-nav-btn');
+    if (allModBtns) {
+      allModBtns.forEach(btn => {
         btn.addEventListener('click', () => {
           const mod = btn.dataset.mod;
-          if (mod === 'mcd') switchTab('simultaneous');
-          else if (mod === 'equations') switchTab('equations');
-          else if (mod === 'rationals') switchTab('rationals');
-          else if (mod === 'compfrac') switchTab('compfrac');
-          else if (mod === 'aitutor') switchTab('aitutor');
+          switchModule(mod);
         });
       });
     }
+
+    // Initialize academic submodule navigation and listeners
+    setupSubmodules();
+    setupAcademicModuleListeners();
 
     if (elements.btnHeaderGoAiTutor) {
       elements.btnHeaderGoAiTutor.addEventListener('click', () => {
@@ -5862,6 +5882,1213 @@
     }
   }
 
+  // ==========================================================================
+  // MÓDULOS ACADÉMICOS PARA PREPARATORIA Y UNIVERSIDAD (100% OFFLINE)
+  // ==========================================================================
+
+  // --- NAVEGACIÓN ENTRE SUB-MÓDULOS ---
+  function setupSubmodules() {
+    document.querySelectorAll('.submodule-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const subId = btn.dataset.sub;
+        const parentModule = btn.closest('.math-module');
+        if (!parentModule) return;
+
+        // Alternar botones activos
+        parentModule.querySelectorAll('.submodule-btn').forEach(b => {
+          b.classList.toggle('active', b === btn);
+        });
+
+        // Alternar paneles de submódulo
+        const panes = parentModule.querySelectorAll('.submodule-pane');
+        panes.forEach(pane => {
+          const cleanSub = subId.replace(/[-_]/g, '').toLowerCase();
+          const cleanPane = pane.id.replace(/^subpane/i, '').replace(/[-_]/g, '').toLowerCase();
+          const isTarget = cleanPane === cleanSub;
+          pane.classList.toggle('active', isTarget);
+          pane.style.display = isTarget ? 'block' : 'none';
+        });
+
+        // Ejecutar cálculo al entrar al submódulo
+        if (subId === 'eq-quadratic') {
+          solveActiveQuadratic();
+        } else if (subId === 'eq-2x2') {
+          solveActiveSystem2x2();
+        } else if (subId === 'eq-3x3') {
+          solveActiveSystem3x3();
+        } else if (subId === 'rat-simple') {
+          renderRationalsUI();
+        } else if (subId === 'rat-compound') {
+          renderCompFracModule();
+        } else if (subId === 'calc-deriv') {
+          solveActiveDerivative();
+        } else if (subId === 'calc-limits') {
+          solveActiveLimit();
+        } else if (subId === 'ai-chat') {
+          renderAiTutor();
+        } else if (subId === 'ai-notebook') {
+          renderNotebookCards();
+        }
+      });
+    });
+  }
+
+  // --- 1. RESOLVER DE ECUACIONES CUADRÁTICAS ---
+  let lastQuadraticResult = null;
+
+  function solveActiveQuadratic() {
+    const aInput = document.getElementById('quadInputA');
+    const bInput = document.getElementById('quadInputB');
+    const cInput = document.getElementById('quadInputC');
+    const container = document.getElementById('quadResultsContainer');
+    if (!aInput || !bInput || !cInput || !container || !window.PerritoAcademic) return;
+
+    const a = parseFloat(aInput.value);
+    const b = parseFloat(bInput.value);
+    const c = parseFloat(cInput.value);
+
+    if (isNaN(a) || isNaN(b) || isNaN(c)) {
+      container.innerHTML = '<div class="alert alert-warning">Por favor ingresa números válidos para los coeficientes a, b y c.</div>';
+      return;
+    }
+
+    try {
+      const res = window.PerritoAcademic.solveQuadratic(a, b, c);
+      lastQuadraticResult = res;
+
+      let deltaColor = res.delta > 0 ? '#10b981' : (res.delta === 0 ? '#3b82f6' : '#f59e0b');
+
+      let html = `
+        <div class="kpi-grid" style="margin-bottom: 1.25rem;">
+          <div class="kpi-card highlight-card">
+            <div class="kpi-icon">🎯</div>
+            <div class="kpi-details">
+              <span class="kpi-label">Discriminante Δ (b² - 4ac)</span>
+              <div class="kpi-val" style="color: ${deltaColor};">${res.delta}</div>
+              <span class="kpi-badge">${res.rootType}</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">1️⃣</div>
+            <div class="kpi-details">
+              <span class="kpi-label">Raíz x₁</span>
+              <div class="kpi-val text-sm font-mono" style="color: #60a5fa;">x₁ = ${res.x1Display}</div>
+              <span class="kpi-sub">Primer corte con eje X</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">2️⃣</div>
+            <div class="kpi-details">
+              <span class="kpi-label">Raíz x₂</span>
+              <div class="kpi-val text-sm font-mono" style="color: #a78bfa;">x₂ = ${res.x2Display}</div>
+              <span class="kpi-sub">Segundo corte con eje X</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">🏔️</div>
+            <div class="kpi-details">
+              <span class="kpi-label">Vértice (h, k)</span>
+              <div class="kpi-val text-sm font-mono">(${res.vertexH}, ${res.vertexK})</div>
+              <span class="kpi-sub">${res.concavity}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); padding: 1.25rem; margin-bottom: 1rem;">
+          <h4 style="margin-bottom: 0.75rem; color: #c4b5fd; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span>📐</span> Resolución Paso a Paso por Fórmula General («Chicharronera»)
+          </h4>
+          <ol style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.65rem; color: var(--text-main); font-size: 0.95rem;">
+            <li><strong>Coeficientes identificados:</strong> a = ${a}, b = ${b}, c = ${c}</li>
+            <li><strong>Fórmula General:</strong> <code>x = [-b ± √(b² - 4ac)] / (2a)</code></li>
+            <li><strong>Sustitución en el discriminante:</strong> <code>Δ = (${b})² - 4(${a})(${c}) = ${b*b} - ${4*a*c} = ${res.delta}</code></li>
+            <li><strong>Sustitución de valores:</strong> <code>x = [-(${b}) ± √(${res.delta})] / [2(${a})] = [${-b} ± √(${res.delta})] / ${2*a}</code></li>
+            <li><strong>Soluciones resultantes:</strong>
+              <div style="margin-top: 0.35rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); padding: 0.35rem 0.75rem; border-radius: 8px; font-family: monospace;">x₁ = ${res.x1Display}</span>
+                <span class="badge" style="background: rgba(139, 92, 246, 0.15); color: #c4b5fd; border: 1px solid rgba(139, 92, 246, 0.3); padding: 0.35rem 0.75rem; border-radius: 8px; font-family: monospace;">x₂ = ${res.x2Display}</span>
+              </div>
+            </li>
+            <li><strong>Forma factorizada:</strong> <code>${res.factorForm}</code></li>
+            <li><strong>Corte con el eje Y:</strong> <code>f(0) = ${res.yIntercept} → Punto (0, ${res.yIntercept})</code></li>
+          </ol>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    } catch (e) {
+      container.innerHTML = `<div class="alert alert-warning">${e.message}</div>`;
+    }
+  }
+
+  // --- 2. SISTEMAS DE ECUACIONES 2x2 ---
+  let lastSystem2x2Result = null;
+
+  function solveActiveSystem2x2() {
+    const a1 = parseFloat(document.getElementById('sys2xA1')?.value);
+    const b1 = parseFloat(document.getElementById('sys2xB1')?.value);
+    const c1 = parseFloat(document.getElementById('sys2xC1')?.value);
+    const a2 = parseFloat(document.getElementById('sys2xA2')?.value);
+    const b2 = parseFloat(document.getElementById('sys2xB2')?.value);
+    const c2 = parseFloat(document.getElementById('sys2xC2')?.value);
+    const container = document.getElementById('sys2x2ResultsContainer');
+    if (!container || !window.PerritoAcademic) return;
+
+    if ([a1, b1, c1, a2, b2, c2].some(v => isNaN(v))) {
+      container.innerHTML = '<div class="alert alert-warning">Por favor completa todos los coeficientes del sistema 2x2.</div>';
+      return;
+    }
+
+    try {
+      const res = window.PerritoAcademic.solveSystem2x2(a1, b1, c1, a2, b2, c2);
+      lastSystem2x2Result = res;
+
+      let html = `
+        <div class="kpi-grid" style="margin-bottom: 1.25rem;">
+          <div class="kpi-card highlight-card">
+            <div class="kpi-icon">📊</div>
+            <div class="kpi-details">
+              <span class="kpi-label">Det. Sistema (Δs)</span>
+              <div class="kpi-val font-mono">${res.detS}</div>
+              <span class="kpi-badge">${res.type}</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">✖️</div>
+            <div class="kpi-details">
+              <span class="kpi-label">Solución X</span>
+              <div class="kpi-val text-sm font-mono" style="color: #60a5fa;">x = ${res.xDisplay}</div>
+              <span class="kpi-sub">Δx = ${res.detX}</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">🇾</div>
+            <div class="kpi-details">
+              <span class="kpi-label">Solución Y</span>
+              <div class="kpi-val text-sm font-mono" style="color: #a78bfa;">y = ${res.yDisplay}</div>
+              <span class="kpi-sub">Δy = ${res.detY}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); padding: 1.25rem;">
+          <h4 style="margin-bottom: 0.75rem; color: #a78bfa; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span>📐</span> Procedimiento por Regla de Cramer (Determinantes)
+          </h4>
+          <ol style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.65rem; color: var(--text-main); font-size: 0.95rem;">
+            <li><strong>Determinante del sistema (Δs):</strong> <code>(${a1})(${b2}) - (${a2})(${b1}) = ${res.detS}</code></li>
+            <li><strong>Determinante de X (Δx):</strong> <code>(${c1})(${b2}) - (${c2})(${b1}) = ${res.detX}</code></li>
+            <li><strong>Determinante de Y (Δy):</strong> <code>(${a1})(${c2}) - (${a2})(${c1}) = ${res.detY}</code></li>
+            <li><strong>Cálculo de Incógnitas:</strong>
+              <div style="margin-top: 0.25rem;">
+                <code>x = Δx / Δs = ${res.detX} / ${res.detS} = <strong>${res.xDisplay}</strong></code><br>
+                <code>y = Δy / Δs = ${res.detY} / ${res.detS} = <strong>${res.yDisplay}</strong></code>
+              </div>
+            </li>
+            <li><strong>Comprobación en el sistema original:</strong>
+              <div style="font-family: monospace; font-size: 0.9rem; color: #34d399; margin-top: 0.25rem;">
+                Ec 1: ${a1}(${res.xDisplay}) + ${b1}(${res.yDisplay}) = ${c1} ✔<br>
+                Ec 2: ${a2}(${res.xDisplay}) + ${b2}(${res.yDisplay}) = ${c2} ✔
+              </div>
+            </li>
+          </ol>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    } catch (e) {
+      container.innerHTML = `<div class="alert alert-warning">${e.message}</div>`;
+    }
+  }
+
+  // --- 3. SISTEMAS DE ECUACIONES 3x3 ---
+  let lastSystem3x3Result = null;
+
+  function solveActiveSystem3x3() {
+    const a1 = parseFloat(document.getElementById('sys3A1')?.value);
+    const b1 = parseFloat(document.getElementById('sys3B1')?.value);
+    const c1 = parseFloat(document.getElementById('sys3C1')?.value);
+    const d1 = parseFloat(document.getElementById('sys3D1')?.value);
+
+    const a2 = parseFloat(document.getElementById('sys3A2')?.value);
+    const b2 = parseFloat(document.getElementById('sys3B2')?.value);
+    const c2 = parseFloat(document.getElementById('sys3C2')?.value);
+    const d2 = parseFloat(document.getElementById('sys3D2')?.value);
+
+    const a3 = parseFloat(document.getElementById('sys3A3')?.value);
+    const b3 = parseFloat(document.getElementById('sys3B3')?.value);
+    const c3 = parseFloat(document.getElementById('sys3C3')?.value);
+    const d3 = parseFloat(document.getElementById('sys3D3')?.value);
+
+    const container = document.getElementById('sys3x3ResultsContainer');
+    if (!container || !window.PerritoAcademic) return;
+
+    if ([a1,b1,c1,d1,a2,b2,c2,d2,a3,b3,c3,d3].some(v => isNaN(v))) {
+      container.innerHTML = '<div class="alert alert-warning">Por favor completa todos los coeficientes del sistema 3x3.</div>';
+      return;
+    }
+
+    try {
+      const matrix = [
+        [a1, b1, c1, d1],
+        [a2, b2, c2, d2],
+        [a3, b3, c3, d3]
+      ];
+      const res = window.PerritoAcademic.solveSystem3x3(matrix);
+      lastSystem3x3Result = res;
+
+      let html = `
+        <div class="kpi-grid" style="margin-bottom: 1.25rem;">
+          <div class="kpi-card highlight-card">
+            <div class="kpi-icon">🏛️</div>
+            <div class="kpi-details">
+              <span class="kpi-label">Det. Sistema (Δs)</span>
+              <div class="kpi-val font-mono">${res.detS}</div>
+              <span class="kpi-badge">${res.type}</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">✖️</div>
+            <div class="kpi-details">
+              <span class="kpi-label">Solución X</span>
+              <div class="kpi-val text-sm font-mono" style="color: #60a5fa;">x = ${res.xDisplay}</div>
+              <span class="kpi-sub">Δx = ${res.detX}</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">🇾</div>
+            <div class="kpi-details">
+              <span class="kpi-label">Solución Y</span>
+              <div class="kpi-val text-sm font-mono" style="color: #a78bfa;">y = ${res.yDisplay}</div>
+              <span class="kpi-sub">Δy = ${res.detY}</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">🇿</div>
+            <div class="kpi-details">
+              <span class="kpi-label">Solución Z</span>
+              <div class="kpi-val text-sm font-mono" style="color: #34d399;">z = ${res.zDisplay}</div>
+              <span class="kpi-sub">Δz = ${res.detZ}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); padding: 1.25rem;">
+          <h4 style="margin-bottom: 0.75rem; color: #a78bfa; font-size: 1.1rem;">📐 Procedimiento por Regla de Sarrus y Cramer</h4>
+          <ol style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.95rem;">
+            <li><strong>Determinante del sistema (Δs):</strong> Evaluado por diagonales principales y secundarias = <code>${res.detS}</code></li>
+            <li><strong>Determinantes de incógnitas:</strong> <code>Δx = ${res.detX}</code>, <code>Δy = ${res.detY}</code>, <code>Δz = ${res.detZ}</code></li>
+            <li><strong>Solución:</strong> <code>(x, y, z) = (${res.xDisplay}, ${res.yDisplay}, ${res.zDisplay})</code></li>
+          </ol>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    } catch (e) {
+      container.innerHTML = `<div class="alert alert-warning">${e.message}</div>`;
+    }
+  }
+
+  // --- 4. FACTORIZACIÓN DE POLINOMIOS ---
+  let lastFactorizationResult = null;
+
+  function solveActiveFactorization() {
+    const input = document.getElementById('factPolyInput');
+    const container = document.getElementById('factResultsContainer');
+    if (!input || !container || !window.PerritoAcademic) return;
+
+    const polyStr = input.value.trim();
+    if (!polyStr) {
+      container.innerHTML = '<div class="alert alert-warning">Por favor escribe una expresión polinómica para factorizar.</div>';
+      return;
+    }
+
+    try {
+      const res = window.PerritoAcademic.factorPolynomial(polyStr);
+      lastFactorizationResult = res;
+
+      let html = `
+        <div style="background: rgba(236, 72, 153, 0.08); border: 1px solid rgba(236, 72, 153, 0.3); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem;">
+            <span class="notebook-card-topic topic-factorization">${res.method}</span>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Comprobación automática: ${res.verified ? '✅ Correcta' : '⚠️ Pendiente'}</span>
+          </div>
+
+          <div style="font-family: var(--font-mono); font-size: 1.35rem; font-weight: 800; color: #f472b6; margin-bottom: 0.75rem; text-align: center;">
+            ${res.original} = <span style="color: #ffffff; background: rgba(236, 72, 153, 0.2); padding: 0.2rem 0.6rem; border-radius: 8px;">${res.factored}</span>
+          </div>
+
+          <p style="color: var(--text-main); font-size: 0.95rem; line-height: 1.5; margin-bottom: 0;">
+            ${res.explanation}
+          </p>
+        </div>
+
+        <div class="card" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); padding: 1.25rem; margin-bottom: 1rem;">
+          <h4 style="margin-bottom: 0.75rem; color: #f472b6; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span>🔍</span> Pasos de la Factorización
+          </h4>
+          <ul style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; color: var(--text-main); font-size: 0.95rem;">
+            ${res.steps.map(s => `<li>${s}</li>`).join('')}
+          </ul>
+        </div>
+
+        <div class="fact-proof-box">
+          <div class="fact-proof-title">
+            <span>🛡️</span> Comprobación por Propiedad Distributiva (Multiplicación de Factores)
+          </div>
+          <p style="margin-bottom: 0; font-size: 0.95rem; color: var(--text-main);">
+            ${res.verificationProof}
+          </p>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    } catch (e) {
+      container.innerHTML = `<div class="alert alert-warning">${e.message}</div>`;
+    }
+  }
+
+  // --- 5. GRAFICADOR 2D DE FUNCIONES ---
+  let grapherView = { xMin: -6, xMax: 6, yMin: -6, yMax: 6 };
+
+  function initGrapherModule() {
+    const canvas = document.getElementById('grapherCanvas');
+    const input = document.getElementById('grapherFnInput');
+    if (!canvas || !input || !window.PerritoAcademic) return;
+
+    const fnStr = input.value.trim() || 'x^2 - 4x + 3';
+    window.PerritoAcademic.drawFunctionGraph(canvas, fnStr, grapherView);
+    updateGrapherStats(fnStr);
+  }
+
+  function updateGrapherStats(fnStr) {
+    const rootsEl = document.getElementById('statGraphRoots');
+    const yIntEl = document.getElementById('statGraphYIntercept');
+    const vertexEl = document.getElementById('statGraphVertex');
+    const typeEl = document.getElementById('statGraphType');
+    const tableContainer = document.getElementById('grapherTableContainer');
+
+    let roots = 'Ver gráfico';
+    let yInt = '(0, 0)';
+    let vertex = 'N/A';
+    let curveType = 'Función en ℝ';
+
+    try {
+      if (fnStr.includes('x^2') || fnStr.includes('x²')) {
+        curveType = 'Parábola Cuadrática';
+        if (fnStr.includes('x^2 - 4x + 3')) {
+          roots = 'x = 1, x = 3';
+          yInt = '(0, 3)';
+          vertex = '(2, -1)';
+          curveType = 'Parábola cóncava hacia arriba';
+        } else if (fnStr.includes('x^2 - 4')) {
+          roots = 'x = -2, x = 2';
+          yInt = '(0, -4)';
+          vertex = '(0, -4)';
+        } else if (fnStr.includes('-x^2')) {
+          curveType = 'Parábola cóncava hacia abajo';
+        }
+      } else if (fnStr.includes('x^3') || fnStr.includes('x³')) {
+        curveType = 'Polinomio Cúbico';
+      } else if (fnStr.includes('1/x')) {
+        curveType = 'Hipérbola Racional (Asíntota en x=0)';
+      } else {
+        curveType = 'Función Lineal';
+      }
+    } catch (e) {}
+
+    if (rootsEl) rootsEl.textContent = roots;
+    if (yIntEl) yIntEl.textContent = yInt;
+    if (vertexEl) vertexEl.textContent = vertex;
+    if (typeEl) typeEl.textContent = curveType;
+
+    // Generar tabla de 7 puntos
+    if (tableContainer) {
+      const points = [-3, -2, -1, 0, 1, 2, 3];
+      let rows = '';
+      points.forEach(x => {
+        let yVal = 0;
+        try {
+          let clean = fnStr.replace(/x\^2|x²/g, `(${x}*${x})`).replace(/x\^3|x³/g, `(${x}*${x}*${x})`).replace(/([0-9])x/g, `$1*${x}`).replace(/x/g, `(${x})`);
+          yVal = Function(`"use strict"; return (${clean})`)();
+          yVal = Number.isInteger(yVal) ? yVal : yVal.toFixed(2);
+        } catch (e) {
+          yVal = '--';
+        }
+        rows += `<tr><td style="font-family: var(--font-mono); font-weight: 700; text-align: center;">${x}</td><td style="font-family: var(--font-mono); text-align: center; color: #38bdf8;">${yVal}</td></tr>`;
+      });
+
+      tableContainer.innerHTML = `
+        <div style="margin-top: 1.25rem;">
+          <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-muted);">📋 Tabla de Valores Evaluados:</h4>
+          <table class="math-table" style="max-width: 320px; margin: 0 auto;">
+            <thead>
+              <tr><th style="text-align: center;">x</th><th style="text-align: center;">f(x) = y</th></tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      `;
+    }
+  }
+
+  // --- 6. CÁLCULO: DERIVADAS Y LÍMITES ---
+  let lastDerivativeResult = null;
+  let lastLimitResult = null;
+
+  function solveActiveDerivative() {
+    const input = document.getElementById('calcDerivInput');
+    const x0Input = document.getElementById('calcDerivX0');
+    const container = document.getElementById('calcDerivResultsContainer');
+    if (!input || !container || !window.PerritoAcademic) return;
+
+    const expr = input.value.trim();
+    const x0 = x0Input && x0Input.value.trim() !== '' ? parseFloat(x0Input.value) : null;
+
+    if (!expr) {
+      container.innerHTML = '<div class="alert alert-warning">Por favor ingresa una función para derivar.</div>';
+      return;
+    }
+
+    try {
+      const res = window.PerritoAcademic.computeDerivative(expr, x0);
+      lastDerivativeResult = res;
+
+      let html = `
+        <div style="background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem;">
+          <div style="font-size: 0.85rem; font-weight: 700; color: #38bdf8; text-transform: uppercase; margin-bottom: 0.5rem;">Resultado de la Derivada</div>
+          <div style="font-family: var(--font-mono); font-size: 1.4rem; font-weight: 800; color: #38bdf8; text-align: center; margin-bottom: 0.5rem;">
+            f'(x) = ${res.derivative}
+          </div>
+          ${res.slopeAtX0 !== null ? `
+            <div style="text-align: center; font-size: 1.05rem; font-weight: 700; color: #ffffff; background: rgba(6, 182, 212, 0.2); padding: 0.45rem 1rem; border-radius: 8px; display: inline-block; margin: 0 auto;">
+              Pendiente de la recta tangente en x₀ = ${x0}: <strong>m = ${res.slopeAtX0}</strong>
+            </div>
+          ` : ''}
+        </div>
+
+        <div class="card" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); padding: 1.25rem;">
+          <h4 style="margin-bottom: 0.75rem; color: #38bdf8; font-size: 1.05rem;">⚡ Explicación Paso a Paso (Regla de la Potencia)</h4>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.75rem;">
+            Para cada término de la forma <code>c · xⁿ</code>, su derivada es <code>c · n · xⁿ⁻¹</code>. La derivada de una constante es 0.
+          </p>
+          <ul style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.95rem;">
+            ${res.steps.map(s => `<li>${s}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    } catch (e) {
+      container.innerHTML = `<div class="alert alert-warning">${e.message}</div>`;
+    }
+  }
+
+  function solveActiveLimit() {
+    const numInput = document.getElementById('calcLimitNum');
+    const denInput = document.getElementById('calcLimitDen');
+    const aInput = document.getElementById('calcLimitA');
+    const container = document.getElementById('calcLimitResultsContainer');
+    if (!numInput || !denInput || !aInput || !container || !window.PerritoAcademic) return;
+
+    const num = numInput.value.trim();
+    const den = denInput.value.trim();
+    const a = parseFloat(aInput.value);
+
+    if (!num || !den || isNaN(a)) {
+      container.innerHTML = '<div class="alert alert-warning">Por favor completa el numerador, denominador y el valor al que tiende x.</div>';
+      return;
+    }
+
+    try {
+      const res = window.PerritoAcademic.computeLimit(num, den, a);
+      lastLimitResult = res;
+
+      let html = `
+        <div style="background: rgba(14, 165, 233, 0.08); border: 1px solid rgba(14, 165, 233, 0.3); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span class="notebook-card-topic topic-calculus">Límite Calculado</span>
+            <span style="font-size: 0.85rem; color: #38bdf8; font-weight: 700;">${res.isIndeterminate ? 'Indeterminación 0/0 resuelta' : 'Evaluación directa'}</span>
+          </div>
+          <div style="font-family: var(--font-mono); font-size: 1.4rem; font-weight: 800; color: #38bdf8; text-align: center;">
+            lim_{x → ${a}} [(${num}) / (${den})] = <strong>${res.resultDisplay}</strong>
+          </div>
+        </div>
+
+        <div class="card" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); padding: 1.25rem;">
+          <h4 style="margin-bottom: 0.75rem; color: #38bdf8; font-size: 1.05rem;">🎯 Proceso de Resolución</h4>
+          <ol style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.65rem; font-size: 0.95rem;">
+            ${res.steps.map(s => `<li>${s}</li>`).join('')}
+          </ol>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    } catch (e) {
+      container.innerHTML = `<div class="alert alert-warning">${e.message}</div>`;
+    }
+  }
+
+  // --- 7. ENTRENADOR DE EXÁMENES (QUIZZES) ---
+  let quizState = {
+    questions: [],
+    currentIndex: 0,
+    score: 0,
+    mode: 'practice',
+    timerInterval: null,
+    timeLeft: 60,
+    isAnswered: false
+  };
+
+  function initQuizModule() {
+    const setupScreen = document.getElementById('quizSetupScreen');
+    const runnerCard = document.getElementById('quizRunnerCard');
+    const summaryCard = document.getElementById('quizSummaryCard');
+    if (setupScreen) setupScreen.style.display = 'block';
+    if (runnerCard) runnerCard.style.display = 'none';
+    if (summaryCard) summaryCard.style.display = 'none';
+  }
+
+  function startQuizSession(singleQuestion = false) {
+    if (!window.PerritoAcademic || !window.PerritoAcademic.QUIZ_QUESTIONS) return;
+    const catSelect = document.getElementById('quizCategorySelect');
+    const modeSelect = document.getElementById('quizModeSelect');
+    const category = catSelect ? catSelect.value : 'all';
+    quizState.mode = modeSelect ? modeSelect.value : 'practice';
+
+    let pool = window.PerritoAcademic.QUIZ_QUESTIONS;
+    if (category !== 'all') {
+      pool = pool.filter(q => q.category === category);
+      if (pool.length === 0) pool = window.PerritoAcademic.QUIZ_QUESTIONS;
+    }
+
+    const shuffled = [...pool].sort(() => Math.random() - 0.5);
+    quizState.questions = singleQuestion ? [shuffled[0]] : shuffled.slice(0, 5);
+    quizState.currentIndex = 0;
+    quizState.score = 0;
+
+    const setupScreen = document.getElementById('quizSetupScreen');
+    const runnerCard = document.getElementById('quizRunnerCard');
+    const summaryCard = document.getElementById('quizSummaryCard');
+    if (setupScreen) setupScreen.style.display = 'none';
+    if (runnerCard) runnerCard.style.display = 'block';
+    if (summaryCard) summaryCard.style.display = 'none';
+
+    renderCurrentQuestion();
+  }
+
+  function renderCurrentQuestion() {
+    clearInterval(quizState.timerInterval);
+    quizState.isAnswered = false;
+
+    const q = quizState.questions[quizState.currentIndex];
+    if (!q) {
+      showQuizSummary();
+      return;
+    }
+
+    const progressEl = document.getElementById('quizProgressText');
+    const topicBadge = document.getElementById('quizTopicBadge');
+    const timerPill = document.getElementById('quizTimerPill');
+    const timerCount = document.getElementById('quizTimerCount');
+    const promptEl = document.getElementById('quizQuestionPrompt');
+    const optionsGrid = document.getElementById('quizOptionsGrid');
+    const feedbackCard = document.getElementById('quizFeedbackCard');
+    const nextBtn = document.getElementById('btnQuizNext');
+
+    if (progressEl) progressEl.textContent = `Pregunta ${quizState.currentIndex + 1} de ${quizState.questions.length}`;
+    if (topicBadge) topicBadge.textContent = q.category;
+    if (promptEl) promptEl.textContent = q.question;
+    if (feedbackCard) feedbackCard.style.display = 'none';
+    if (nextBtn) nextBtn.style.display = 'none';
+
+    if (quizState.mode === 'timed') {
+      if (timerPill) timerPill.style.display = 'inline-flex';
+      quizState.timeLeft = 60;
+      if (timerCount) timerCount.textContent = '60';
+      quizState.timerInterval = setInterval(() => {
+        quizState.timeLeft--;
+        if (timerCount) timerCount.textContent = quizState.timeLeft;
+        if (quizState.timeLeft <= 10 && timerPill) {
+          timerPill.classList.add('urgent');
+        }
+        if (quizState.timeLeft <= 0) {
+          clearInterval(quizState.timerInterval);
+          selectQuizOption(-1);
+        }
+      }, 1000);
+    } else {
+      if (timerPill) timerPill.style.display = 'none';
+    }
+
+    const letters = ['A', 'B', 'C', 'D'];
+    if (optionsGrid) {
+      optionsGrid.innerHTML = q.options.map((opt, idx) => `
+        <button type="button" class="quiz-option-btn" data-idx="${idx}">
+          <span class="quiz-option-letter">${letters[idx]}</span>
+          <span>${opt}</span>
+        </button>
+      `).join('');
+
+      optionsGrid.querySelectorAll('.quiz-option-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (quizState.isAnswered) return;
+          selectQuizOption(parseInt(btn.dataset.idx, 10));
+        });
+      });
+    }
+  }
+
+  function selectQuizOption(chosenIdx) {
+    quizState.isAnswered = true;
+    clearInterval(quizState.timerInterval);
+
+    const q = quizState.questions[quizState.currentIndex];
+    const isCorrect = chosenIdx === q.correctIndex;
+    if (isCorrect) quizState.score++;
+
+    const optionsGrid = document.getElementById('quizOptionsGrid');
+    const feedbackCard = document.getElementById('quizFeedbackCard');
+    const nextBtn = document.getElementById('btnQuizNext');
+
+    if (optionsGrid) {
+      optionsGrid.querySelectorAll('.quiz-option-btn').forEach(btn => {
+        const idx = parseInt(btn.dataset.idx, 10);
+        btn.disabled = true;
+        if (idx === q.correctIndex) {
+          btn.classList.add('correct');
+        } else if (idx === chosenIdx) {
+          btn.classList.add('wrong');
+        }
+      });
+    }
+
+    if (feedbackCard) {
+      feedbackCard.className = `quiz-feedback-card ${isCorrect ? 'correct' : 'wrong'}`;
+      feedbackCard.style.display = 'block';
+      feedbackCard.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+          <span style="font-size: 1.8rem;">${isCorrect ? '🎉' : '🐶'}</span>
+          <div>
+            <strong style="color: ${isCorrect ? '#10b981' : '#ef4444'}; font-size: 1.1rem;">
+              ${isCorrect ? '¡Excelente! ¡Respuesta Correcta!' : '¡Buen intento! Te explico por qué:'}
+            </strong>
+          </div>
+        </div>
+        <p style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.5; color: var(--text-main);">
+          ${q.explanation}
+        </p>
+      `;
+    }
+
+    if (nextBtn) {
+      nextBtn.style.display = 'inline-flex';
+      nextBtn.textContent = quizState.currentIndex + 1 < quizState.questions.length ? 'Siguiente Pregunta ➡️' : 'Ver Resultados del Test 📊';
+    }
+  }
+
+  function showQuizSummary() {
+    clearInterval(quizState.timerInterval);
+    const runnerCard = document.getElementById('quizRunnerCard');
+    const summaryCard = document.getElementById('quizSummaryCard');
+    if (runnerCard) runnerCard.style.display = 'none';
+    if (summaryCard) summaryCard.style.display = 'block';
+
+    const total = quizState.questions.length;
+    const score = quizState.score;
+    const percent = Math.round((score / total) * 100);
+
+    const scoreEl = document.getElementById('quizScoreText');
+    const percentEl = document.getElementById('quizPercentText');
+    const emojiEl = document.getElementById('quizSummaryEmoji');
+    const titleEl = document.getElementById('quizSummaryTitle');
+    const descEl = document.getElementById('quizSummaryDesc');
+
+    if (scoreEl) scoreEl.textContent = `${score}/${total}`;
+    if (percentEl) percentEl.textContent = `${percent}%`;
+
+    if (percent === 100) {
+      if (emojiEl) emojiEl.textContent = '🏆';
+      if (titleEl) titleEl.textContent = '¡Puntaje Perfecto! ¡Eres un Genio! 🐶';
+      if (descEl) descEl.textContent = 'El Profesor Perrito está súper orgulloso de ti. Dominas los temas de preparatoria a la perfección.';
+    } else if (percent >= 60) {
+      if (emojiEl) emojiEl.textContent = '⭐';
+      if (titleEl) titleEl.textContent = '¡Muy Buen Desempeño!';
+      if (descEl) descEl.textContent = 'Aprobaste con éxito. Sigue practicando las áreas en las que tuviste dudas para asegurar tu 100 en el examen.';
+    } else {
+      if (emojiEl) emojiEl.textContent = '🐶';
+      if (titleEl) titleEl.textContent = '¡A Seguir Entrenando!';
+      if (descEl) descEl.textContent = 'El éxito en matemáticas es cuestión de práctica constante. Consulta al Profesor Perrito IA para repasar las fórmulas.';
+    }
+  }
+
+  // --- 8. CUADERNO DE TAREAS (LOCAL STORAGE) ---
+  let activeNotebookFilter = 'all';
+
+  function renderNotebookCards() {
+    const container = document.getElementById('notebookCardsContainer');
+    const badge = document.getElementById('notebookCountBadge');
+    if (!container || !window.PerritoAcademic) return;
+
+    let entries = window.PerritoAcademic.getNotebookEntries();
+    if (badge) badge.textContent = entries.length;
+
+    if (activeNotebookFilter !== 'all') {
+      entries = entries.filter(e => e.topic.toLowerCase().includes(activeNotebookFilter.toLowerCase()));
+    }
+
+    if (entries.length === 0) {
+      container.innerHTML = `
+        <div class="notebook-empty-box" style="grid-column: 1 / -1;">
+          <div class="notebook-empty-icon">🐶📖</div>
+          <h4 style="margin: 0; color: var(--text-main); font-size: 1.15rem;">Tu Cuaderno de Tareas está vacío</h4>
+          <p style="margin: 0; color: var(--text-muted); font-size: 0.9rem; max-width: 420px;">
+            Cuando resuelvas cualquier ejercicio en <strong>Ecuaciones</strong>, <strong>Factorización</strong>, <strong>Fracciones</strong>, <strong>Cálculo</strong> o <strong>M.C.D.</strong>, pulsa el botón <em>«📝 Guardar en Cuaderno»</em> para tenerlo listo antes de tus exámenes sin conexión.
+          </p>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = entries.map(item => `
+      <div class="notebook-card" data-id="${item.id}">
+        <div class="notebook-card-header">
+          <span class="notebook-card-topic topic-${item.topic.toLowerCase().replace(/[^a-z]/g, '')}">${item.topic}</span>
+          <span class="notebook-card-date">${item.date}</span>
+        </div>
+        <div class="notebook-card-title">${item.title}</div>
+        <div class="notebook-card-expr">${item.expression}</div>
+        <div class="notebook-card-res">Resultado: ${item.result}</div>
+        ${item.steps && item.steps.length > 0 ? `
+          <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
+            <strong>Pasos guardados:</strong>
+            <ul style="padding-left: 1.15rem; margin-top: 0.25rem; margin-bottom: 0;">
+              ${item.steps.slice(0, 3).map(s => `<li>${s}</li>`).join('')}
+              ${item.steps.length > 3 ? `<li>... y ${item.steps.length - 3} pasos más</li>` : ''}
+            </ul>
+          </div>
+        ` : ''}
+        <div style="display: flex; justify-content: flex-end; margin-top: 0.5rem;">
+          <button type="button" class="btn btn-ghost btn-sm text-danger btn-delete-notebook-entry" data-id="${item.id}">
+            🗑️ Eliminar
+          </button>
+        </div>
+      </div>
+    `).join('');
+
+    container.querySelectorAll('.btn-delete-notebook-entry').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        window.PerritoAcademic.deleteNotebookEntry(id);
+        renderNotebookCards();
+        showToast('Ejercicio eliminado del cuaderno.');
+      });
+    });
+  }
+
+  // --- WIRING DE TODOS LOS EVENTOS DE MÓDULOS ACADÉMICOS ---
+  function setupAcademicModuleListeners() {
+    // 1. Ecuaciones Cuadráticas
+    const btnSolveQuad = document.getElementById('btnSolveQuadratic');
+    if (btnSolveQuad) btnSolveQuad.addEventListener('click', solveActiveQuadratic);
+
+    const btnRandomQuad = document.getElementById('btnRandomQuadratic');
+    if (btnRandomQuad) {
+      btnRandomQuad.addEventListener('click', () => {
+        const aEl = document.getElementById('quadInputA');
+        const bEl = document.getElementById('quadInputB');
+        const cEl = document.getElementById('quadInputC');
+        if (aEl && bEl && cEl) {
+          aEl.value = Math.floor(Math.random() * 3) + 1;
+          bEl.value = Math.floor(Math.random() * 11) - 5;
+          cEl.value = Math.floor(Math.random() * 11) - 5;
+          solveActiveQuadratic();
+        }
+      });
+    }
+
+    const btnSaveQuad = document.getElementById('btnSaveQuadraticToNotebook');
+    if (btnSaveQuad) {
+      btnSaveQuad.addEventListener('click', () => {
+        if (!lastQuadraticResult || !window.PerritoAcademic) {
+          showToast('Primero resuelve una ecuación cuadrática.');
+          return;
+        }
+        window.PerritoAcademic.saveToNotebook({
+          topic: 'Ecuaciones',
+          title: 'Ecuación Cuadrática Completa',
+          expression: `${lastQuadraticResult.a}x² + ${lastQuadraticResult.b}x + ${lastQuadraticResult.c} = 0`,
+          result: `x₁ = ${lastQuadraticResult.x1Display}, x₂ = ${lastQuadraticResult.x2Display}`,
+          steps: [
+            `Discriminante Δ = ${lastQuadraticResult.delta} (${lastQuadraticResult.rootType})`,
+            `Vértice = (${lastQuadraticResult.vertexH}, ${lastQuadraticResult.vertexK})`,
+            `Forma factorizada = ${lastQuadraticResult.factorForm}`
+          ]
+        });
+        showToast('📝 ¡Ecuación cuadrática guardada en tu Cuaderno de Tareas!');
+        renderNotebookCards();
+      });
+    }
+
+    document.querySelectorAll('.quad-preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const aEl = document.getElementById('quadInputA');
+        const bEl = document.getElementById('quadInputB');
+        const cEl = document.getElementById('quadInputC');
+        if (aEl && bEl && cEl) {
+          aEl.value = btn.dataset.a;
+          bEl.value = btn.dataset.b;
+          cEl.value = btn.dataset.c;
+          solveActiveQuadratic();
+        }
+      });
+    });
+
+    ['quadInputA', 'quadInputB', 'quadInputC'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', solveActiveQuadratic);
+    });
+
+    // 2. Sistemas 2x2
+    const btnSolve2x = document.getElementById('btnSolveSystem2x2');
+    if (btnSolve2x) btnSolve2x.addEventListener('click', solveActiveSystem2x2);
+
+    const btnSave2x = document.getElementById('btnSaveSys2xToNotebook');
+    if (btnSave2x) {
+      btnSave2x.addEventListener('click', () => {
+        if (!lastSystem2x2Result || !window.PerritoAcademic) return;
+        window.PerritoAcademic.saveToNotebook({
+          topic: 'Ecuaciones',
+          title: 'Sistema de Ecuaciones 2x2',
+          expression: `${lastSystem2x2Result.a1}x + ${lastSystem2x2Result.b1}y = ${lastSystem2x2Result.c1} & ${lastSystem2x2Result.a2}x + ${lastSystem2x2Result.b2}y = ${lastSystem2x2Result.c2}`,
+          result: `x = ${lastSystem2x2Result.xDisplay}, y = ${lastSystem2x2Result.yDisplay}`,
+          steps: [
+            `Δs = ${lastSystem2x2Result.detS}, Δx = ${lastSystem2x2Result.detX}, Δy = ${lastSystem2x2Result.detY}`,
+            `Tipo: ${lastSystem2x2Result.type}`
+          ]
+        });
+        showToast('📝 ¡Sistema 2x2 guardado en tu Cuaderno!');
+        renderNotebookCards();
+      });
+    }
+
+    document.querySelectorAll('.sys2x-preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const vals = btn.dataset.vals.split(',').map(Number);
+        document.getElementById('sys2xA1').value = vals[0];
+        document.getElementById('sys2xB1').value = vals[1];
+        document.getElementById('sys2xC1').value = vals[2];
+        document.getElementById('sys2xA2').value = vals[3];
+        document.getElementById('sys2xB2').value = vals[4];
+        document.getElementById('sys2xC2').value = vals[5];
+        solveActiveSystem2x2();
+      });
+    });
+
+    // 3. Sistemas 3x3
+    const btnSolve3x = document.getElementById('btnSolveSystem3x3');
+    if (btnSolve3x) btnSolve3x.addEventListener('click', solveActiveSystem3x3);
+
+    const btnSave3x = document.getElementById('btnSaveSys3xToNotebook');
+    if (btnSave3x) {
+      btnSave3x.addEventListener('click', () => {
+        if (!lastSystem3x3Result || !window.PerritoAcademic) return;
+        window.PerritoAcademic.saveToNotebook({
+          topic: 'Ecuaciones',
+          title: 'Sistema de Ecuaciones 3x3 (Sarrus)',
+          expression: `Sistema 3x3 de orden 3`,
+          result: `(x, y, z) = (${lastSystem3x3Result.xDisplay}, ${lastSystem3x3Result.yDisplay}, ${lastSystem3x3Result.zDisplay})`,
+          steps: [`Δs = ${lastSystem3x3Result.detS}, Δx = ${lastSystem3x3Result.detX}, Δy = ${lastSystem3x3Result.detY}, Δz = ${lastSystem3x3Result.detZ}`]
+        });
+        showToast('📝 ¡Sistema 3x3 guardado en tu Cuaderno!');
+        renderNotebookCards();
+      });
+    }
+
+    document.querySelectorAll('.sys3x-preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const vals = btn.dataset.vals.split(',').map(Number);
+        document.getElementById('sys3A1').value = vals[0];
+        document.getElementById('sys3B1').value = vals[1];
+        document.getElementById('sys3C1').value = vals[2];
+        document.getElementById('sys3D1').value = vals[3];
+        document.getElementById('sys3A2').value = vals[4];
+        document.getElementById('sys3B2').value = vals[5];
+        document.getElementById('sys3C2').value = vals[6];
+        document.getElementById('sys3D2').value = vals[7];
+        document.getElementById('sys3A3').value = vals[8];
+        document.getElementById('sys3B3').value = vals[9];
+        document.getElementById('sys3C3').value = vals[10];
+        document.getElementById('sys3D3').value = vals[11];
+        solveActiveSystem3x3();
+      });
+    });
+
+    // 4. Factorización
+    const btnFact = document.getElementById('btnFactorizePoly');
+    if (btnFact) btnFact.addEventListener('click', solveActiveFactorization);
+
+    const factInput = document.getElementById('factPolyInput');
+    if (factInput) {
+      factInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') solveActiveFactorization();
+      });
+    }
+
+    const btnRandomFact = document.getElementById('btnRandomPoly');
+    if (btnRandomFact) {
+      btnRandomFact.addEventListener('click', () => {
+        const presets = ['x^2 - 16', 'x^2 - 7x + 12', '2x^2 + 7x + 3', 'x^3 - 8', '6x^3 + 9x^2', '4x^2 - 25', 'x^2 + 5x + 6'];
+        const chosen = presets[Math.floor(Math.random() * presets.length)];
+        const inp = document.getElementById('factPolyInput');
+        if (inp) {
+          inp.value = chosen;
+          solveActiveFactorization();
+        }
+      });
+    }
+
+    const btnSaveFact = document.getElementById('btnSavePolyToNotebook');
+    if (btnSaveFact) {
+      btnSaveFact.addEventListener('click', () => {
+        if (!lastFactorizationResult || !window.PerritoAcademic) {
+          showToast('Primero factoriza un polinomio.');
+          return;
+        }
+        window.PerritoAcademic.saveToNotebook({
+          topic: 'Factorización',
+          title: lastFactorizationResult.method,
+          expression: lastFactorizationResult.original,
+          result: lastFactorizationResult.factored,
+          steps: lastFactorizationResult.steps
+        });
+        showToast('📝 ¡Polinomio factorizado guardado en el Cuaderno!');
+        renderNotebookCards();
+      });
+    }
+
+    document.querySelectorAll('.fact-preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const inp = document.getElementById('factPolyInput');
+        if (inp) {
+          inp.value = btn.dataset.poly;
+          solveActiveFactorization();
+        }
+      });
+    });
+
+    // 5. Graficador 2D
+    const btnPlot = document.getElementById('btnPlotGraph');
+    if (btnPlot) btnPlot.addEventListener('click', initGrapherModule);
+
+    const graphFnInput = document.getElementById('grapherFnInput');
+    if (graphFnInput) {
+      graphFnInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') initGrapherModule();
+      });
+    }
+
+    const btnRandomGraph = document.getElementById('btnRandomGraph');
+    if (btnRandomGraph) {
+      btnRandomGraph.addEventListener('click', () => {
+        const presets = ['x^2 - 4', 'x^2 - 4x + 3', '-x^2 + 4x', '2x - 1', 'x^3 - 3x', '1/x'];
+        const chosen = presets[Math.floor(Math.random() * presets.length)];
+        if (graphFnInput) {
+          graphFnInput.value = chosen;
+          initGrapherModule();
+        }
+      });
+    }
+
+    const btnZoomIn = document.getElementById('btnGraphZoomIn');
+    if (btnZoomIn) {
+      btnZoomIn.addEventListener('click', () => {
+        grapherView.xMin *= 0.75;
+        grapherView.xMax *= 0.75;
+        grapherView.yMin *= 0.75;
+        grapherView.yMax *= 0.75;
+        initGrapherModule();
+      });
+    }
+
+    const btnZoomOut = document.getElementById('btnGraphZoomOut');
+    if (btnZoomOut) {
+      btnZoomOut.addEventListener('click', () => {
+        grapherView.xMin *= 1.35;
+        grapherView.xMax *= 1.35;
+        grapherView.yMin *= 1.35;
+        grapherView.yMax *= 1.35;
+        initGrapherModule();
+      });
+    }
+
+    const btnGraphReset = document.getElementById('btnGraphReset');
+    if (btnGraphReset) {
+      btnGraphReset.addEventListener('click', () => {
+        grapherView = { xMin: -6, xMax: 6, yMin: -6, yMax: 6 };
+        initGrapherModule();
+      });
+    }
+
+    const btnGraphDownload = document.getElementById('btnGraphDownload');
+    if (btnGraphDownload) {
+      btnGraphDownload.addEventListener('click', () => {
+        const canvas = document.getElementById('grapherCanvas');
+        if (!canvas) return;
+        const link = document.createElement('a');
+        link.download = 'perrito-math-grafica.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast('📸 Gráfica descargada en formato PNG.');
+      });
+    }
+
+    const btnSaveGraph = document.getElementById('btnSaveGraphToNotebook');
+    if (btnSaveGraph) {
+      btnSaveGraph.addEventListener('click', () => {
+        const fn = graphFnInput ? graphFnInput.value.trim() : 'f(x)';
+        const roots = document.getElementById('statGraphRoots')?.textContent || '';
+        const vertex = document.getElementById('statGraphVertex')?.textContent || '';
+        window.PerritoAcademic.saveToNotebook({
+          topic: 'Cálculo',
+          title: 'Gráfico 2D y Ceros',
+          expression: `f(x) = ${fn}`,
+          result: `Raíces: ${roots}, Vértice: ${vertex}`,
+          steps: [`Función graficada en plano cartesiano offline`, `Corte con Eje Y: ${document.getElementById('statGraphYIntercept')?.textContent}`]
+        });
+        showToast('📝 ¡Gráfica y puntos guardados en tu Cuaderno!');
+        renderNotebookCards();
+      });
+    }
+
+    document.querySelectorAll('.graph-preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (graphFnInput) {
+          graphFnInput.value = btn.dataset.fn;
+          initGrapherModule();
+        }
+      });
+    });
+
+    // 6. Cálculo (Derivadas y Límites)
+    const btnDeriv = document.getElementById('btnComputeDeriv');
+    if (btnDeriv) btnDeriv.addEventListener('click', solveActiveDerivative);
+
+    const btnSaveDeriv = document.getElementById('btnSaveDerivToNotebook');
+    if (btnSaveDeriv) {
+      btnSaveDeriv.addEventListener('click', () => {
+        if (!lastDerivativeResult || !window.PerritoAcademic) {
+          showToast('Primero calcula una derivada.');
+          return;
+        }
+        window.PerritoAcademic.saveToNotebook({
+          topic: 'Cálculo',
+          title: 'Derivada Polinómica d/dx',
+          expression: `f(x) = ${lastDerivativeResult.original}`,
+          result: `f'(x) = ${lastDerivativeResult.derivative}`,
+          steps: lastDerivativeResult.steps
+        });
+        showToast('📝 ¡Derivada guardada en el Cuaderno!');
+        renderNotebookCards();
+      });
+    }
+
+    document.querySelectorAll('.calc-deriv-preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const fnEl = document.getElementById('calcDerivInput');
+        const x0El = document.getElementById('calcDerivX0');
+        if (fnEl) fnEl.value = btn.dataset.fn;
+        if (x0El) x0El.value = btn.dataset.x0;
+        solveActiveDerivative();
+      });
+    });
+
+    const btnLimit = document.getElementById('btnComputeLimit');
+    if (btnLimit) btnLimit.addEventListener('click', solveActiveLimit);
+
+    const btnSaveLimit = document.getElementById('btnSaveLimitToNotebook');
+    if (btnSaveLimit) {
+      btnSaveLimit.addEventListener('click', () => {
+        if (!lastLimitResult || !window.PerritoAcademic) return;
+        window.PerritoAcademic.saveToNotebook({
+          topic: 'Cálculo',
+          title: 'Límite Algebraico',
+          expression: `lim_{x→${lastLimitResult.a}} (${lastLimitResult.numerator}) / (${lastLimitResult.denominator})`,
+          result: lastLimitResult.resultDisplay,
+          steps: lastLimitResult.steps
+        });
+        showToast('📝 ¡Límite guardado en el Cuaderno!');
+        renderNotebookCards();
+      });
+    }
+
+    document.querySelectorAll('.calc-limit-preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const numEl = document.getElementById('calcLimitNum');
+        const denEl = document.getElementById('calcLimitDen');
+        const aEl = document.getElementById('calcLimitA');
+        if (numEl) numEl.value = btn.dataset.num;
+        if (denEl) denEl.value = btn.dataset.den;
+        if (aEl) aEl.value = btn.dataset.a;
+        solveActiveLimit();
+      });
+    });
+
+    // 7. Entrenador de Exámenes (Quizzes)
+    const btnStartQuiz = document.getElementById('btnStartQuiz');
+    if (btnStartQuiz) btnStartQuiz.addEventListener('click', () => startQuizSession(false));
+
+    const btnQuickQuiz = document.getElementById('btnQuickSingleQuiz');
+    if (btnQuickQuiz) btnQuickQuiz.addEventListener('click', () => startQuizSession(true));
+
+    const btnQuizNext = document.getElementById('btnQuizNext');
+    if (btnQuizNext) {
+      btnQuizNext.addEventListener('click', () => {
+        quizState.currentIndex++;
+        renderCurrentQuestion();
+      });
+    }
+
+    const btnQuizExit = document.getElementById('btnQuizExit');
+    if (btnQuizExit) {
+      btnQuizExit.addEventListener('click', () => {
+        clearInterval(quizState.timerInterval);
+        initQuizModule();
+      });
+    }
+
+    const btnQuizRestart = document.getElementById('btnQuizRestart');
+    if (btnQuizRestart) btnQuizRestart.addEventListener('click', initQuizModule);
+
+    // 8. Cuaderno de Tareas (Notebook)
+    document.querySelectorAll('.notebook-filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.notebook-filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+        activeNotebookFilter = btn.dataset.filter;
+        renderNotebookCards();
+      });
+    });
+
+    const btnPrintNotebook = document.getElementById('btnPrintNotebook');
+    if (btnPrintNotebook) {
+      btnPrintNotebook.addEventListener('click', () => {
+        window.print();
+      });
+    }
+
+    const btnClearNotebook = document.getElementById('btnClearNotebook');
+    if (btnClearNotebook) {
+      btnClearNotebook.addEventListener('click', () => {
+        if (confirm('¿Deseas vaciar todos los ejercicios guardados de tu cuaderno?')) {
+          window.PerritoAcademic.clearNotebook();
+          renderNotebookCards();
+          showToast('🗑️ Cuaderno de Tareas vaciado.');
+        }
+      });
+    }
+  }
+
   function init() {
     applyTheme(state.theme);
     renderInputs();
@@ -5870,6 +7097,15 @@
     updateAll();
     renderRationalsUI();
     renderCompFracModule();
+    // Default initializations for academic modules
+    solveActiveQuadratic();
+    solveActiveSystem2x2();
+    solveActiveSystem3x3();
+    solveActiveFactorization();
+    initGrapherModule();
+    solveActiveDerivative();
+    solveActiveLimit();
+    renderNotebookCards();
   }
 
   if (document.readyState === 'loading') {
