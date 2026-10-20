@@ -5689,11 +5689,44 @@
     const mobileInstallBanner = document.getElementById('mobileInstallBanner');
     const btnBannerInstall = document.getElementById('btnBannerInstall');
     const btnBannerClose = document.getElementById('btnBannerClose');
+    const offlineBadge = document.getElementById('offlineBadge');
 
     // Detect iOS
     const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     // Detect Standalone / Installed
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+    // Network status (online / offline) indicator
+    function updateNetworkStatus(isInit = false) {
+      const isOnline = navigator.onLine;
+      if (!isOnline) {
+        if (offlineBadge) {
+          offlineBadge.style.display = 'inline-flex';
+          const textEl = offlineBadge.querySelector('.offline-badge-text');
+          if (textEl) textEl.textContent = '100% Offline';
+        }
+        if (!isInit) {
+          showToast('🐶 Modo sin conexión activo: Perrito Math funciona al 100% offline.');
+        }
+      } else {
+        if (!isInit && offlineBadge && offlineBadge.style.display !== 'none') {
+          const textEl = offlineBadge.querySelector('.offline-badge-text');
+          if (textEl) textEl.textContent = 'Online';
+          showToast('🌐 Conexión a internet restablecida.');
+          setTimeout(() => {
+            if (navigator.onLine && offlineBadge) {
+              offlineBadge.style.display = 'none';
+            }
+          }, 2500);
+        } else if (offlineBadge) {
+          offlineBadge.style.display = 'none';
+        }
+      }
+    }
+
+    window.addEventListener('online', () => updateNetworkStatus(false));
+    window.addEventListener('offline', () => updateNetworkStatus(false));
+    updateNetworkStatus(true);
 
     // Register Service Worker
     if ('serviceWorker' in navigator) {
@@ -5701,6 +5734,14 @@
         navigator.serviceWorker.register('./sw.js')
           .then((registration) => {
             console.log('[PWA] ServiceWorker registrado con éxito, ámbito:', registration.scope);
+            
+            if (registration.installing) {
+              registration.installing.addEventListener('statechange', (e) => {
+                if (e.target.state === 'installed' && !navigator.serviceWorker.controller) {
+                  showToast('🐶 ¡Perrito Math listo para usarse sin internet!');
+                }
+              });
+            }
           })
           .catch((error) => {
             console.log('[PWA] Error registrando ServiceWorker:', error);
