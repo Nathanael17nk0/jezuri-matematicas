@@ -2434,6 +2434,12 @@ h1, h2, h3, h4 {
     padding: 0.75rem 0.65rem;
   }
 
+  .card {
+    background: var(--bg-surface) !important;
+    padding: 1.15rem 0.85rem !important;
+    border-radius: var(--radius-md) !important;
+  }
+
   /* Header adjustments */
   .header-container {
     flex-direction: column;
