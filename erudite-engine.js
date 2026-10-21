@@ -43,6 +43,66 @@
     return (a * b) / gcdBig(a, b);
   }
 
+  // Descomposición en factores primos y pasos pedagógicos de m.c.m. / M.C.D.
+  function getPrimeFactorization(n) {
+    n = Math.abs(Math.round(n));
+    if (n <= 1) return { factors: { [n]: 1 }, text: `${n}` };
+    const factors = {};
+    let d = 2;
+    let temp = n;
+    while (d * d <= temp) {
+      while (temp % d === 0) {
+        factors[d] = (factors[d] || 0) + 1;
+        temp = Math.floor(temp / d);
+      }
+      d = d === 2 ? 3 : d + 2;
+    }
+    if (temp > 1) {
+      factors[temp] = (factors[temp] || 0) + 1;
+    }
+    const parts = Object.entries(factors).map(([p, exp]) => {
+      const sup = exp === 1 ? '' : (exp === 2 ? '²' : (exp === 3 ? '³' : `<sup>${exp}</sup>`));
+      return `${p}${sup}`;
+    });
+    return { factors, text: parts.join(' × ') };
+  }
+
+  function computeLcmWithSteps(numbers) {
+    const factorizations = numbers.map(n => ({ num: n, fact: getPrimeFactorization(n) }));
+    const maxExps = {};
+    for (const { fact } of factorizations) {
+      for (const [p, exp] of Object.entries(fact.factors)) {
+        maxExps[p] = Math.max(maxExps[p] || 0, exp);
+      }
+    }
+    let lcmVal = 1;
+    const lcmExprParts = [];
+    for (const [p, exp] of Object.entries(maxExps)) {
+      const powVal = Math.pow(Number(p), exp);
+      lcmVal *= powVal;
+      const sup = exp === 1 ? '' : (exp === 2 ? '²' : (exp === 3 ? '³' : `<sup>${exp}</sup>`));
+      lcmExprParts.push(`${p}${sup}`);
+    }
+    return { lcmVal, factorizations, lcmExpr: lcmExprParts.join(' × ') };
+  }
+
+  function computeGcdWithSteps(numbers) {
+    const factorizations = numbers.map(n => ({ num: n, fact: getPrimeFactorization(n) }));
+    if (!factorizations.length) return { gcdVal: 1, factorizations: [], gcdExpr: '1' };
+    const allPrimes = Object.keys(factorizations[0].fact.factors);
+    const commonPrimes = allPrimes.filter(p => factorizations.every(f => f.fact.factors[p]));
+    let gcdVal = 1;
+    const gcdExprParts = [];
+    for (const p of commonPrimes) {
+      const minExp = Math.min(...factorizations.map(f => f.fact.factors[p]));
+      gcdVal *= Math.pow(Number(p), minExp);
+      const sup = minExp === 1 ? '' : (minExp === 2 ? '²' : (minExp === 3 ? '³' : `<sup>${minExp}</sup>`));
+      gcdExprParts.push(`${p}${sup}`);
+    }
+    const gcdExpr = gcdExprParts.length > 0 ? gcdExprParts.join(' × ') : '1';
+    return { gcdVal, factorizations, gcdExpr };
+  }
+
   // Clase racional de alta precisión
   class Rational {
     constructor(num, den = 1n) {
@@ -410,63 +470,74 @@
         if (numbers.length < 2) return null;
 
         if (isMcm) {
-          const res = numbers.reduce((acc, val) => {
-            let a = acc, b = val;
-            while (b) { const t = b; b = a % b; a = t; }
-            return (acc * val) / a;
-          });
+          const { lcmVal, factorizations, lcmExpr } = computeLcmWithSteps(numbers);
+          const factorsHtml = factorizations.map(f => `• Factores de <code>${f.num}</code>: <code>${f.fact.text}</code>`).join('<br>');
           return `
             <div class="erudite-card-response">
               <div class="erudite-header">
-                <span class="erudite-badge">🎯 Teoría de Números</span>
-                <strong>Mínimo Común Múltiplo (m.c.m.)</strong>
+                <span class="erudite-badge">🎯 Teoría de Números • m.c.m.</span>
+                <h4 class="erudite-title">Mínimo Común Múltiplo de [${numbers.join(', ')}]</h4>
+                <span class="erudite-sub">Cálculo exacto por Descomposición en Factores Primos</span>
               </div>
               <div class="erudite-problem-line">
                 Calcular m.c.m. de: <code>[${numbers.join(', ')}]</code>
               </div>
               <div class="erudite-steps">
                 <div class="erudite-step-item">
-                  <strong>Concepto:</strong> El m.c.m. es el número positivo más pequeño que es múltiplo exacto de todos ellos a la vez. Es indispensable para homogenizar denominadores en sumas y restas de fracciones.
+                  <span class="step-num-badge">Paso 1</span>
+                  <div>
+                    <strong>Descomposición Canónica en Primos:</strong><br>
+                    ${factorsHtml}
+                  </div>
                 </div>
                 <div class="erudite-step-item">
-                  <strong>Descomposición en Factores Primos:</strong> Se descompone simultáneamente dividiendo por números primos (2, 3, 5, 7...) hasta que todas las columnas lleguen a 1.
+                  <span class="step-num-badge">Paso 2</span>
+                  <div>
+                    <strong>Regla Fundamental del m.c.m.:</strong> Se toman todos los factores primos comunes y no comunes elevados a su <strong>mayor exponente</strong>:<br>
+                    <code>m.c.m. = ${lcmExpr} = <strong>${lcmVal}</strong></code>.
+                  </div>
                 </div>
               </div>
               <div class="erudite-result-box">
-                <span class="result-label">m.c.m. Exacto:</span>
-                <span class="result-highlight">${res}</span>
+                <span class="result-label">m.c.m. Calculado:</span>
+                <span class="result-highlight">${lcmVal}</span>
               </div>
             </div>
           `;
         }
 
         // MCD
-        const res = numbers.reduce((acc, val) => {
-          let a = acc, b = val;
-          while (b) { const t = b; b = a % b; a = t; }
-          return a;
-        });
-
+        const { gcdVal, factorizations, gcdExpr } = computeGcdWithSteps(numbers);
+        const factorsHtml = factorizations.map(f => `• Factores de <code>${f.num}</code>: <code>${f.fact.text}</code>`).join('<br>');
         return `
           <div class="erudite-card-response">
             <div class="erudite-header">
-              <span class="erudite-badge">🎯 Teoría de Números</span>
-              <strong>Máximo Común Divisor (M.C.D.)</strong>
+              <span class="erudite-badge">🎯 Teoría de Números • M.C.D.</span>
+              <h4 class="erudite-title">Máximo Común Divisor de [${numbers.join(', ')}]</h4>
+              <span class="erudite-sub">Cálculo exacto por Factores Primos Comunes</span>
             </div>
             <div class="erudite-problem-line">
               Calcular M.C.D. de: <code>[${numbers.join(', ')}]</code>
             </div>
             <div class="erudite-steps">
               <div class="erudite-step-item">
-                <strong>Concepto:</strong> El M.C.D. es el divisor entero más grande que divide exactamente a <em>todos</em> los números sin dejar residuo.
+                <span class="step-num-badge">Paso 1</span>
+                <div>
+                  <strong>Descomposición Canónica en Primos:</strong><br>
+                  ${factorsHtml}
+                </div>
               </div>
               <div class="erudite-step-item">
-                <strong>Algoritmo de Descomposición:</strong> Se divide únicamente por los factores primos que dividen a <strong>todos</strong> los términos al mismo tiempo. En cuanto dejan de tener un factor común primo, el proceso se detiene.
+                <span class="step-num-badge">Paso 2</span>
+                <div>
+                  <strong>Regla Fundamental del M.C.D.:</strong> Se multiplican únicamente los factores primos comunes elevados a su <strong>menor exponente</strong>:<br>
+                  <code>M.C.D. = ${gcdExpr} = <strong>${gcdVal}</strong></code>.
+                </div>
               </div>
             </div>
             <div class="erudite-result-box">
               <span class="result-label">M.C.D. Calculado:</span>
-              <span class="result-highlight">${res}</span>
+              <span class="result-highlight">${gcdVal}</span>
             </div>
           </div>
         `;
@@ -481,7 +552,6 @@
         const nums = (query.match(/\d+(\.\d+)?/g) || []).map(Number);
         if (nums.length < 2) return null;
 
-        const isHypot = query.includes('hipotenusa') || query.includes('cateto');
         let a = nums[0], b = nums[1];
         let c = Math.sqrt(a * a + b * b);
         let cDisp = Number.isInteger(c) ? c.toString() : c.toFixed(4);
@@ -490,22 +560,29 @@
           <div class="erudite-card-response">
             <div class="erudite-header">
               <span class="erudite-badge">🔺 Geometría Euclidiana</span>
-              <strong>Teorema de Pitágoras</strong>
+              <h4 class="erudite-title">Teorema de Pitágoras</h4>
+              <span class="erudite-sub">Triángulos Rectángulos e Hipotenusa</span>
             </div>
             <div class="erudite-problem-line">
               Catetos dados: <code>a = ${a}</code>, <code>b = ${b}</code>
             </div>
             <div class="erudite-steps">
               <div class="erudite-step-item">
-                <strong>Teorema Fundamental:</strong> En todo triángulo rectángulo, el cuadrado de la hipotenusa es igual a la suma de los cuadrados de los catetos:<br>
-                <code>c² = a² + b²</code>
+                <span class="step-num-badge">Paso 1</span>
+                <div>
+                  <strong>Teorema Fundamental:</strong> En todo triángulo rectángulo, el cuadrado de la hipotenusa es igual a la suma de los cuadrados de los catetos:<br>
+                  <code>c² = a² + b²</code>
+                </div>
               </div>
               <div class="erudite-step-item">
-                <strong>Paso a paso con tus datos:</strong><br>
-                • <code>a² = (${a})² = ${a * a}</code><br>
-                • <code>b² = (${b})² = ${b * b}</code><br>
-                • <code>c² = ${a * a} + ${b * b} = ${a * a + b * b}</code><br>
-                • <code>c = √(${a * a + b * b}) = <strong>${cDisp}</strong></code>
+                <span class="step-num-badge">Paso 2</span>
+                <div>
+                  <strong>Cálculo con tus valores:</strong><br>
+                  • <code>a² = (${a})² = ${a * a}</code><br>
+                  • <code>b² = (${b})² = ${b * b}</code><br>
+                  • <code>c² = ${a * a} + ${b * b} = ${a * a + b * b}</code><br>
+                  • <code>c = √(${a * a + b * b}) = <strong>${cDisp}</strong></code>
+                </div>
               </div>
             </div>
             <div class="erudite-result-box">
@@ -515,6 +592,297 @@
           </div>
         `;
       } catch (e) {
+        return null;
+      }
+    },
+
+    // Solucionador de problemas verbales y de aplicación cotidiana
+    solveWordProblem(query) {
+      try {
+        const qNorm = (query || '')
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .trim();
+
+        // 1. Porcentajes
+        const pctMatch = qNorm.match(/(?:cuanto\s+es\s+el\s+|calcular\s+el\s+|el\s+)?(\d+(?:\.\d+)?)\s*%\s*(?:de\s+)?(\d+(?:\.\d+)?)/);
+        if (pctMatch) {
+          const pct = parseFloat(pctMatch[1]);
+          const total = parseFloat(pctMatch[2]);
+          const res = (pct * total) / 100;
+          const resDisp = Number.isInteger(res) ? res.toString() : res.toFixed(2);
+          return `
+            <div class="erudite-card-response">
+              <div class="erudite-header">
+                <span class="erudite-badge">🎯 Aritmética Comercial • Porcentajes</span>
+                <h4 class="erudite-title">Cálculo de Porcentaje: ${pct}% de ${total}</h4>
+                <span class="erudite-sub">Proporcionalidad Directa Base 100</span>
+              </div>
+              <div class="erudite-problem-line">
+                Problema: <code>${pct}% de ${total}</code>
+              </div>
+              <div class="erudite-steps">
+                <div class="erudite-step-item">
+                  <span class="step-num-badge">Paso 1</span>
+                  <div><strong>Concepto de Porcentaje:</strong> El <em>${pct}%</em> representa tomar <code>${pct}</code> partes de cada <code>100</code> unidades totales: <code>${pct}/100 = ${(pct / 100).toFixed(4).replace(/\.?0+$/, '')}</code>.</div>
+                </div>
+                <div class="erudite-step-item">
+                  <span class="step-num-badge">Paso 2</span>
+                  <div><strong>Multiplicación Directa:</strong><br>
+                  <code>Resultado = (${pct} × ${total}) ÷ 100 = ${pct * total} ÷ 100 = <strong>${resDisp}</strong></code></div>
+                </div>
+              </div>
+              <div class="erudite-result-box">
+                <span class="result-label">Resultado:</span>
+                <span class="result-highlight">${resDisp}</span>
+              </div>
+            </div>
+          `;
+        }
+
+        // 2. Coincidencias periódicas en el tiempo (Problemas clásicos de m.c.m.: cometas, planetas, semáforos, campanas, autobuses, etc.)
+        const isCoincidence = /repite|coincid|encontrar|junt|simultan|vez|sol|cometa|planeta|faro|alarma|campana|semaforo|autobus|camion|vuelta|pista|engranaje|ciclo/.test(qNorm);
+
+        if (isCoincidence) {
+          // Detect baseline year (ej: "ano 2000", "el año 2000", "en 2000", "desde el año 2000")
+          let baseYear = null;
+          const yearMatch = qNorm.match(/(?:ano|año|en el|desde el|el)\s*(\d{4})\b/) || qNorm.match(/\b(19\d\d|20\d\d|2100)\b/);
+          if (yearMatch) {
+            baseYear = parseInt(yearMatch[1], 10);
+          }
+
+          // Detect baseline hour (ej: "a las 12:00", "8:30", "a las 8")
+          let baseHour = null, baseMin = null;
+          const timeMatch = qNorm.match(/(\d{1,2}):(\d{2})/);
+          if (timeMatch) {
+            baseHour = parseInt(timeMatch[1], 10);
+            baseMin = parseInt(timeMatch[2], 10);
+          } else {
+            const hourMatch = qNorm.match(/a las\s*(\d{1,2})\b/);
+            if (hourMatch) {
+              baseHour = parseInt(hourMatch[1], 10);
+              baseMin = 0;
+            }
+          }
+
+          // Extract periods
+          let periods = [];
+          const cadaMatches = [...qNorm.matchAll(/cada\s+(\d+)/g)].map(m => parseInt(m[1], 10));
+          if (cadaMatches.length >= 2) {
+            periods = cadaMatches;
+          } else {
+            const listAfterCada = qNorm.match(/cada\s+([0-9\s,ye\s]+?)(?:anos|años|dias|minutos|min|segundos|seg|horas|h|vueltas|meses|semanas|\.|\?|$)/);
+            if (listAfterCada) {
+              const found = (listAfterCada[1].match(/\d+/g) || []).map(Number);
+              if (found.length >= 2) periods = found;
+            }
+            if (periods.length < 2) {
+              const allInts = (qNorm.match(/\b\d+\b/g) || []).map(Number).filter(n => n > 0);
+              periods = allInts.filter(n => n !== baseYear && (baseHour === null || (n !== baseHour && n !== baseMin)));
+            }
+          }
+
+          periods = [...new Set(periods.filter(p => p > 1))];
+
+          if (periods.length >= 2) {
+            const unit = qNorm.includes('ano') || qNorm.includes('año') || qNorm.includes('siglo') ? 'años' :
+                         qNorm.includes('minuto') || qNorm.includes('min') ? 'minutos' :
+                         qNorm.includes('segundo') || qNorm.includes('seg') ? 'segundos' :
+                         qNorm.includes('hora') ? 'horas' :
+                         qNorm.includes('dia') ? 'días' :
+                         qNorm.includes('vuelta') ? 'vueltas' : 'unidades de tiempo';
+
+            const { lcmVal, factorizations, lcmExpr } = computeLcmWithSteps(periods);
+
+            let targetFutureTitle = '';
+            let targetFutureResult = '';
+            let calculationHtml = '';
+            let checkHtml = '';
+
+            const factorsListHtml = factorizations.map((f, idx) => `• Período ${idx + 1} (<code>${f.num} ${unit}</code>): <code>${f.fact.text}</code>`).join('<br>');
+
+            if (baseYear !== null) {
+              const targetYear = baseYear + lcmVal;
+              targetFutureTitle = `Coincidencia Periódica en el Tiempo (Año ${targetYear})`;
+              targetFutureResult = `Volverán a encontrarse en el año ${targetYear}`;
+              calculationHtml = `
+                • <em>m.c.m. calculado:</em> <code>${lcmExpr} = <strong>${lcmVal} ${unit}</strong></code>.<br>
+                • <em>Cálculo del Año de Coincidencia:</em><br>
+                <code>Año base (${baseYear}) + m.c.m. (${lcmVal} ${unit}) = <strong>Año ${targetYear}</strong></code>.
+              `;
+              checkHtml = factorizations.map((f, i) => {
+                const cycles = lcmVal / f.num;
+                return `• Elemento ${i + 1} (${f.num} ${unit}): <code>${lcmVal} ÷ ${f.num} = ${cycles} órbitas/ciclos exactos</code>.`;
+              }).join('<br>') + `<br>Al ser cocientes enteros exactos, ambos cuerpos coinciden con absoluta precisión en su perihelio.`;
+            } else if (baseHour !== null) {
+              const totalMinutes = (baseHour * 60) + baseMin + lcmVal;
+              const finalHour = Math.floor(totalMinutes / 60) % 24;
+              const finalMin = totalMinutes % 60;
+              const timeStr = `${String(finalHour).padStart(2, '0')}:${String(finalMin).padStart(2, '0')}`;
+              targetFutureTitle = `Coincidencia Periódica (A las ${timeStr})`;
+              targetFutureResult = `Volverán a coincidir a las ${timeStr}`;
+              calculationHtml = `
+                • <em>m.c.m. de las frecuencias:</em> <code>${lcmExpr} = <strong>${lcmVal} minutos</strong></code> (${(lcmVal / 60).toFixed(1)} h).<br>
+                • <em>Hora final:</em> <code>${String(baseHour).padStart(2, '0')} + ${lcmVal} min = <strong>${timeStr}</strong></code>.
+              `;
+              checkHtml = factorizations.map((f, i) => {
+                const cycles = lcmVal / f.num;
+                return `• Elemento ${i + 1} (${f.num} min): <code>${lcmVal} ÷ ${f.num} = ${cycles} repeticiones exactas</code>.`;
+              }).join('<br>');
+            } else {
+              targetFutureTitle = `Coincidencia Periódica Simultánea (Cada ${lcmVal} ${unit})`;
+              targetFutureResult = `Volverán a coincidir cada ${lcmVal} ${unit}`;
+              calculationHtml = `
+                • <em>m.c.m. de los períodos:</em> <code>m.c.m.(${periods.join(', ')}) = ${lcmExpr} = <strong>${lcmVal} ${unit}</strong></code>.
+              `;
+              checkHtml = factorizations.map((f, i) => {
+                const cycles = lcmVal / f.num;
+                return `• Elemento ${i + 1} (${f.num} ${unit}): <code>${lcmVal} ÷ ${f.num} = ${cycles} ciclos</code>.`;
+              }).join('<br>');
+            }
+
+            return `
+              <div class="erudite-card-response">
+                <div class="erudite-header">
+                  <span class="erudite-badge">🎯 Problema de Aplicación Verbal • m.c.m.</span>
+                  <h4 class="erudite-title">${targetFutureTitle}</h4>
+                  <span class="erudite-sub">Teoría de Números • Mínimo Común Múltiplo • Metodología George Pólya</span>
+                </div>
+
+                <div class="erudite-problem-line">
+                  <strong>Problema planteado:</strong> "${query}"
+                </div>
+
+                <div class="erudite-steps">
+                  <div class="erudite-step-item">
+                    <span class="step-num-badge">Fase 1</span>
+                    <div>
+                      <strong>Comprender el Problema e Identificar Datos:</strong><br>
+                      • Períodos regulares involucrados: <code>[${periods.map(p => `${p} ${unit}`).join(', ')}]</code>.<br>
+                      ${baseYear ? `• Punto de inicio / última coincidencia: <code>Año ${baseYear}</code>.<br>` : ''}
+                      ${baseHour !== null ? `• Hora de partida: <code>${String(baseHour).padStart(2, '0')}:${String(baseMin).padStart(2, '0')}</code>.<br>` : ''}
+                      • <em>Objetivo:</em> Encontrar el instante exacto en que ambos ciclos volverán a coincidir simultáneamente en la misma posición.
+                    </div>
+                  </div>
+
+                  <div class="erudite-step-item">
+                    <span class="step-num-badge">Fase 2</span>
+                    <div>
+                      <strong>Estrategia Matemática (¿Por qué m.c.m.?):</strong><br>
+                      Cuando dos o más fenómenos periódicos se repiten con frecuencias distintas y buscamos la <em>primera vez en el futuro en que ocurrirán al mismo tiempo</em>, debemos calcular el <strong>Mínimo Común Múltiplo (m.c.m.)</strong> de sus períodos.
+                    </div>
+                  </div>
+
+                  <div class="erudite-step-item">
+                    <span class="step-num-badge">Fase 3</span>
+                    <div>
+                      <strong>Ejecución y Descomposición Canónica en Primos:</strong><br>
+                      ${factorsListHtml}<br>
+                      • Tomamos factores primos comunes y no comunes al <strong>mayor exponente</strong>:<br>
+                      ${calculationHtml}
+                    </div>
+                  </div>
+
+                  <div class="erudite-step-item">
+                    <span class="step-num-badge">Fase 4</span>
+                    <div>
+                      <strong>Comprobación Retrospectiva (Verificación Pólya):</strong><br>
+                      ${checkHtml}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="erudite-result-box">
+                  <span class="result-label">Respuesta Definitiva:</span>
+                  <span class="result-highlight">${targetFutureResult}</span>
+                  ${baseYear ? `<span class="result-dec" style="margin-top: 0.35rem; display: block;">Transcurrirán exactamente ${lcmVal} ${unit} desde el año ${baseYear}.</span>` : ''}
+                </div>
+
+                <div class="erudite-tip-box">
+                  💡 <strong>Consejo de Oro del Profesor Perrito:</strong> En problemas de física o astronomía (cometas, planetas, semáforos, rutas de autobuses o campanas), ¡la coincidencia temporal siempre se resuelve con el <strong>m.c.m.</strong>!
+                </div>
+              </div>
+            `;
+          }
+        }
+
+        // 3. Reparto equitativo / División máxima (Problemas de M.C.D.)
+        const isPartition = /cortar|repartir|dividir|envasar|empaquetar|trozos|pedazos|cajas|paquetes|bolsas|baldosas|listones|cuerdas/.test(qNorm) &&
+                            /mayor|maximo|mas largo|mas grande|iguales|sin que sobre/.test(qNorm);
+
+        if (isPartition) {
+          const numbers = (qNorm.match(/\b\d+\b/g) || []).map(Number).filter(n => n > 1);
+          if (numbers.length >= 2) {
+            const { gcdVal, factorizations, gcdExpr } = computeGcdWithSteps(numbers);
+            const totalParts = numbers.reduce((acc, val) => acc + (val / gcdVal), 0);
+            const factorsListHtml = factorizations.map((f, idx) => `• Cantidad ${idx + 1} (<code>${f.num}</code>): <code>${f.fact.text}</code>`).join('<br>');
+            const partsBreakdown = numbers.map((n, i) => `• Cantidad ${i + 1} (${n}): <code>${n} ÷ ${gcdVal} = ${n / gcdVal} partes</code>.`).join('<br>');
+
+            return `
+              <div class="erudite-card-response">
+                <div class="erudite-header">
+                  <span class="erudite-badge">🎯 Problema de Aplicación Verbal • M.C.D.</span>
+                  <h4 class="erudite-title">Reparto Equitativo Máximo (Máximo Común Divisor)</h4>
+                  <span class="erudite-sub">Teoría de Números • Partición Óptima sin Residuo</span>
+                </div>
+
+                <div class="erudite-problem-line">
+                  <strong>Problema planteado:</strong> "${query}"
+                </div>
+
+                <div class="erudite-steps">
+                  <div class="erudite-step-item">
+                    <span class="step-num-badge">Fase 1</span>
+                    <div>
+                      <strong>Comprender el Problema:</strong> Se tienen cantidades <code>[${numbers.join(', ')}]</code> que deben subdividirse en partes iguales lo más grandes posibles sin que sobre nada.
+                    </div>
+                  </div>
+
+                  <div class="erudite-step-item">
+                    <span class="step-num-badge">Fase 2</span>
+                    <div>
+                      <strong>Estrategia Matemática (¿Por qué M.C.D.?):</strong> Al buscar la <em>máxima medida común</em> para dividir todas las cantidades de manera exacta, aplicamos el <strong>Máximo Común Divisor (M.C.D.)</strong>.
+                    </div>
+                  </div>
+
+                  <div class="erudite-step-item">
+                    <span class="step-num-badge">Fase 3</span>
+                    <div>
+                      <strong>Descomposición en Primos y M.C.D.:</strong><br>
+                      ${factorsListHtml}<br>
+                      • Factores primos comunes con su <strong>menor exponente</strong>:<br>
+                      <code>M.C.D.(${numbers.join(', ')}) = ${gcdExpr} = <strong>${gcdVal}</strong></code>.
+                    </div>
+                  </div>
+
+                  <div class="erudite-step-item">
+                    <span class="step-num-badge">Fase 4</span>
+                    <div>
+                      <strong>Conteo de Partes Obtenidas:</strong><br>
+                      ${partsBreakdown}<br>
+                      • Total de partes obtenidas: <code><strong>${totalParts} partes</strong></code>.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="erudite-result-box">
+                  <span class="result-label">Medida de cada parte:</span>
+                  <span class="result-highlight">${gcdVal} unidades</span> &nbsp;|&nbsp;
+                  <span class="result-label">Total de partes:</span>
+                  <span class="result-highlight">${totalParts}</span>
+                </div>
+
+                <div class="erudite-tip-box">
+                  💡 <strong>Consejo de Oro del Profesor Perrito:</strong> En problemas de cortar, envasar o repartir en el mayor tamaño posible sin desperdicio, ¡siempre es el <strong>M.C.D.</strong>!
+                </div>
+              </div>
+            `;
+          }
+        }
+
+        return null;
+      } catch (err) {
         return null;
       }
     }
@@ -616,7 +984,7 @@
       title: 'M.C.D. (Máximo Común Divisor) vs m.c.m. (Mínimo Común Múltiplo)',
       category: 'Teoría de Números',
       badge: 'Aritmética',
-      keywords: ['mcd', 'mcm', 'maximo comun divisor', 'minimo comun multiplo', 'diferencia mcd mcm', 'descomposicion simultanea', 'factores primos'],
+      keywords: ['mcd', 'mcm', 'maximo comun divisor', 'minimo comun multiplo', 'diferencia mcd mcm', 'descomposicion simultanea', 'factores primos', 'cometa', 'cometas', 'coincidir', 'coincidencia', 'volver a encontrarse', 'periodos', 'ciclos', 'semaforo', 'autobus', 'campana', 'reparto equitativo', 'perihelio', 'proxima al sol'],
       concept: `Son las dos herramientas reinas de la aritmética entera:<br>
       • <strong>M.C.D.:</strong> El mayor número entero que divide exactamente a todos los números del conjunto (para repartos equitativos y simplificación).<br>
       • <strong>m.c.m.:</strong> El menor múltiplo positivo común a todos (para coincidencias de tiempos y suma de fracciones).`,
@@ -1340,6 +1708,10 @@ Contexto actual del estudiante en la app: ${activeContext ? activeContext.typeNa
     }
 
     // 2. ¿Es un cálculo o problema específico para el evaluador interactivo?
+    // Problemas verbales de aplicación (coincidencias periódicas de m.c.m., cometas, reparto equitativo M.C.D., porcentajes)
+    const wordRes = PerritoSolver.solveWordProblem(cleanQuery);
+    if (wordRes) return wordRes;
+
     // Fracciones directas
     const fracRes = PerritoSolver.solveFractions(cleanQuery);
     if (fracRes) return fracRes;
