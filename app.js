@@ -241,11 +241,35 @@
     aiChatForm: document.getElementById('aiChatForm'),
     aiChatInput: document.getElementById('aiChatInput'),
     btnAiSend: document.getElementById('btnAiSend'),
-    btnAiGeneratePractice: document.getElementById('btnAiGeneratePractice'),
     btnAiExplainMcd: document.getElementById('btnAiExplainMcd'),
     btnAiExplainEquation: document.getElementById('btnAiExplainEquation'),
     btnAiExplainRationals: document.getElementById('btnAiExplainRationals'),
-    btnAiExplainCompFrac: document.getElementById('btnAiExplainCompFrac')
+    btnAiExplainCompFrac: document.getElementById('btnAiExplainCompFrac'),
+    btnOpenGeminiModal: document.getElementById('btnOpenGeminiModal'),
+    geminiModalOverlay: document.getElementById('geminiModalOverlay'),
+    btnCloseGeminiModal: document.getElementById('btnCloseGeminiModal'),
+    geminiApiKeyInput: document.getElementById('geminiApiKeyInput'),
+    btnSaveGeminiKey: document.getElementById('btnSaveGeminiKey'),
+    geminiStatusLabel: document.getElementById('geminiStatusLabel'),
+    aiCatPills: document.getElementById('aiCatPills'),
+    quickQueriesLabel: document.getElementById('quickQueriesLabel'),
+    btnHeaderGemini: document.getElementById('btnHeaderGemini'),
+    headerGeminiLabel: document.getElementById('headerGeminiLabel'),
+    btnBannerGemini: document.getElementById('btnBannerGemini'),
+    bannerGeminiLabel: document.getElementById('bannerGeminiLabel'),
+    floatingAiChatWidget: document.getElementById('floatingAiChatWidget'),
+    btnFloatingGeminiConfig: document.getElementById('btnFloatingGeminiConfig'),
+    floatingGeminiLabel: document.getElementById('floatingGeminiLabel'),
+    btnFloatingGoFullScreen: document.getElementById('btnFloatingGoFullScreen'),
+    btnCloseFloatingChat: document.getElementById('btnCloseFloatingChat'),
+    floatingContextName: document.getElementById('floatingContextName'),
+    btnFloatingSync: document.getElementById('btnFloatingSync'),
+    floatingCatPills: document.getElementById('floatingCatPills'),
+    floatingQuickChipsGrid: document.getElementById('floatingQuickChipsGrid'),
+    floatingChatMessages: document.getElementById('floatingChatMessages'),
+    floatingChatForm: document.getElementById('floatingChatForm'),
+    floatingChatInput: document.getElementById('floatingChatInput'),
+    btnFloatingSend: document.getElementById('btnFloatingSend')
   };
 
   // --- MATEMÁTICAS PURAS Y ALGORITMOS DE FACTORES PRIMOS ---
@@ -4989,33 +5013,188 @@
   }
 
   function renderAiChatMessages() {
-    if (!elements.aiChatMessages) return;
-    const container = elements.aiChatMessages;
-    container.innerHTML = '';
+    const containers = [elements.aiChatMessages, elements.floatingChatMessages].filter(Boolean);
+    if (containers.length === 0) return;
 
-    state.aiState.messages.forEach(msg => {
-      const bubble = document.createElement('div');
-      bubble.className = `ai-message ${msg.sender === 'user' ? 'user' : 'bot'}`;
-      if (msg.sender === 'bot') {
-        bubble.innerHTML = `
-          <div class="ai-msg-sender">
-            <span>🐶</span> Profesor Perrito Math
-          </div>
-          <div class="ai-msg-text">${msg.text}</div>
-        `;
-      } else {
-        bubble.innerHTML = `<div class="ai-msg-text">${msg.text}</div>`;
-      }
-      container.appendChild(bubble);
+    containers.forEach(container => {
+      container.innerHTML = '';
+      (state.aiState.messages || []).forEach(msg => {
+        const bubble = document.createElement('div');
+        bubble.className = `ai-message ${msg.sender === 'user' ? 'user' : 'bot'}`;
+        if (msg.sender === 'bot') {
+          bubble.innerHTML = `
+            <div class="ai-msg-sender">
+              <span>🐶</span> Profesor Perrito Math
+            </div>
+            <div class="ai-msg-text">${msg.text}</div>
+          `;
+        } else {
+          bubble.innerHTML = `<div class="ai-msg-text">${msg.text}</div>`;
+        }
+        container.appendChild(bubble);
+      });
+      container.scrollTop = container.scrollHeight;
     });
-
-    container.scrollTop = container.scrollHeight;
   }
 
   function appendAiChatMessage(sender, text) {
     if (!state.aiState.messages) state.aiState.messages = [];
     state.aiState.messages.push({ sender, text });
     renderAiChatMessages();
+  }
+
+  // Categorías de preguntas y catálogo temático del Catedrático
+  const CATEGORY_QUERIES = {
+    current: [
+      { text: '❓ ¿Por qué da este resultado?', query: 'por_que_resultado' },
+      { text: '⚡ ¿Cómo funciona la regla de signos aquí?', query: 'ley_signos' },
+      { text: '🧲 ¿Cómo se aplica la Ley de la Herradura?', query: 'ley_herradura' },
+      { text: '🪜 ¿Por qué se resuelve de abajo hacia arriba?', query: 'orden_abajo_arriba' },
+      { text: '💡 Explícamelo con una analogía simple', query: 'analogia' },
+      { text: '🔍 ¿Cómo comprobar mi respuesta?', query: 'como_comprobar' }
+    ],
+    compfrac: [
+      { text: '🧲 ¿Cómo funciona la Ley de la Herradura?', prompt: 'Explícame la ley de la herradura con extremos y medios' },
+      { text: '🪜 ¿Por qué resolver de abajo hacia arriba?', prompt: 'Por qué las fracciones compuestas se resuelven de abajo hacia arriba' },
+      { text: '⚡ ¿Cómo no equivocarse con los signos menos?', prompt: 'Cómo manejar los signos negativos en fracciones compuestas' },
+      { text: '📝 Ejemplo completo de fracción compuesta paso a paso', prompt: 'Dame un ejemplo resuelto paso a paso de fracción compuesta' }
+    ],
+    algebra: [
+      { text: '🧩 Los 6 casos de factorización explicados', prompt: 'Cuáles son los 6 casos de factorización fundamentales con ejemplos' },
+      { text: '✨ Productos notables esenciales', prompt: 'Cuáles son los productos notables más importantes con ejemplos' },
+      { text: '⚖️ Sistemas 2x2 por determinantes (Cramer)', prompt: 'Cómo resolver sistemas de ecuaciones 2x2 por la Regla de Cramer' },
+      { text: '🔍 ¿Cómo despejar x en una ecuación?', prompt: 'Cómo despejar la incógnita x en una ecuación lineal paso a paso' }
+    ],
+    quadratic: [
+      { text: '⚡ Fórmula General (Chicharronera) paso a paso', prompt: 'Cómo usar la fórmula general para ecuaciones cuadráticas' },
+      { text: '🎯 ¿Qué significa el discriminante b² - 4ac?', prompt: 'Qué significa el discriminante b^2 - 4ac y los tipos de raíces' },
+      { text: '📍 Vértice de una parábola', prompt: 'Cómo calcular el vértice de una parábola cuadrática' },
+      { text: '👻 ¿Cuándo hay soluciones complejas?', prompt: 'Cuándo una ecuación cuadrática tiene soluciones complejas e imaginarias' }
+    ],
+    calculus: [
+      { text: '📈 ¿Qué es una derivada y su significado gráfico?', prompt: 'Qué es una derivada y qué representa geométricamente' },
+      { text: '0️⃣ Indeterminaciones 0/0 en límites', prompt: 'Cómo resolver indeterminaciones 0/0 en límites matemáticos' },
+      { text: '📏 Reglas básicas de derivación', prompt: 'Cuáles son las reglas de derivación esenciales con ejemplos' },
+      { text: '🔄 ¿Qué es una integral y área bajo la curva?', prompt: 'Qué es una integral y cómo calcula el área bajo la curva' }
+    ],
+    geometry: [
+      { text: '🔺 Teorema de Pitágoras con ejemplo real', prompt: 'Explícame el Teorema de Pitágoras con un ejemplo de catetos e hipotenusa' },
+      { text: '📐 ¿Qué significa SOH-CAH-TOA?', prompt: 'Qué significa SOH-CAH-TOA en trigonometría' },
+      { text: '⚪ ¿Por qué sen²(θ) + cos²(θ) = 1?', prompt: 'Por qué sen^2(x) + cos^2(x) = 1 identidad pitagórica' },
+      { text: '🌐 Ley de Senos vs Ley de Cosenos', prompt: 'Cuándo usar la ley de senos y cuándo la ley de cosenos' }
+    ],
+    rationals: [
+      { text: '🍕 Suma de fracciones con distinto denominador', prompt: 'Cómo sumar fracciones con diferente denominador usando mcm' },
+      { text: '🎯 Diferencia entre M.C.D. y m.c.m.', prompt: 'Cuál es la diferencia entre MCD y mcm y cuándo usar cada uno' },
+      { text: '✖️ Multiplicación y división de fracciones', prompt: 'Cómo multiplicar y dividir fracciones paso a paso' },
+      { text: '📊 Fracciones impropias a mixtas', prompt: 'Cómo convertir fracciones impropias a números mixtos' }
+    ],
+    mysteries: [
+      { text: '🔥 ¿Por qué no se puede dividir entre cero?', prompt: 'Por qué es imposible dividir entre cero demostración' },
+      { text: '0️⃣ ¿Por qué cualquier número a la 0 es 1?', prompt: 'Por qué cualquier número elevado a la 0 da 1' },
+      { text: '➖ ¿Por qué menos por menos da más?', prompt: 'Por qué menos por menos da más en matemáticas' },
+      { text: '🥧 ¿Qué es el número Pi y el número de Euler?', prompt: 'Qué es el número Pi y el número de Euler e' },
+      { text: '👻 ¿Qué son los números imaginarios i?', prompt: 'Qué son los números imaginarios y complejos' }
+    ]
+  };
+
+  function renderCategoryChips(catId) {
+    const queries = CATEGORY_QUERIES[catId] || CATEGORY_QUERIES.current;
+
+    const labelMap = {
+      current: 'Preguntas frecuentes del problema actual:',
+      compfrac: 'Temas de Fracciones Compuestas & Ley de la Herradura:',
+      algebra: 'Álgebra, Factorización & Despejes:',
+      quadratic: 'Ecuaciones Cuadráticas & Parábolas:',
+      calculus: 'Límites, Derivadas & Cálculo:',
+      geometry: 'Pitágoras, Geometría & Trigonometría:',
+      rationals: 'Fracciones Racionales & m.c.m.:',
+      mysteries: 'Enigmas, Paradojas & Demostraciones:'
+    };
+
+    if (elements.quickQueriesLabel) {
+      elements.quickQueriesLabel.textContent = labelMap[catId] || 'Preguntas recomendadas:';
+    }
+
+    const grids = [elements.aiQuickChipsGrid, elements.floatingQuickChipsGrid].filter(Boolean);
+    grids.forEach(grid => {
+      grid.innerHTML = '';
+      queries.forEach(item => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'ai-query-chip';
+        chip.textContent = item.text;
+        if (item.query) chip.dataset.query = item.query;
+        if (item.prompt) chip.dataset.prompt = item.prompt;
+
+        chip.addEventListener('click', () => {
+          if (item.query) {
+            handleAiQuickQuery(item.query);
+          } else if (item.prompt) {
+            handleAiChatMessage(item.prompt);
+          }
+        });
+
+        grid.appendChild(chip);
+      });
+    });
+  }
+
+  function updateGeminiStatusBadge() {
+    const hasKey = window.PerritoErudite && window.PerritoErudite.getApiKey && window.PerritoErudite.getApiKey();
+    const statusText = hasKey ? '✨ Gemini Activo' : '🔑 Modo Gemini (Opcional)';
+    const isActive = !!hasKey;
+
+    const triggers = [
+      { btn: elements.btnHeaderGemini, label: elements.headerGeminiLabel },
+      { btn: elements.btnBannerGemini, label: elements.bannerGeminiLabel },
+      { btn: elements.btnOpenGeminiModal, label: elements.geminiStatusLabel },
+      { btn: elements.btnFloatingGeminiConfig, label: elements.floatingGeminiLabel }
+    ];
+
+    triggers.forEach(({ btn, label }) => {
+      if (label) label.textContent = statusText;
+      if (btn) {
+        btn.classList.toggle('active', isActive);
+        if (isActive) {
+          btn.title = 'Gemini AI está activo y respondiendo consultas con Google Gemini';
+        } else {
+          btn.title = 'Configurar o activar Google Gemini AI (Opcional)';
+        }
+      }
+    });
+  }
+
+  function toggleFloatingAiChat(forceOpen) {
+    if (!elements.floatingAiChatWidget) return;
+    const isHidden = elements.floatingAiChatWidget.style.display === 'none' || !elements.floatingAiChatWidget.style.display;
+    const willOpen = forceOpen !== undefined ? forceOpen : isHidden;
+
+    if (willOpen) {
+      elements.floatingAiChatWidget.style.display = 'flex';
+      const ctx = getAiProblemContext();
+      if (elements.floatingContextName) {
+        elements.floatingContextName.textContent = ctx.typeName;
+      }
+      if (!state.aiState.messages || state.aiState.messages.length === 0) {
+        state.aiState.messages = [
+          {
+            sender: 'bot',
+            text: `🐾 ¡Guau! ¡Hola! Soy tu <strong>Profesor Perrito Math 🐶</strong>.<br><br>
+                   Estoy aquí a tu lado mientras resuelves tus matemáticas. Puedes preguntarme cualquier duda sobre tu ejercicio en pantalla (<strong>${ctx.typeName}</strong>), pedirme que te resuelva cualquier cuenta paso a paso, o elegir un tema de las pestañas de arriba. ¿En qué te ayudo hoy?`
+          }
+        ];
+      }
+      renderAiChatMessages();
+      renderCategoryChips('current');
+      updateGeminiStatusBadge();
+      setTimeout(() => {
+        if (elements.floatingChatInput) elements.floatingChatInput.focus();
+        if (elements.floatingChatMessages) elements.floatingChatMessages.scrollTop = elements.floatingChatMessages.scrollHeight;
+      }, 100);
+    } else {
+      elements.floatingAiChatWidget.style.display = 'none';
+    }
   }
 
   function generateAiResponse(userQuery, ctx) {
@@ -5069,22 +5248,53 @@
               ${ctx.strategyHtml}`;
     }
 
-    // Default friendly response
-    return `Comprendo tu pregunta sobre <code>${userQuery}</code>. En este tipo de problemas de <strong>${ctx.typeName}</strong>, la clave es mantener el orden jerárquico paso a paso y verificar los signos antes de cada multiplicación o simplificación. ¿Te gustaría que detallemos un paso específico o probemos con un ejercicio de práctica?`;
+    return `Comprendo tu pregunta sobre <code>${userQuery}</code>. En este tipo de problemas de <strong>${ctx.typeName}</strong>, la clave es mantener el orden jerárquico paso a paso y verificar los signos antes de cada multiplicación o simplificación.`;
   }
 
-  function handleAiChatMessage(userText) {
+  async function handleAiChatMessage(userText) {
     if (!userText || !userText.trim()) return;
     const cleanText = userText.trim();
     appendAiChatMessage('user', cleanText);
 
     if (elements.aiChatInput) elements.aiChatInput.value = '';
+    if (elements.floatingChatInput) elements.floatingChatInput.value = '';
 
     const ctx = getAiProblemContext();
-    setTimeout(() => {
-      const botResponse = generateAiResponse(cleanText, ctx);
+
+    // Mensaje transitorio de pensamiento del profesor erudito en todos los contenedores
+    const typingId = 'typing_' + Date.now();
+    const containers = [elements.aiChatMessages, elements.floatingChatMessages].filter(Boolean);
+    containers.forEach(cont => {
+      const typingBubble = document.createElement('div');
+      typingBubble.className = 'ai-message bot';
+      typingBubble.dataset.typingId = typingId;
+      typingBubble.innerHTML = `
+        <div class="ai-msg-sender">
+          <span>🐶</span> Profesor Perrito Math (Consultando los anales de la matemática...)
+        </div>
+        <div class="ai-msg-text" style="color: var(--text-dim); font-style: italic; display: flex; align-items: center; gap: 0.5rem;">
+          <span class="ai-pulse-dot" style="position: static; display: inline-block;"></span>
+          Preparando cátedra con fundamento teórico y ejemplos paso a paso...
+        </div>
+      `;
+      cont.appendChild(typingBubble);
+      cont.scrollTop = cont.scrollHeight;
+    });
+
+    try {
+      let botResponse = '';
+      if (window.PerritoErudite && window.PerritoErudite.ask) {
+        botResponse = await window.PerritoErudite.ask(cleanText, ctx);
+      } else {
+        botResponse = generateAiResponse(cleanText, ctx);
+      }
+      document.querySelectorAll(`[data-typing-id="${typingId}"]`).forEach(el => el.remove());
       appendAiChatMessage('bot', botResponse);
-    }, 280);
+    } catch (err) {
+      console.error('[AI Tutor Chat Error]:', err);
+      document.querySelectorAll(`[data-typing-id="${typingId}"]`).forEach(el => el.remove());
+      appendAiChatMessage('bot', generateAiResponse(cleanText, ctx));
+    }
   }
 
   function handleAiQuickQuery(queryKey) {
@@ -5115,7 +5325,7 @@
     appendAiChatMessage('user', queryText);
     setTimeout(() => {
       appendAiChatMessage('bot', answerText);
-    }, 250);
+    }, 200);
   }
 
   function generateAiPracticeProblem() {
@@ -5153,7 +5363,7 @@
   }
 
   function setupAiTutorEvents() {
-    // Context selector pills
+    // Context selector pills (problema activo)
     if (elements.aiContextPills) {
       elements.aiContextPills.forEach(pill => {
         pill.addEventListener('click', () => {
@@ -5173,17 +5383,34 @@
       });
     }
 
-    // Quick FAQ chips
-    if (elements.aiQuickChipsGrid) {
-      elements.aiQuickChipsGrid.querySelectorAll('.ai-query-chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-          const qKey = chip.dataset.query;
-          handleAiQuickQuery(qKey);
+    // Category pills in chat (Main Tab)
+    if (elements.aiCatPills) {
+      elements.aiCatPills.querySelectorAll('.ai-cat-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          elements.aiCatPills.querySelectorAll('.ai-cat-pill').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const cat = btn.dataset.cat;
+          renderCategoryChips(cat);
         });
       });
     }
 
-    // Chat submit
+    // Category pills in floating widget
+    if (elements.floatingCatPills) {
+      elements.floatingCatPills.querySelectorAll('.ai-cat-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          elements.floatingCatPills.querySelectorAll('.ai-cat-pill').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const cat = btn.dataset.cat;
+          renderCategoryChips(cat);
+        });
+      });
+    }
+
+    // Quick FAQ chips iniciales
+    renderCategoryChips('current');
+
+    // Chat submit (Main Tab)
     if (elements.aiChatForm) {
       elements.aiChatForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -5192,10 +5419,108 @@
       });
     }
 
+    // Chat submit (Floating Widget)
+    if (elements.floatingChatForm) {
+      elements.floatingChatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = elements.floatingChatInput ? elements.floatingChatInput.value : '';
+        handleAiChatMessage(text);
+      });
+    }
+
+    if (elements.btnFloatingSend) {
+      elements.btnFloatingSend.addEventListener('click', (e) => {
+        e.preventDefault();
+        const text = elements.floatingChatInput ? elements.floatingChatInput.value : '';
+        handleAiChatMessage(text);
+      });
+    }
+
+    if (elements.floatingChatInput) {
+      elements.floatingChatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const text = elements.floatingChatInput.value;
+          handleAiChatMessage(text);
+        }
+      });
+    }
+
+    // Floating chat widget buttons
+    if (elements.btnCloseFloatingChat) {
+      elements.btnCloseFloatingChat.addEventListener('click', () => {
+        toggleFloatingAiChat(false);
+      });
+    }
+
+    if (elements.btnFloatingGoFullScreen) {
+      elements.btnFloatingGoFullScreen.addEventListener('click', () => {
+        toggleFloatingAiChat(false);
+        switchTab('aitutor');
+      });
+    }
+
+    if (elements.btnFloatingSync) {
+      elements.btnFloatingSync.addEventListener('click', () => {
+        const ctx = getAiProblemContext();
+        if (elements.floatingContextName) elements.floatingContextName.textContent = ctx.typeName;
+        showToast('Sincronizado con ejercicio en pantalla');
+      });
+    }
+
     // Practice problem button
     if (elements.btnAiGeneratePractice) {
       elements.btnAiGeneratePractice.addEventListener('click', () => {
         generateAiPracticeProblem();
+      });
+    }
+
+    // Gemini Modal triggers (Header, Banner, Main Chat & Floating Chat)
+    updateGeminiStatusBadge();
+
+    const openGeminiTriggers = [
+      elements.btnHeaderGemini,
+      elements.btnBannerGemini,
+      elements.btnOpenGeminiModal,
+      elements.btnFloatingGeminiConfig
+    ].filter(Boolean);
+
+    openGeminiTriggers.forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (elements.geminiApiKeyInput && window.PerritoErudite) {
+          elements.geminiApiKeyInput.value = window.PerritoErudite.getApiKey();
+        }
+        if (elements.geminiModalOverlay) elements.geminiModalOverlay.style.display = 'flex';
+      });
+    });
+
+    if (elements.btnCloseGeminiModal) {
+      elements.btnCloseGeminiModal.addEventListener('click', () => {
+        if (elements.geminiModalOverlay) elements.geminiModalOverlay.style.display = 'none';
+      });
+    }
+
+    if (elements.btnSaveGeminiKey) {
+      elements.btnSaveGeminiKey.addEventListener('click', () => {
+        const val = elements.geminiApiKeyInput ? elements.geminiApiKeyInput.value.trim() : '';
+        if (window.PerritoErudite) {
+          window.PerritoErudite.setApiKey(val);
+          updateGeminiStatusBadge();
+          showToast(val ? '✨ Clave de Gemini guardada y activada' : 'Modo offline activado');
+        }
+        if (elements.geminiModalOverlay) elements.geminiModalOverlay.style.display = 'none';
+      });
+    }
+
+    if (elements.btnRemoveGeminiKey) {
+      elements.btnRemoveGeminiKey.addEventListener('click', () => {
+        if (window.PerritoErudite) {
+          window.PerritoErudite.setApiKey('');
+          if (elements.geminiApiKeyInput) elements.geminiApiKeyInput.value = '';
+          updateGeminiStatusBadge();
+          showToast('Clave removida (motor offline activo)');
+        }
+        if (elements.geminiModalOverlay) elements.geminiModalOverlay.style.display = 'none';
       });
     }
 
@@ -5621,8 +5946,10 @@
     }
 
     if (elements.btnFloatingAiTutor) {
-      elements.btnFloatingAiTutor.addEventListener('click', () => {
-        switchTab('aitutor');
+      elements.btnFloatingAiTutor.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleFloatingAiChat();
       });
     }
 

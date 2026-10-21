@@ -51,6 +51,10 @@
         </div>
         
         <div class="header-actions">
+          <button type="button" class="btn btn-secondary btn-sm btn-header-gemini" id="btnHeaderGemini" title="Activar o configurar Google Gemini AI (Opcional)">
+            <span style="font-size: 0.95rem;">🔑</span>
+            <span id="headerGeminiLabel">Modo Gemini</span>
+          </button>
           <button id="btnInstallApp" class="btn btn-primary btn-sm btn-install-app" title="Descargar e Instalar Perrito Math en tu Celular o Computadora">
             📲 <span class="install-btn-text">Instalar App</span>
           </button>
@@ -1950,7 +1954,10 @@
               </div>
             </div>
             
-            <div class="ai-banner-actions">
+            <div class="ai-banner-actions" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-secondary btn-sm btn-header-gemini" id="btnBannerGemini" title="Configurar o ver estado de Gemini AI">
+                <span>🔑</span> <span id="bannerGeminiLabel">Modo Gemini</span>
+              </button>
               <button type="button" class="btn btn-secondary btn-sm" id="btnAiAnalyzeCurrent">
                 🔄 Sincronizar con Ejercicio Activo
               </button>
@@ -2048,17 +2055,34 @@
             <div class="ai-right-column">
               <div class="ai-chat-card">
                 
-                <div class="ai-chat-header">
+                <div class="ai-chat-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
                   <div class="ai-chat-title">
                     <span class="ai-sparkle">✨</span>
-                    <span>Pregunta lo que quieras al Tutor IA</span>
+                    <span>Pregunta lo que quieras al Tutor Erudito</span>
                   </div>
-                  <span class="text-dim" style="font-size: 0.78rem;">Responde en lenguaje claro y paso a paso</span>
+                  <button type="button" class="btn btn-ghost btn-sm" id="btnOpenGeminiModal" style="font-size: 0.78rem; padding: 0.25rem 0.65rem; border: 1px solid var(--border-medium); border-radius: var(--radius-pill); display: flex; align-items: center; gap: 0.35rem;">
+                    <span>🔑</span>
+                    <span id="geminiStatusLabel">Modo Gemini (Opcional)</span>
+                  </button>
+                </div>
+
+                <!-- Topic Category Selector for the Professor -->
+                <div class="ai-categories-container">
+                  <div class="ai-cat-pills" id="aiCatPills">
+                    <button type="button" class="ai-cat-pill active" data-cat="current" id="catPillCurrent">📌 Este Problema</button>
+                    <button type="button" class="ai-cat-pill" data-cat="compfrac" id="catPillCompFrac">🪜 Fracciones Compuestas</button>
+                    <button type="button" class="ai-cat-pill" data-cat="algebra" id="catPillAlgebra">📐 Álgebra & Factorización</button>
+                    <button type="button" class="ai-cat-pill" data-cat="quadratic" id="catPillQuadratic">⚡ Cuadráticas & Chicharronera</button>
+                    <button type="button" class="ai-cat-pill" data-cat="calculus" id="catPillCalculus">📈 Límites & Derivadas</button>
+                    <button type="button" class="ai-cat-pill" data-cat="geometry" id="catPillGeometry">🔺 Pitágoras & Trigonometría</button>
+                    <button type="button" class="ai-cat-pill" data-cat="rationals" id="catPillRationals">🍕 Fracciones & m.c.m.</button>
+                    <button type="button" class="ai-cat-pill" data-cat="mysteries" id="catPillMysteries">🔥 Paradojas & Curiosidades</button>
+                  </div>
                 </div>
 
                 <!-- Instant FAQ Chips -->
                 <div class="ai-quick-queries">
-                  <div class="quick-queries-label">Preguntas frecuentes con 1 clic:</div>
+                  <div class="quick-queries-label" id="quickQueriesLabel">Preguntas frecuentes del problema actual:</div>
                   <div class="quick-chips-grid" id="aiQuickChipsGrid">
                     <button type="button" class="ai-query-chip" data-query="por_que_resultado">
                       ❓ ¿Por qué da este resultado?
@@ -2219,10 +2243,87 @@
     <!-- Toast Notification -->
     <div class="toast" id="toastNotification" role="alert" aria-live="polite"></div>
 
+    <!-- Floating AI Chat Widget / Drawer (Profesor Perrito Math Flotante) -->
+    <div class="floating-chat-widget" id="floatingAiChatWidget" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="floatingChatTitle">
+      <!-- Header -->
+      <div class="floating-chat-header">
+        <div class="floating-chat-brand">
+          <div class="floating-chat-avatar">
+            <img src="icons/perrito-avatar.png" alt="Profesor Perrito Math" width="36" height="36">
+            <span class="ai-pulse-dot" style="bottom: 0; right: 0;"></span>
+          </div>
+          <div>
+            <h4 class="floating-chat-title" id="floatingChatTitle">Profesor Perrito Math 🐶</h4>
+            <span class="floating-chat-status" id="floatingChatStatus">🟢 Erudito en línea</span>
+          </div>
+        </div>
+        <div class="floating-chat-actions">
+          <button type="button" class="btn-gemini-pill-sm" id="btnFloatingGeminiConfig" title="Configurar Google Gemini AI (Opcional)">
+            <span>🔑</span> <span id="floatingGeminiLabel">Modo Gemini</span>
+          </button>
+          <button type="button" class="floating-action-btn" id="btnFloatingGoFullScreen" title="Ver en pantalla completa">
+            ↗️
+          </button>
+          <button type="button" class="floating-action-btn" id="btnCloseFloatingChat" title="Cerrar chat flotante" aria-label="Cerrar ventana">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Problem Mini Context Banner -->
+      <div class="floating-context-bar" id="floatingContextBar">
+        <span>📌 Analizando: <strong id="floatingContextName">Fracción Compuesta / Ejercicio Activo</strong></span>
+        <button type="button" class="btn-sync-mini" id="btnFloatingSync" title="Sincronizar con lo que está en pantalla">🔄</button>
+      </div>
+
+      <!-- Categories Pills in Floating Widget -->
+      <div class="floating-categories-bar">
+        <div class="ai-cat-pills" id="floatingCatPills">
+          <button type="button" class="ai-cat-pill active" data-cat="current" id="fCatPillCurrent">📌 Este Problema</button>
+          <button type="button" class="ai-cat-pill" data-cat="compfrac" id="fCatPillCompFrac">🪜 Fracciones Compuestas</button>
+          <button type="button" class="ai-cat-pill" data-cat="algebra" id="fCatPillAlgebra">📐 Álgebra</button>
+          <button type="button" class="ai-cat-pill" data-cat="quadratic" id="fCatPillQuadratic">⚡ Cuadráticas</button>
+          <button type="button" class="ai-cat-pill" data-cat="calculus" id="fCatPillCalculus">📈 Cálculo</button>
+          <button type="button" class="ai-cat-pill" data-cat="geometry" id="fCatPillGeometry">🔺 Pitágoras</button>
+          <button type="button" class="ai-cat-pill" data-cat="rationals" id="fCatPillRationals">🍕 Fracciones</button>
+          <button type="button" class="ai-cat-pill" data-cat="mysteries" id="fCatPillMysteries">🔥 Paradojas</button>
+        </div>
+      </div>
+
+      <!-- Quick Chips Grid in Floating Widget -->
+      <div class="floating-quick-chips" id="floatingQuickChipsGrid">
+        <!-- Injected dynamically based on category -->
+      </div>
+
+      <!-- Chat Messages Container in Floating Widget -->
+      <div class="floating-chat-messages" id="floatingChatMessages">
+        <!-- Synchronized messages -->
+      </div>
+
+      <form class="floating-chat-form" id="floatingChatForm">
+        <div class="ai-input-wrapper">
+          <input 
+            type="text" 
+            id="floatingChatInput" 
+            class="ai-input-field" 
+            placeholder="Escribe tu duda o una cuenta (ej: 3/4 + 5/6, 2x+5=15)..."
+            autocomplete="off"
+          >
+          <button type="submit" class="btn btn-primary" id="btnFloatingSend" title="Enviar consulta">
+            <span>Enviar</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+        </div>
+      </form>
+    </div>
+
     <!-- Floating AI Tutor Quick Trigger Button -->
-    <button type="button" class="ai-floating-btn" id="btnFloatingAiTutor" title="Abrir Profesor Perrito IA">
+    <button type="button" class="ai-floating-btn" id="btnFloatingAiTutor" title="Abrir Chat con el Profesor Perrito IA">
       <span class="ai-floating-icon">🐶</span>
-      <span class="ai-floating-label">Perrito IA</span>
+      <span class="ai-floating-label">Profesor IA</span>
       <span class="ai-floating-pulse"></span>
     </button>
   </div>
@@ -2312,8 +2413,44 @@
     </div>
   </div>
 
+  <!-- Modal Gemini API Configuration (Opcional) -->
+  <div class="modal-overlay" id="geminiModalOverlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="geminiModalTitle">
+    <div class="modal-card" style="max-width: 480px; padding: 1.5rem;">
+      <button class="modal-close-btn" id="btnCloseGeminiModal" aria-label="Cerrar modal">✕</button>
+      <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+        <span style="font-size: 2rem;">✨</span>
+        <div>
+          <h3 id="geminiModalTitle" style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #ffffff;">Conectar Gemini AI al Asistente</h3>
+          <p style="margin: 0; font-size: 0.8rem; color: var(--text-dim);">Google Gemini 2.0 Flash (100% Opcional)</p>
+        </div>
+      </div>
+      <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-main); margin-bottom: 1rem;">
+        El <strong>Profesor Perrito Math 🐶</strong> incluye un motor de conocimientos erudito que funciona <strong>100% offline sin internet</strong>. Si deseas adicionalmente conectarte a la IA de Google Gemini para consultas libres sin límites, puedes pegar aquí tu clave API gratuita:
+      </p>
+      <div style="margin-bottom: 1rem;">
+        <label for="geminiApiKeyInput" style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 0.35rem; color: #a78bfa;">Clave API de Gemini:</label>
+        <input 
+          type="password" 
+          id="geminiApiKeyInput" 
+          class="ai-input-field" 
+          placeholder="AIzaSy..." 
+          style="width: 100%; box-sizing: border-box;"
+        >
+        <span style="display: block; font-size: 0.75rem; color: var(--text-dim); margin-top: 0.4rem; line-height: 1.4;">
+          🔒 Tu clave se almacena únicamente en el almacenamiento local de tu navegador (localStorage). Nunca pasa por ningún servidor intermediario.
+        </span>
+      </div>
+      <div style="display: flex; gap: 0.5rem; justify-content: flex-end; flex-wrap: wrap;">
+        <button type="button" class="btn btn-ghost btn-sm" id="btnRemoveGeminiKey">Borrar Clave</button>
+        <button type="button" class="btn btn-primary btn-sm" id="btnSaveGeminiKey">Guardar y Activar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Academic Engines & Offline Algorithms -->
   <script src="academic-modules.js"></script>
+  <!-- Universal Mathematical Erudite Engine -->
+  <script src="erudite-engine.js"></script>
   <!-- Main JavaScript Logic -->
   <script src="app.js"></script>
 </body>
