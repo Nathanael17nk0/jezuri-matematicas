@@ -250,6 +250,8 @@
     btnCloseGeminiModal: document.getElementById('btnCloseGeminiModal'),
     geminiApiKeyInput: document.getElementById('geminiApiKeyInput'),
     btnSaveGeminiKey: document.getElementById('btnSaveGeminiKey'),
+    btnTestGeminiKey: document.getElementById('btnTestGeminiKey'),
+    geminiTestStatus: document.getElementById('geminiTestStatus'),
     geminiStatusLabel: document.getElementById('geminiStatusLabel'),
     aiCatPills: document.getElementById('aiCatPills'),
     quickQueriesLabel: document.getElementById('quickQueriesLabel'),
@@ -5490,6 +5492,10 @@
         if (elements.geminiApiKeyInput && window.PerritoErudite) {
           elements.geminiApiKeyInput.value = window.PerritoErudite.getApiKey();
         }
+        if (elements.geminiTestStatus) {
+          elements.geminiTestStatus.style.display = 'none';
+          elements.geminiTestStatus.innerHTML = '';
+        }
         if (elements.geminiModalOverlay) elements.geminiModalOverlay.style.display = 'flex';
       });
     });
@@ -5497,6 +5503,40 @@
     if (elements.btnCloseGeminiModal) {
       elements.btnCloseGeminiModal.addEventListener('click', () => {
         if (elements.geminiModalOverlay) elements.geminiModalOverlay.style.display = 'none';
+      });
+    }
+
+    if (elements.btnTestGeminiKey) {
+      elements.btnTestGeminiKey.addEventListener('click', async () => {
+        const val = elements.geminiApiKeyInput ? elements.geminiApiKeyInput.value.trim() : '';
+        const statusBox = elements.geminiTestStatus;
+        if (!statusBox) return;
+
+        statusBox.style.display = 'block';
+        statusBox.className = 'gemini-test-result loading';
+        statusBox.innerHTML = '⏳ <em>Conectando con Google Generative AI... Verificando credenciales...</em>';
+
+        if (!val) {
+          statusBox.className = 'gemini-test-result error';
+          statusBox.innerHTML = '⚠️ <strong>Campo vacío:</strong> Por favor escribe o pega tu clave de API antes de probar la conexión.';
+          return;
+        }
+
+        try {
+          if (window.PerritoErudite && window.PerritoErudite.testGeminiKey) {
+            const res = await window.PerritoErudite.testGeminiKey(val);
+            if (res.ok) {
+              statusBox.className = 'gemini-test-result success';
+              statusBox.innerHTML = `✅ <strong>¡Conexión Exitosa!</strong><br>${res.message}`;
+            } else {
+              statusBox.className = 'gemini-test-result error';
+              statusBox.innerHTML = `❌ <strong>Error reportado por Google:</strong><br><code>${res.error}</code><br><small style="color: var(--text-dim); display: block; margin-top: 4px;">Verifica que la clave comience con "AIzaSy..." y que tu proyecto en Google AI Studio esté activo.</small>`;
+            }
+          }
+        } catch (err) {
+          statusBox.className = 'gemini-test-result error';
+          statusBox.innerHTML = `❌ <strong>Error de red:</strong> ${err.message}`;
+        }
       });
     }
 

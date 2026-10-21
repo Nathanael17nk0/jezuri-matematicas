@@ -6053,6 +6053,98 @@ input, select, textarea, button {
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(217, 119, 6, 0.12)) !important;
 }
 
+/* Feedback & Diagnosis for Gemini and Engine */
+.erudite-api-notice {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: #fef3c7;
+}
+
+.erudite-api-notice .erudite-notice-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  color: #fbbf24;
+  margin-bottom: 0.35rem;
+}
+
+.erudite-api-notice code {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  color: #fde68a;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  word-break: break-all;
+}
+
+.gemini-test-result {
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.gemini-test-result.loading {
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  color: #c7d2fe;
+}
+
+.gemini-test-result.success {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #6ee7b7;
+}
+
+.gemini-test-result.error {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
+
+.erudite-gemini-card {
+  border-color: rgba(139, 92, 246, 0.35) !important;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(99, 102, 241, 0.04)) !important;
+}
+
+.erudite-gemini-content {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-main);
+}
+
+.erudite-gemini-content h4, .erudite-gemini-content h5 {
+  color: #e2e8f0;
+  margin: 0.8rem 0 0.4rem 0;
+}
+
+.erudite-gemini-content ul, .erudite-gemini-content ol {
+  margin: 0.5rem 0;
+  padding-left: 1.4rem;
+}
+
+.erudite-gemini-content li {
+  margin-bottom: 0.3rem;
+}
+
+.erudite-gemini-content code {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  color: #a78bfa;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+}
+
+
 
 
 

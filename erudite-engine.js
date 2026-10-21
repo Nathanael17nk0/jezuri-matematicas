@@ -135,127 +135,473 @@
 
   // Solucionador al vuelo de problemas específicos en el chat
   const PerritoSolver = {
-    // Resolver fracciones directas: ej: 3/4 + 5/6 ó (2/3) / (4/5)
+    // Resolver fracciones directas: ej: 3/8 mas 9/3, 3/4 + 5/6, (2/3) / (4/5), 3/8 + 2
     solveFractions(expr) {
       try {
         let clean = expr.replace(/[?¿!¡;]/g, ' ').trim();
-        clean = clean.replace(/^(por\s+favor\s+|hola\s*perrito\s*,?\s*|profesor\s*,?\s*)/i, '');
-        clean = clean.replace(/^(resuelve|resolver|calcula|calcular|halla|hallar|evalua|evaluar|cuanto\s+es|cuanto\s+da|simplifica|simplificar|solve)\s*(la\s+operacion\s+|la\s+fraccion\s+|el\s+ejercicio\s+|:)?\s*/i, '');
-        clean = clean.replace(/\s+/g, '').replace(/[×·]/g, '*').replace(/[÷]/g, '/');
+        clean = clean.replace(/^(por\s+favor\s+|hola\s*perrito\s*,?\s*|profesor\s*,?\s*|oiga\s*,?\s*|oye\s*,?\s*|profe\s*,?\s*)/i, '');
+        clean = clean.replace(/^(resuelve|resolver|calcula|calcular|halla|hallar|evalua|evaluar|cuanto\s+es|cuanto\s+da|simplifica|simplificar|opera|operar|solve)\s*(la\s+operacion\s+|la\s+fraccion\s+|el\s+ejercicio\s+|:)?\s*/i, '');
+        clean = clean.replace(/^(suma|resta|multiplicacion|division|producto|cociente)\s+(de\s+)?/i, '');
 
-        // Buscar patrón de dos fracciones con operador: a/b [+-*/] c/d
-        const match = clean.match(/([+-]?\d+)\/(\d+)([\+\-\*\/])([+-]?\d+)\/(\d+)/);
-        if (!match) return null;
+        // Normalizar operadores en lenguaje natural a símbolos matemáticos
+        clean = clean.replace(/\b(m[aá]s|sumado\s+(con|a)|sumar)\b/gi, ' + ');
+        clean = clean.replace(/\b(menos|restado\s+de|restar)\b/gi, ' - ');
+        clean = clean.replace(/\b(por|multiplicado\s+por|multiplicar)\b/gi, ' * ');
+        clean = clean.replace(/\b(entre|dividido\s+entre|dividido\s+por|dividido|sobre|dividir)\b/gi, ' / ');
+        clean = clean.replace(/\bcon\b/gi, ' + ');
+        clean = clean.replace(/\by\b/gi, ' + ');
+        clean = clean.replace(/[×·]/g, '*').replace(/[÷:]/g, '/');
+        clean = clean.replace(/\s+/g, '');
 
-        const n1 = BigInt(match[1]), d1 = BigInt(match[2]);
-        const op = match[3];
-        const n2 = BigInt(match[4]), d2 = BigInt(match[5]);
+        // Caso 1: Operación binaria (A op B), donde al menos uno es fracción (tiene /)
+        const binaryMatch = clean.match(/^([+-]?\d+(?:\/\d+)?)([\+\-\*\/])([+-]?\d+(?:\/\d+)?)$/);
+        if (binaryMatch && clean.includes('/')) {
+          function parseFrac(s) {
+            if (s.includes('/')) {
+              const parts = s.split('/');
+              return { n: BigInt(parts[0]), d: BigInt(parts[1]) };
+            }
+            return { n: BigInt(s), d: 1n };
+          }
 
-        const r1 = new Rational(n1, d1);
-        const r2 = new Rational(n2, d2);
-        let res, opName, stepsHtml;
+          const raw1 = parseFrac(binaryMatch[1]);
+          const op = binaryMatch[2];
+          const raw2 = parseFrac(binaryMatch[3]);
 
-        if (op === '+') {
-          res = r1.add(r2);
-          const mcm = lcmBig(r1.d, r2.d);
-          const f1 = mcm / r1.d;
-          const f2 = mcm / r2.d;
-          const amp1 = r1.n * f1;
-          const amp2 = r2.n * f2;
-          const sum = amp1 + amp2;
-          opName = 'Suma de Fracciones con m.c.m.';
-          stepsHtml = `
-            <div class="erudite-step-item">
-              <strong>Paso 1: Homogenización de denominadores.</strong> Calculamos el mínimo común múltiplo de ${r1.d} y ${r2.d}:<br>
-              <code>m.c.m.(${r1.d}, ${r2.d}) = ${mcm}</code>.
-            </div>
-            <div class="erudite-step-item">
-              <strong>Paso 2: Amplificación de numeradores.</strong><br>
-              • Primera fracción: <code>(${r1.n} × ${f1})/${mcm} = ${amp1}/${mcm}</code><br>
-              • Segunda fracción: <code>(${r2.n} × ${f2})/${mcm} = ${amp2}/${mcm}</code>
-            </div>
-            <div class="erudite-step-item">
-              <strong>Paso 3: Suma y simplificación.</strong><br>
-              <code>${amp1} + ${amp2} = ${sum}</code> ⟹ Fracción resultante: <code>${sum}/${mcm}</code><br>
-              ${gcdBig(sum, mcm) > 1n ? `Simplificando por M.C.D.(${sum}, ${mcm}) = <strong>${gcdBig(sum, mcm)}</strong>` : 'Ya es irreducible'}.
-            </div>
-          `;
-        } else if (op === '-') {
-          res = r1.sub(r2);
-          const mcm = lcmBig(r1.d, r2.d);
-          const f1 = mcm / r1.d;
-          const f2 = mcm / r2.d;
-          const amp1 = r1.n * f1;
-          const amp2 = r2.n * f2;
-          const diff = amp1 - amp2;
-          opName = 'Resta de Fracciones con m.c.m.';
-          stepsHtml = `
-            <div class="erudite-step-item">
-              <strong>Paso 1: Hallar el m.c.m. de los denominadores.</strong><br>
-              <code>m.c.m.(${r1.d}, ${r2.d}) = ${mcm}</code>.
-            </div>
-            <div class="erudite-step-item">
-              <strong>Paso 2: Amplificar numeradores.</strong><br>
-              • Primera fracción: <code>${amp1}/${mcm}</code><br>
-              • Segunda fracción: <code>${amp2}/${mcm}</code>
-            </div>
-            <div class="erudite-step-item">
-              <strong>Paso 3: Sustracción y reducción.</strong><br>
-              <code>${amp1} − ${amp2} = ${diff}</code> ⟹ <code>${diff}/${mcm}</code>.
-            </div>
-          `;
-        } else if (op === '*') {
-          res = r1.mul(r2);
-          opName = 'Multiplicación en Línea Recta';
-          stepsHtml = `
-            <div class="erudite-step-item">
-              <strong>Paso 1: Multiplicar numeradores entre sí.</strong><br>
-              <code>${r1.n} × ${r2.n} = ${r1.n * r2.n}</code>.
-            </div>
-            <div class="erudite-step-item">
-              <strong>Paso 2: Multiplicar denominadores entre sí.</strong><br>
-              <code>${r1.d} × ${r2.d} = ${r1.d * r2.d}</code>.
-            </div>
-            <div class="erudite-step-item">
-              <strong>Paso 3: Fracción irreducible final.</strong><br>
-              <code>(${r1.n * r2.n})/(${r1.d * r2.d}) = <strong>${res.toString()}</strong></code>.
-            </div>
-          `;
-        } else if (op === '/') {
-          res = r1.div(r2);
-          opName = 'División de Fracciones (Ley de la Herradura / Extremos y Medios)';
-          stepsHtml = `
-            <div class="erudite-step-item">
-              <strong>Paso 1: Ley de la Herradura (Extremos por Medios).</strong><br>
-              • Multiplicamos los extremos (superior e inferior): <code>${r1.n} × ${r2.d} = ${r1.n * r2.d}</code> (nuevo numerador).<br>
-              • Multiplicamos los medios (interiores): <code>${r1.d} × ${r2.n} = ${r1.d * r2.n}</code> (nuevo denominador).
-            </div>
-            <div class="erudite-step-item">
-              <strong>Paso 2: Simplificación final por M.C.D.</strong><br>
-              Resultado irreducible: <strong>${res.toString()}</strong>.
+          if (raw1.d === 0n || raw2.d === 0n) {
+            return `
+              <div class="erudite-card-response">
+                <div class="erudite-header">
+                  <span class="erudite-badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171;">⚠️ Indefinición Matemática</span>
+                  <strong>División entre Cero</strong>
+                </div>
+                <p>El denominador de una fracción no puede ser <code>0</code> porque la división entre cero está indefinida en el campo de los números reales (<code>ℝ</code>).</p>
+              </div>
+            `;
+          }
+
+          const r1 = new Rational(raw1.n, raw1.d);
+          const r2 = new Rational(raw2.n, raw2.d);
+          let res, opName, stepsHtml, pedagogicalTip = '';
+
+          // Tip didáctico si alguna fracción se podía simplificar antes (ej: 9/3 = 3)
+          if (raw1.d > 1n && raw1.n % raw1.d === 0n) {
+            pedagogicalTip += `<div class="erudite-tip-box" style="margin-top:0.6rem;">💡 <strong>Cátedra didáctica:</strong> Observa que la primera fracción <code>${raw1.n}/${raw1.d} = ${raw1.n / raw1.d}</code> es un número entero exacto antes de operar.</div>`;
+          } else if (gcdBig(raw1.n, raw1.d) > 1n) {
+            pedagogicalTip += `<div class="erudite-tip-box" style="margin-top:0.6rem;">💡 <strong>Cátedra didáctica:</strong> La fracción <code>${raw1.n}/${raw1.d}</code> se puede pre-simplificar a <code>${r1.toString()}</code>.</div>`;
+          }
+          if (raw2.d > 1n && raw2.n % raw2.d === 0n) {
+            pedagogicalTip += `<div class="erudite-tip-box" style="margin-top:0.6rem;">💡 <strong>Cátedra didáctica:</strong> Observa que la segunda fracción <code>${raw2.n}/${raw2.d} = ${raw2.n / raw2.d}</code> es un número entero exacto (${raw2.n / raw2.d}). Sumar como entero o como fracción arroja el mismo resultado exacto.</div>`;
+          } else if (gcdBig(raw2.n, raw2.d) > 1n) {
+            pedagogicalTip += `<div class="erudite-tip-box" style="margin-top:0.6rem;">💡 <strong>Cátedra didáctica:</strong> La fracción <code>${raw2.n}/${raw2.d}</code> se puede pre-simplificar a <code>${r2.toString()}</code>.</div>`;
+          }
+
+          if (op === '+') {
+            res = r1.add(r2);
+            const mcm = lcmBig(raw1.d, raw2.d);
+            const f1 = mcm / raw1.d;
+            const f2 = mcm / raw2.d;
+            const amp1 = raw1.n * f1;
+            const amp2 = raw2.n * f2;
+            const sum = amp1 + amp2;
+            const g = gcdBig(sum, mcm);
+            opName = 'Suma de Fracciones con Mínimo Común Múltiplo (m.c.m.)';
+            stepsHtml = `
+              <div class="erudite-step-item">
+                <span class="step-num-badge">Paso 1</span>
+                <div>
+                  <strong>Homogenización de denominadores (m.c.m.):</strong><br>
+                  Los denominadores son <code>${raw1.d}</code> y <code>${raw2.d}</code>.<br>
+                  Calculamos su mínimo común múltiplo: <code>m.c.m.(${raw1.d}, ${raw2.d}) = <strong>${mcm}</strong></code>.
+                </div>
+              </div>
+              <div class="erudite-step-item">
+                <span class="step-num-badge">Paso 2</span>
+                <div>
+                  <strong>Amplificación de numeradores al denominador común:</strong><br>
+                  • Primera fracción: <code>(${raw1.n} × ${f1})/${mcm} = ${amp1}/${mcm}</code><br>
+                  • Segunda fracción: <code>(${raw2.n} × ${f2})/${mcm} = ${amp2}/${mcm}</code>
+                </div>
+              </div>
+              <div class="erudite-step-item">
+                <span class="step-num-badge">Paso 3</span>
+                <div>
+                  <strong>Suma de numeradores homogéneos:</strong><br>
+                  <code>(${amp1} + ${amp2})/${mcm} = <strong>${sum}/${mcm}</strong></code>.
+                </div>
+              </div>
+              <div class="erudite-step-item">
+                <span class="step-num-badge">Paso 4</span>
+                <div>
+                  <strong>Simplificación final al máximo por M.C.D.:</strong><br>
+                  ${g > 1n ? `Calculamos <code>M.C.D.(${sum}, ${mcm}) = ${g}</code>. Dividiendo numerador y denominador entre ${g}:<br><code>(${sum} ÷ ${g}) / (${mcm} ÷ ${g}) = <strong>${res.toString()}</strong></code>.` : `La fracción <code>${res.toString()}</code> ya es irreducible puesto que <code>M.C.D.(${sum}, ${mcm}) = 1</code>.`}
+                </div>
+              </div>
+            `;
+          } else if (op === '-') {
+            res = r1.sub(r2);
+            const mcm = lcmBig(raw1.d, raw2.d);
+            const f1 = mcm / raw1.d;
+            const f2 = mcm / raw2.d;
+            const amp1 = raw1.n * f1;
+            const amp2 = raw2.n * f2;
+            const diff = amp1 - amp2;
+            const g = gcdBig(diff, mcm);
+            opName = 'Resta de Fracciones con m.c.m.';
+            stepsHtml = `
+              <div class="erudite-step-item">
+                <span class="step-num-badge">Paso 1</span>
+                <div>
+                  <strong>Denominador común por m.c.m.:</strong><br>
+                  <code>m.c.m.(${raw1.d}, ${raw2.d}) = <strong>${mcm}</strong></code>.
+                </div>
+              </div>
+              <div class="erudite-step-item">
+                <span class="step-num-badge">Paso 2</span>
+                <div>
+                  <strong>Amplificación de fracciones:</strong><br>
+                  • Primera: <code>(${raw1.n} × ${f1})/${mcm} = ${amp1}/${mcm}</code><br>
+                  • Segunda: <code>(${raw2.n} × ${f2})/${mcm} = ${amp2}/${mcm}</code>
+                </div>
+              </div>
+              <div class="erudite-step-item">
+                <span class="step-num-badge">Paso 3</span>
+                <div>
+                  <strong>Sustracción de numeradores:</strong><br>
+                  <code>(${amp1} − ${amp2})/${mcm} = <strong>${diff}/${mcm}</strong></code>.
+                </div>
+              </div>
+              <div class="erudite-step-item">
+                <span class="step-num-badge">Paso 4</span>
+                <div>
+                  <strong>Reducción por M.C.D.:</strong><br>
+                  ${g > 1n ? `<code>M.C.D.(${diff}, ${mcm}) = ${g}</code> ⟹ Fracción irreducible: <strong>${res.toString()}</strong>.` : `Fracción irreducible directa: <strong>${res.toString()}</strong>.`}
+                </div>
+              </div>
+            `;
+          } else if (op === '*') {
+            res = r1.mul(r2);
+            opName = 'Multiplicación de Fracciones (En Línea Recta)';
+            const rawN = raw1.n * raw2.n;
+            const rawD = raw1.d * raw2.d;
+            const g = gcdBig(rawN, rawD);
+            stepsHtml = `
+              <div class="erudite-step-item">
+                <span class="step-num-badge">Paso 1</span>
+                <div>
+                  <strong>Multiplicar numeradores en línea recta:</strong><br>
+                  <code>${raw1.n} × ${raw2.n} = <strong>${rawN}</strong></code>.
+                </div>
+              </div>
+              <div class="erudite-step-item">
+                <span class="step-num-badge">Paso 2</span>
+                <div>
+                  <strong>Multiplicar denominadores en línea recta:</strong><br>
+                  <code>${raw1.d} × ${raw2.d} = <strong>${rawD}</strong></code>.
+                </div>
+              </div>
+              <div class="erudite-step-item">
+                <span class="step-num-badge">Paso 3</span>
+                <div>
+                  <strong>Simplificación de la fracción resultante:</strong><br>
+                  <code>${rawN}/${rawD}</code> ${g > 1n ? `⟹ Dividiendo entre <code>M.C.D. = ${g}</code> ⟹ <strong>${res.toString()}</strong>.` : '⟹ Ya es irreducible.'}
+                </div>
+              </div>
+            `;
+          } else if (op === '/') {
+            if (raw2.n === 0n) {
+              return `
+                <div class="erudite-card-response">
+                  <div class="erudite-header">
+                    <span class="erudite-badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171;">⚠️ Indefinición Matemática</span>
+                    <strong>División entre Cero</strong>
+                  </div>
+                  <p>No se puede dividir una fracción entre <code>0</code>.</p>
+                </div>
+              `;
+            }
+            res = r1.div(r2);
+            opName = 'División de Fracciones (Ley de la Herradura / Extremos y Medios)';
+            const ext = raw1.n * raw2.d;
+            const med = raw1.d * raw2.n;
+            const g = gcdBig(ext, med);
+            stepsHtml = `
+              <div class="erudite-step-item">
+                <span class="step-num-badge">Paso 1</span>
+                <div>
+                  <strong>Ley de la Herradura (Extremos por Medios):</strong><br>
+                  • <em>Extremos (arriba y abajo):</em> <code>${raw1.n} × ${raw2.d} = <strong>${ext}</strong></code> (nuevo numerador).<br>
+                  • <em>Medios (los del centro):</em> <code>${raw1.d} × ${raw2.n} = <strong>${med}</strong></code> (nuevo denominador).<br>
+                  Fracción intermedia: <code>${ext}/${med}</code>.
+                </div>
+              </div>
+              <div class="erudite-step-item">
+                <span class="step-num-badge">Paso 2</span>
+                <div>
+                  <strong>Simplificación final:</strong><br>
+                  ${g > 1n ? `Dividiendo entre <code>M.C.D.(${ext}, ${med}) = ${g}</code> ⟹ <strong>${res.toString()}</strong>.` : `Fracción irreducible: <strong>${res.toString()}</strong>.`}
+                </div>
+              </div>
+            `;
+          }
+
+          // Generar representación de número mixto si |n| > d y d != 1
+          let mixedHtml = '';
+          if (res.d !== 1n && res.n > res.d) {
+            const whole = res.n / res.d;
+            const rem = res.n % res.d;
+            mixedHtml = `<span class="result-dec">(o en número mixto: <strong>${whole} ${rem}/${res.d}</strong>)</span>`;
+          }
+
+          return `
+            <div class="erudite-card-response">
+              <div class="erudite-header">
+                <span class="erudite-badge">🧮 Solución al Vuelo</span>
+                <strong>${opName}</strong>
+              </div>
+              <div class="erudite-problem-line">
+                Operación planteada: <code>${raw1.n}${raw1.d !== 1n ? '/' + raw1.d : ''} ${op} ${raw2.n}${raw2.d !== 1n ? '/' + raw2.d : ''}</code>
+              </div>
+              <div class="erudite-steps">
+                ${stepsHtml}
+              </div>
+              ${pedagogicalTip}
+              <div class="erudite-result-box">
+                <span class="result-label">Resultado Irreducible:</span>
+                <span class="result-highlight">${res.toString()}</span>
+                ${mixedHtml}
+                ${res.d !== 1n ? `<span class="result-dec">≈ ${(Number(res.n) / Number(res.d)).toFixed(5)}</span>` : ''}
+              </div>
             </div>
           `;
         }
 
-        return `
-          <div class="erudite-card-response">
-            <div class="erudite-header">
-              <span class="erudite-badge">🧮 Solución al Vuelo</span>
-              <strong>${opName}</strong>
+        // Caso 2: Cadena de 3 o más fracciones sumadas/restadas (ej: 1/2 + 2/3 - 1/4)
+        if (clean.includes('/') && !clean.includes('*') && (clean.includes('+') || clean.includes('-'))) {
+          const tokens = clean.match(/([+-]?[^+-]+)/g);
+          if (tokens && tokens.length >= 3) {
+            const terms = [];
+            for (const tok of tokens) {
+              let sign = 1n;
+              let t = tok;
+              if (t.startsWith('+')) t = t.substring(1);
+              else if (t.startsWith('-')) { sign = -1n; t = t.substring(1); }
+              if (t.includes('/')) {
+                const parts = t.split('/');
+                terms.push({ n: sign * BigInt(parts[0]), d: BigInt(parts[1]) });
+              } else {
+                terms.push({ n: sign * BigInt(t), d: 1n });
+              }
+            }
+
+            let mcmGlobal = terms[0].d;
+            for (let i = 1; i < terms.length; i++) {
+              mcmGlobal = lcmBig(mcmGlobal, terms[i].d);
+            }
+
+            let sumNumerators = 0n;
+            const stepsAmp = terms.map((t, idx) => {
+              const factor = mcmGlobal / t.d;
+              const amp = t.n * factor;
+              sumNumerators += amp;
+              return `• Término ${idx + 1}: <code>(${t.n} × ${factor})/${mcmGlobal} = ${amp}/${mcmGlobal}</code>`;
+            }).join('<br>');
+
+            const g = gcdBig(sumNumerators, mcmGlobal);
+            const finalN = sumNumerators / g;
+            const finalD = mcmGlobal / g;
+            const resRational = new Rational(finalN, finalD);
+
+            return `
+              <div class="erudite-card-response">
+                <div class="erudite-header">
+                  <span class="erudite-badge">🧮 Solución al Vuelo</span>
+                  <strong>Suma y Resta Combinada de Múltiples Fracciones</strong>
+                </div>
+                <div class="erudite-problem-line">
+                  Expresión: <code>${expr}</code>
+                </div>
+                <div class="erudite-steps">
+                  <div class="erudite-step-item">
+                    <span class="step-num-badge">Paso 1</span>
+                    <div>
+                      <strong>Mínimo Común Múltiplo global de los denominadores:</strong><br>
+                      Denominadores: <code>${terms.map(t => t.d).join(', ')}</code> ⟹ <code>m.c.m. = <strong>${mcmGlobal}</strong></code>.
+                    </div>
+                  </div>
+                  <div class="erudite-step-item">
+                    <span class="step-num-badge">Paso 2</span>
+                    <div>
+                      <strong>Amplificación de cada término al denominador común:</strong><br>
+                      ${stepsAmp}
+                    </div>
+                  </div>
+                  <div class="erudite-step-item">
+                    <span class="step-num-badge">Paso 3</span>
+                    <div>
+                      <strong>Suma algebraica de numeradores y reducción:</strong><br>
+                      Suma de numeradores: <code>${sumNumerators}/${mcmGlobal}</code>.<br>
+                      ${g > 1n ? `Simplificando por <code>M.C.D. = ${g}</code> ⟹ <strong>${resRational.toString()}</strong>.` : `Ya es irreducible: <strong>${resRational.toString()}</strong>.`}
+                    </div>
+                  </div>
+                </div>
+                <div class="erudite-result-box">
+                  <span class="result-label">Resultado Final:</span>
+                  <span class="result-highlight">${resRational.toString()}</span>
+                  ${resRational.d !== 1n ? `<span class="result-dec">≈ ${(Number(resRational.n) / Number(resRational.d)).toFixed(5)}</span>` : ''}
+                </div>
+              </div>
+            `;
+          }
+        }
+
+        return null;
+      } catch (e) {
+        return null;
+      }
+    },
+
+    // Resolver operaciones aritméticas al vuelo (raíces, potencias, porcentajes, aritmética directa)
+    solveArithmetic(expr) {
+      try {
+        let clean = expr.replace(/[?¿!¡;]/g, ' ').trim();
+        clean = clean.replace(/^(por\s+favor\s+|hola\s*perrito\s*,?\s*|profesor\s*,?\s*|oiga\s*,?\s*|oye\s*,?\s*|profe\s*,?\s*)/i, '');
+        clean = clean.replace(/^(resuelve|resolver|calcula|calcular|halla|hallar|evalua|evaluar|cuanto\s+es|cuanto\s+da|simplifica|simplificar|opera|operar|solve)\s*(la\s+operacion\s+|el\s+ejercicio\s+|:)?\s*/i, '');
+
+        // 1. Porcentaje: ej: 15% de 300, 20% sobre 50
+        const pctMatch = clean.match(/^(\d+(?:\.\d+)?)\s*%\s*(?:de|sobre|\*)\s*(\d+(?:\.\d+)?)$/i);
+        if (pctMatch) {
+          const pct = parseFloat(pctMatch[1]);
+          const base = parseFloat(pctMatch[2]);
+          const result = (pct / 100) * base;
+          return `
+            <div class="erudite-card-response">
+              <div class="erudite-header">
+                <span class="erudite-badge">📊 Cálculo Porcentual</span>
+                <strong>Porcentaje al Vuelo</strong>
+              </div>
+              <div class="erudite-problem-line">
+                Pregunta: <code>${pct}% de ${base}</code>
+              </div>
+              <div class="erudite-steps">
+                <div class="erudite-step-item">
+                  <span class="step-num-badge">Paso 1</span>
+                  <div><strong>Convertir el porcentaje a factor decimal:</strong><br><code>${pct}% = ${pct} / 100 = ${pct / 100}</code>.</div>
+                </div>
+                <div class="erudite-step-item">
+                  <span class="step-num-badge">Paso 2</span>
+                  <div><strong>Multiplicar por la cantidad base:</strong><br><code>(${pct} / 100) × ${base} = ${pct / 100} × ${base} = <strong>${result}</strong></code>.</div>
+                </div>
+              </div>
+              <div class="erudite-result-box">
+                <span class="result-label">Resultado:</span>
+                <span class="result-highlight">${result}</span>
+              </div>
             </div>
-            <div class="erudite-problem-line">
-              Operación ingresada: <code>${r1.toString()} ${op} ${r2.toString()}</code>
+          `;
+        }
+
+        // 2. Raíz cuadrada: ej: raiz de 144, sqrt(81), raiz cuadrada de 25
+        const sqrtMatch = clean.match(/^(?:raiz|ra[ií]z|sqrt)\s*(?:cuadrada\s+)?(?:de\s+)?(\d+(?:\.\d+)?)$/i);
+        if (sqrtMatch) {
+          const num = parseFloat(sqrtMatch[1]);
+          const root = Math.sqrt(num);
+          const isExact = Number.isInteger(root);
+          return `
+            <div class="erudite-card-response">
+              <div class="erudite-header">
+                <span class="erudite-badge">📐 Radicación</span>
+                <strong>Raíz Cuadrada Exacta / Aproximada</strong>
+              </div>
+              <div class="erudite-problem-line">
+                Radical: <code>√(${num})</code>
+              </div>
+              <div class="erudite-steps">
+                <div class="erudite-step-item">
+                  <span class="step-num-badge">Desarrollo</span>
+                  <div>
+                    Buscamos un número <code>r</code> tal que <code>r² = ${num}</code>.<br>
+                    ${isExact ? `Dado que <code>${root} × ${root} = ${num}</code>, es un <strong>cuadrado perfecto</strong>.` : `No es cuadrado perfecto. Su aproximación decimal es <code>≈ ${root.toFixed(6)}</code>.`}
+                  </div>
+                </div>
+              </div>
+              <div class="erudite-result-box">
+                <span class="result-label">Raíz Cuadrada:</span>
+                <span class="result-highlight">√${num} = ${isExact ? root : root.toFixed(5)}</span>
+              </div>
             </div>
-            <div class="erudite-steps">
-              ${stepsHtml}
-            </div>
-            <div class="erudite-result-box">
-              <span class="result-label">Resultado Final:</span>
-              <span class="result-highlight">${res.toString()}</span>
-              ${res.d !== 1n ? `<span class="result-dec">(≈ ${(Number(res.n) / Number(res.d)).toFixed(5)})</span>` : ''}
-            </div>
-          </div>
-        `;
+          `;
+        }
+
+        // 3. Potencia: ej: 2^8, 5^3, 2**10
+        const powMatch = clean.match(/^(\d+(?:\.\d+)?)\s*(?:\^|\*\*|elevado\s+(?:a\s+la|al)?)\s*(\d+)$/i);
+        if (powMatch) {
+          const base = parseFloat(powMatch[1]);
+          const exp = parseInt(powMatch[2], 10);
+          if (exp <= 50) {
+            const res = Math.pow(base, exp);
+            return `
+              <div class="erudite-card-response">
+                <div class="erudite-header">
+                  <span class="erudite-badge">⚡ Potenciación</span>
+                  <strong>Exponente Entero</strong>
+                </div>
+                <div class="erudite-problem-line">
+                  Potencia: <code>${base}^${exp}</code>
+                </div>
+                <div class="erudite-steps">
+                  <div class="erudite-step-item">
+                    <span class="step-num-badge">Concepto</span>
+                    <div>Multiplicamos la base <code>${base}</code> por sí misma <code>${exp}</code> veces consecutivas.</div>
+                  </div>
+                </div>
+                <div class="erudite-result-box">
+                  <span class="result-label">Resultado:</span>
+                  <span class="result-highlight">${res}</span>
+                </div>
+              </div>
+            `;
+          }
+        }
+
+        // 4. Aritmética elemental directa (ej: 15 * 8, 125 + 380, 144 / 12)
+        let normArith = clean.replace(/\b(m[aá]s|sumar|con)\b/gi, '+')
+                             .replace(/\b(menos|restar)\b/gi, '-')
+                             .replace(/\b(por|multiplicar)\b/gi, '*')
+                             .replace(/\b(entre|dividido\s+entre|dividido|dividir)\b/gi, '/')
+                             .replace(/[×·]/g, '*')
+                             .replace(/[÷:]/g, '/')
+                             .replace(/\s+/g, '');
+
+        if (/^[0-9\.\+\-\*\/\(\)]+$/.test(normArith) && /[\+\-\*\/]/.test(normArith) && !normArith.includes('//')) {
+          const calcVal = Function(`'use strict'; return (${normArith})`)();
+          if (typeof calcVal === 'number' && !isNaN(calcVal) && isFinite(calcVal)) {
+            const isInt = Number.isInteger(calcVal);
+            return `
+              <div class="erudite-card-response">
+                <div class="erudite-header">
+                  <span class="erudite-badge">🧮 Aritmética Fundamental</span>
+                  <strong>Cálculo Numérico Directo</strong>
+                </div>
+                <div class="erudite-problem-line">
+                  Operación: <code>${normArith.replace(/\*/g, ' × ').replace(/\//g, ' ÷ ').replace(/\+/g, ' + ').replace(/\-/g, ' − ')}</code>
+                </div>
+                <div class="erudite-steps">
+                  <div class="erudite-step-item">
+                    <span class="step-num-badge">Jerarquía PEMDAS</span>
+                    <div>Aplicamos el orden matemático universal: primero paréntesis, luego multiplicaciones y divisiones de izquierda a derecha, y finalmente adiciones y sustracciones.</div>
+                  </div>
+                </div>
+                <div class="erudite-result-box">
+                  <span class="result-label">Resultado Final:</span>
+                  <span class="result-highlight">${isInt ? calcVal : calcVal.toFixed(5)}</span>
+                </div>
+              </div>
+            `;
+          }
+        }
+
+        return null;
       } catch (e) {
         return null;
       }
@@ -1536,6 +1882,16 @@
       .trim();
   }
 
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   function formatKnowledgeResponse(topic) {
     const formulasHtml = topic.formulas.map(f => `<code>${f}</code>`).join('<br>');
     const stepsHtml = topic.example.steps.map((st, i) => `
@@ -1630,42 +1986,63 @@
   }
 
   // ==========================================================================
-  // 4. API GEMINI INTEGRADA (CONEXIÓN EXTERNA OPCIONAL)
+  // 4. API GEMINI INTEGRADA (CONEXIÓN EXTERNA OPCIONAL CON CASCADE & DIAGNÓSTICO)
   // ==========================================================================
 
   const GEMINI_KEY_STORAGE = 'perrito_math_gemini_api_key';
 
-  async function queryGemini(userPrompt, apiKey, activeContext) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+  const GEMINI_MODELS = [
+    'gemini-2.0-flash',
+    'gemini-1.5-flash',
+    'gemini-1.5-pro'
+  ];
 
-    const systemInstruction = `
-Eres el "Profesor Perrito Math 🐶", un erudito y virtuoso catedrático de matemáticas con doctorado en pedagogía y didáctica matemática.
-Tu misión es enseñar y responder CUALQUIER duda matemática que el estudiante plantee con:
-1. Tono culto, amable, motivador, claro y paciente (con toques sutiles y cariñosos de perrito profesor 🐾).
-2. Explicación conceptual profunda pero sumamente intuitiva con analogías comprensibles.
-3. Principios y fórmulas bien explicadas.
-4. SIEMPRE incluye uno o dos EJEMPLOS PRÁCTICOS RESUELTOS PASO A PASO con números reales, mostrando cada cálculo intermedio.
-5. Destaca trampas típicas y errores comunes de examen.
-6. Emplea etiquetas HTML bien estructuradas (ej: <strong>, <code>, <div>, <ul>, <li>, <div class="erudite-step-item">) para que la respuesta se vea hermosa y fácil de leer. No uses Markdown con asteriscos crudos; usa HTML limpio.
-Contexto actual del estudiante en la app: ${activeContext ? activeContext.typeName : 'Matemáticas Generales'}.
-    `.trim();
+  function cleanApiKey(key) {
+    if (!key || typeof key !== 'string') return '';
+    return key.trim().replace(/^["']|["']$/g, '').replace(/^key=/, '').trim();
+  }
 
-    const body = {
-      contents: [
-        {
-          role: 'user',
-          parts: [{ text: `Pregunta del alumno: ${userPrompt}` }]
-        }
-      ],
-      systemInstruction: {
-        parts: [{ text: systemInstruction }]
-      },
-      generationConfig: {
-        temperature: 0.4,
-        maxOutputTokens: 1200
-      }
-    };
+  // Conversor elegante de Markdown a HTML para respuestas de Gemini
+  function renderMarkdown(md) {
+    if (!md) return '';
+    let html = md;
+    // Evitar scripts
+    html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
+    // Headers
+    html = html.replace(/^### (.*$)/gim, '<h5 style="color:#e2e8f0; margin:0.8rem 0 0.35rem 0;">$1</h5>');
+    html = html.replace(/^## (.*$)/gim, '<h4 style="color:#f8fafc; margin:1rem 0 0.4rem 0;">$1</h4>');
+    html = html.replace(/^# (.*$)/gim, '<h3 style="color:#ffffff; margin:1rem 0 0.5rem 0;">$1</h3>');
+
+    // Code blocks
+    html = html.replace(/```([a-z]*)\n([\s\S]*?)```/gim, '<pre style="background:rgba(0,0,0,0.4); padding:0.75rem; border-radius:8px; overflow-x:auto;"><code>$2</code></pre>');
+    // Inline code
+    html = html.replace(/`([^`]+)`/g, '<code style="background:rgba(255,255,255,0.08); padding:0.15rem 0.4rem; border-radius:4px; color:#a78bfa;">$1</code>');
+
+    // Bold & italic
+    html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+    // List items
+    html = html.replace(/^\s*[\-\*]\s+(.*$)/gim, '<li style="margin-bottom:0.25rem;">$1</li>');
+    html = html.replace(/(<li.*<\/li>)/s, '<ul style="padding-left:1.3rem; margin:0.5rem 0;">$1</ul>');
+
+    // LaTeX fractions like \frac{a}{b} -> a/b
+    html = html.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '$1/$2');
+    html = html.replace(/\$([^\$]+)\$/g, '<code>$1</code>');
+
+    // Paragraphs
+    const paragraphs = html.split(/\n\s*\n/);
+    return paragraphs.map(p => {
+      p = p.trim();
+      if (!p) return '';
+      if (p.startsWith('<h') || p.startsWith('<pre') || p.startsWith('<ul') || p.startsWith('<div')) return p;
+      return `<p style="margin:0.5rem 0; line-height:1.6;">${p.replace(/\n/g, '<br>')}</p>`;
+    }).join('');
+  }
+
+  async function callGeminiApi(model, cleanKey, body) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${cleanKey}`;
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1673,15 +2050,132 @@ Contexto actual del estudiante en la app: ${activeContext ? activeContext.typeNa
     });
 
     if (!res.ok) {
-      throw new Error(`Error en API de Gemini: HTTP ${res.status}`);
+      let errMsg = `HTTP ${res.status}`;
+      try {
+        const errJson = await res.json();
+        if (errJson && errJson.error) {
+          errMsg = errJson.error.message || errJson.error.status || errMsg;
+        }
+      } catch (_) {}
+      const err = new Error(errMsg);
+      err.status = res.status;
+      err.model = model;
+      throw err;
     }
 
     const data = await res.json();
     const candidate = data.candidates && data.candidates[0];
     if (candidate && candidate.content && candidate.content.parts && candidate.content.parts[0]) {
-      return candidate.content.parts[0].text;
+      return {
+        text: candidate.content.parts[0].text,
+        model: model
+      };
     }
-    throw new Error('Respuesta vacía de Gemini');
+    throw new Error('Respuesta vacía o bloqueada por políticas de seguridad de Gemini');
+  }
+
+  async function testGeminiKey(key) {
+    const cleanKey = cleanApiKey(key);
+    if (!cleanKey) {
+      return { ok: false, error: 'Por favor ingresa una clave de API antes de probar.' };
+    }
+    if (cleanKey.length < 15) {
+      return { ok: false, error: 'La clave ingresada es demasiado corta. Las claves de Google AI Studio suelen comenzar con "AIzaSy..." y tener aproximadamente 39 caracteres.' };
+    }
+
+    const testBody = {
+      contents: [{
+        role: 'user',
+        parts: [{ text: 'Responde estrictamente con la palabra: CONECTADO' }]
+      }],
+      generationConfig: {
+        maxOutputTokens: 20
+      }
+    };
+
+    let lastError = null;
+    for (const model of GEMINI_MODELS) {
+      try {
+        const result = await callGeminiApi(model, cleanKey, testBody);
+        return {
+          ok: true,
+          model: result.model,
+          message: `¡Conexión exitosa! El modelo <strong>${result.model}</strong> está activo y respondiendo correctamente.`
+        };
+      } catch (err) {
+        lastError = err;
+        // Si la clave es inválida (400 API_KEY_INVALID), no insistir con otros modelos
+        if (err.status === 400 && (err.message || '').includes('API key not valid')) {
+          break;
+        }
+      }
+    }
+
+    return {
+      ok: false,
+      error: lastError ? lastError.message : 'No se pudo conectar con los servidores de Google Generative AI.'
+    };
+  }
+
+  async function queryGemini(userPrompt, apiKey, activeContext) {
+    const cleanKey = cleanApiKey(apiKey);
+    if (!cleanKey) throw new Error('Clave de API no provista');
+
+    const systemInstruction = `
+Eres el "Profesor Perrito Math 🐶", un erudito y virtuoso catedrático de matemáticas con doctorado en pedagogía y didáctica matemática.
+Tu misión es enseñar y responder CUALQUIER duda o ejercicio matemático que el estudiante plantee con:
+1. Tono culto, amable, motivador, claro y paciente (con toques sutiles y cariñosos de perrito profesor 🐾).
+2. Explicación conceptual profunda pero sumamente intuitiva con analogías comprensibles.
+3. Principios y fórmulas bien explicadas.
+4. SIEMPRE incluye la resolución COMPLETA PASO A PASO con números reales, mostrando cada cálculo intermedio.
+5. Si te piden una operación (ej: 3/8 + 9/3), RESUÉLVELA DE INMEDIATO paso a paso con su m.c.m., amplificación, simplificación por M.C.D., número mixto y equivalente decimal.
+6. Destaca trampas típicas y errores comunes de examen.
+Contexto actual del estudiante en la app: ${activeContext ? activeContext.typeName : 'Matemáticas Generales'}.
+    `.trim();
+
+    const body = {
+      contents: [
+        {
+          role: 'user',
+          parts: [{ text: `Pregunta u operación matemática del alumno: ${userPrompt}` }]
+        }
+      ],
+      systemInstruction: {
+        parts: [{ text: systemInstruction }]
+      },
+      generationConfig: {
+        temperature: 0.3,
+        maxOutputTokens: 1400
+      }
+    };
+
+    let lastError = null;
+    for (const model of GEMINI_MODELS) {
+      try {
+        const result = await callGeminiApi(model, cleanKey, body);
+        const parsedHtml = renderMarkdown(result.text);
+        return `
+          <div class="erudite-card-response erudite-gemini-card">
+            <div class="erudite-header">
+              <span class="erudite-badge" style="background: linear-gradient(135deg, #7c3aed, #4f46e5); color: #fff;">✨ Google Gemini (${result.model})</span>
+              <strong>Cátedra Magistral con IA</strong>
+            </div>
+            <div class="erudite-gemini-content">
+              ${parsedHtml}
+            </div>
+          </div>
+        `;
+      } catch (err) {
+        lastError = err;
+        // Si el modelo no existe (404), intentamos con el siguiente en GEMINI_MODELS
+        if (err.status === 404 || (err.message || '').includes('not found')) {
+          continue;
+        }
+        // Si es otro error (ej: clave inválida o cuota), lanzamos el error
+        throw err;
+      }
+    }
+    throw lastError || new Error('No se pudo obtener respuesta de Google Gemini');
   }
 
   // ==========================================================================
@@ -1696,42 +2190,66 @@ Contexto actual del estudiante en la app: ${activeContext ? activeContext.typeNa
     const cleanQuery = query.trim();
     const qNorm = normalizeText(cleanQuery);
 
+    let geminiApiErrorNotice = '';
+
     // 1. ¿Tiene el usuario configurada una API Key de Gemini y hay conexión?
-    const savedApiKey = localStorage.getItem(GEMINI_KEY_STORAGE);
-    if (savedApiKey && savedApiKey.trim().length > 10 && navigator.onLine) {
+    const rawApiKey = localStorage.getItem(GEMINI_KEY_STORAGE);
+    const savedApiKey = cleanApiKey(rawApiKey);
+    if (savedApiKey && savedApiKey.length > 10 && (typeof navigator === 'undefined' || navigator.onLine !== false)) {
       try {
-        const geminiAnswer = await queryGemini(cleanQuery, savedApiKey.trim(), activeContext);
+        const geminiAnswer = await queryGemini(cleanQuery, savedApiKey, activeContext);
         if (geminiAnswer) return geminiAnswer;
       } catch (err) {
-        console.warn('[Perrito Erudite] Gemini no disponible, recurriendo al motor offline local:', err);
+        console.warn('[Perrito Erudite] Error al consultar API de Gemini:', err);
+        const errDetail = err.message || 'Error al conectar con Google Generative Language API';
+        geminiApiErrorNotice = `
+          <div class="erudite-api-notice">
+            <div class="erudite-notice-header">
+              <span>⚠️</span> <strong>Aviso del Asistente Google Gemini:</strong>
+            </div>
+            <div class="erudite-notice-body">
+              Google reportó: <code>${escapeHtml(errDetail)}</code>.<br>
+              🐶 <em>No te preocupes: el <strong>Profesor Perrito Math</strong> activó el <strong>Motor Matemático Offline Local</strong> para resolver tu ejercicio de inmediato:</em>
+            </div>
+          </div>
+        `;
       }
+    }
+
+    function withGeminiNotice(html) {
+      if (!html) return html;
+      return geminiApiErrorNotice ? (geminiApiErrorNotice + html) : html;
     }
 
     // 2. ¿Es un cálculo o problema específico para el evaluador interactivo?
     // Problemas verbales de aplicación (coincidencias periódicas de m.c.m., cometas, reparto equitativo M.C.D., porcentajes)
     const wordRes = PerritoSolver.solveWordProblem(cleanQuery);
-    if (wordRes) return wordRes;
+    if (wordRes) return withGeminiNotice(wordRes);
 
-    // Fracciones directas
+    // Fracciones directas (soporta lenguaje natural como '3/8 mas 9/3', '3/8 y 9/3', enteros con fracciones, etc.)
     const fracRes = PerritoSolver.solveFractions(cleanQuery);
-    if (fracRes) return fracRes;
+    if (fracRes) return withGeminiNotice(fracRes);
+
+    // Cálculos aritméticos y científicos directos (porcentajes, raíces, potencias, aritmética elemental)
+    const arithRes = PerritoSolver.solveArithmetic(cleanQuery);
+    if (arithRes) return withGeminiNotice(arithRes);
 
     // Ecuación lineal
     const linRes = PerritoSolver.solveLinear(cleanQuery);
-    if (linRes) return linRes;
+    if (linRes) return withGeminiNotice(linRes);
 
     // Ecuación cuadrática
     const quadRes = PerritoSolver.solveQuadratic(cleanQuery);
-    if (quadRes) return quadRes;
+    if (quadRes) return withGeminiNotice(quadRes);
 
     // M.C.D. o m.c.m.
     const mcdRes = PerritoSolver.solveMcdMcm(cleanQuery);
-    if (mcdRes) return mcdRes;
+    if (mcdRes) return withGeminiNotice(mcdRes);
 
     // Teorema de Pitágoras
     if (qNorm.includes('pitagora') || (qNorm.includes('cateto') && qNorm.includes('hipotenusa'))) {
       const pitRes = PerritoSolver.solvePythagoras(cleanQuery);
-      if (pitRes) return pitRes;
+      if (pitRes) return withGeminiNotice(pitRes);
     }
 
     // 3. ¿Coincide con algún tema de la Base de Conocimiento Erudita?
@@ -1753,25 +2271,25 @@ Contexto actual del estudiante en la app: ${activeContext ? activeContext.typeNa
     }
 
     if (bestMatch && maxScore >= 3) {
-      return formatKnowledgeResponse(bestMatch);
+      return withGeminiNotice(formatKnowledgeResponse(bestMatch));
     }
 
     // 4. Si la consulta tiene que ver con el contexto activo (ej. fracción compuesta en pantalla)
     if (activeContext && (qNorm.includes('este') || qNorm.includes('actual') || qNorm.includes('pantalla') || qNorm.includes('resultado') || qNorm.includes('porque') || qNorm.includes('por que'))) {
       if (activeContext.id === 'compfrac') {
         const compItem = KNOWLEDGE_BASE.find(k => k.id === 'fracciones_compuestas');
-        if (compItem) return formatKnowledgeResponse(compItem);
+        if (compItem) return withGeminiNotice(formatKnowledgeResponse(compItem));
       } else if (activeContext.id === 'equations') {
         const algItem = KNOWLEDGE_BASE.find(k => k.id === 'factorizacion_total');
-        if (algItem) return formatKnowledgeResponse(algItem);
+        if (algItem) return withGeminiNotice(formatKnowledgeResponse(algItem));
       } else if (activeContext.id === 'mcd') {
         const mcdItem = KNOWLEDGE_BASE.find(k => k.id === 'mcd_vs_mcm');
-        if (mcdItem) return formatKnowledgeResponse(mcdItem);
+        if (mcdItem) return withGeminiNotice(formatKnowledgeResponse(mcdItem));
       }
     }
 
     // 5. Respuesta heurística general de Pólya con ejemplos
-    return formatGenericEruditeResponse(cleanQuery, activeContext);
+    return withGeminiNotice(formatGenericEruditeResponse(cleanQuery, activeContext));
   }
 
   function getTopics() {
@@ -1784,8 +2302,9 @@ Contexto actual del estudiante en la app: ${activeContext ? activeContext.typeNa
   }
 
   function setApiKey(key) {
-    if (key && key.trim()) {
-      localStorage.setItem(GEMINI_KEY_STORAGE, key.trim());
+    const cleaned = cleanApiKey(key);
+    if (cleaned) {
+      localStorage.setItem(GEMINI_KEY_STORAGE, cleaned);
       return true;
     } else {
       localStorage.removeItem(GEMINI_KEY_STORAGE);
@@ -1804,6 +2323,8 @@ Contexto actual del estudiante en la app: ${activeContext ? activeContext.typeNa
     getTopicById,
     setApiKey,
     getApiKey,
+    testGeminiKey,
+    cleanApiKey,
     solver: PerritoSolver
   };
 
