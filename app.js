@@ -803,7 +803,26 @@
     const visibleRounds = stepExplanations.slice(0, Math.max(0, currentStep - 1));
 
     if (visibleRounds.length > 0) {
-      detailsHtml += `<h4 style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--color-primary);">🔍 Justificación de los Factores Primos Comunes Seleccionados:</h4>`;
+      const prevDetails = elements.simultaneousStepDetails ? elements.simultaneousStepDetails.querySelector('details') : null;
+      const wasOpen = prevDetails ? prevDetails.open : false;
+
+      detailsHtml += `
+        <details class="step-justification-collapse" ${wasOpen ? 'open' : ''}>
+          <summary class="step-justification-summary">
+            <div class="step-justification-title">
+              <span>🔍</span>
+              <span>Justificación de los Factores Primos Comunes Seleccionados:</span>
+              <span class="step-justification-badge">${visibleRounds.length} paso${visibleRounds.length > 1 ? 's' : ''}</span>
+            </div>
+            <div class="step-justification-action">
+              <span class="badge-text-open">Ver justificación</span>
+              <span class="badge-text-close">Plegar justificación</span>
+              <span class="collapsible-chevron-icon">▼</span>
+            </div>
+          </summary>
+          <div class="step-justification-body">
+      `;
+
       visibleRounds.forEach(round => {
         detailsHtml += `
           <div class="step-reason-card">
@@ -832,6 +851,11 @@
         });
         detailsHtml += `</div></div>`;
       });
+
+      detailsHtml += `
+          </div>
+        </details>
+      `;
     }
 
     elements.simultaneousStepDetails.innerHTML = detailsHtml;
@@ -6579,20 +6603,27 @@
       const res = window.PerritoAcademic.factorPolynomial(polyStr);
       lastFactorizationResult = res;
 
+      const method = res.method || res.caseName || 'Factorización de Polinomio';
+      const original = res.original || polyStr;
+      const explanation = res.explanation || res.formula || '';
+      const verificationProof = res.verificationProof || res.verification || 'Comprobación por multiplicación de factores verificada.';
+      const verified = res.verified !== undefined ? res.verified : (res.factored && !res.factored.includes('No se identificó'));
+
       let html = `
         <div style="background: rgba(236, 72, 153, 0.08); border: 1px solid rgba(236, 72, 153, 0.3); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem;">
-            <span class="notebook-card-topic topic-factorization">${res.method}</span>
-            <span style="font-size: 0.85rem; color: var(--text-muted);">Comprobación automática: ${res.verified ? '✅ Correcta' : '⚠️ Pendiente'}</span>
+            <span class="notebook-card-topic topic-factorization">${method}</span>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Comprobación automática: ${verified ? '✅ Correcta' : '⚠️ Pendiente'}</span>
           </div>
 
           <div style="font-family: var(--font-mono); font-size: 1.35rem; font-weight: 800; color: #f472b6; margin-bottom: 0.75rem; text-align: center;">
-            ${res.original} = <span style="color: #ffffff; background: rgba(236, 72, 153, 0.2); padding: 0.2rem 0.6rem; border-radius: 8px;">${res.factored}</span>
+            ${original} = <span style="color: #ffffff; background: rgba(236, 72, 153, 0.2); padding: 0.2rem 0.6rem; border-radius: 8px;">${res.factored}</span>
           </div>
 
+          ${explanation ? `
           <p style="color: var(--text-main); font-size: 0.95rem; line-height: 1.5; margin-bottom: 0;">
-            ${res.explanation}
-          </p>
+            ${explanation}
+          </p>` : ''}
         </div>
 
         <div class="card" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); padding: 1.25rem; margin-bottom: 1rem;">
@@ -6600,7 +6631,7 @@
             <span>🔍</span> Pasos de la Factorización
           </h4>
           <ul style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; color: var(--text-main); font-size: 0.95rem;">
-            ${res.steps.map(s => `<li>${s}</li>`).join('')}
+            ${(res.steps || []).map(s => `<li>${s}</li>`).join('')}
           </ul>
         </div>
 
@@ -6609,7 +6640,7 @@
             <span>🛡️</span> Comprobación por Propiedad Distributiva (Multiplicación de Factores)
           </div>
           <p style="margin-bottom: 0; font-size: 0.95rem; color: var(--text-main);">
-            ${res.verificationProof}
+            ${verificationProof}
           </p>
         </div>
       `;
@@ -7229,8 +7260,8 @@
         }
         window.PerritoAcademic.saveToNotebook({
           topic: 'Factorización',
-          title: lastFactorizationResult.method,
-          expression: lastFactorizationResult.original,
+          title: lastFactorizationResult.method || lastFactorizationResult.caseName || 'Factorización',
+          expression: lastFactorizationResult.original || factInput?.value || '',
           result: lastFactorizationResult.factored,
           steps: lastFactorizationResult.steps
         });

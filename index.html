@@ -2183,15 +2183,22 @@
       </div>
     </div> <!-- /#moduleAitutor -->
 
-      <!-- Educational Cheat Sheet & Excel Formulas Section -->
-      <section class="card edu-card">
-        <h2 class="section-heading">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-          </svg>
-          Guía Rápida: Fórmulas en Excel y Criterios de Divisibilidad
-        </h2>
+      <!-- Educational Cheat Sheet & Excel Formulas Section (Desplegable) -->
+      <details class="card edu-card collapsible-card" id="eduCardCollapse">
+        <summary class="section-heading collapsible-summary">
+          <div class="collapsible-title-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+            <span>Guía Rápida: Fórmulas en Excel y Criterios de Divisibilidad</span>
+          </div>
+          <div class="collapsible-action-badge">
+            <span class="badge-text-open">Ver guía</span>
+            <span class="badge-text-close">Plegar guía</span>
+            <span class="collapsible-chevron-icon">▼</span>
+          </div>
+        </summary>
         
         <div class="edu-grid">
           <div class="edu-item">
@@ -2231,7 +2238,7 @@
             </p>
           </div>
         </div>
-      </section>
+      </details>
 
     </main>
 

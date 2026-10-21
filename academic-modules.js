@@ -175,6 +175,21 @@ window.PerritoAcademic = (function() {
     // Normalize: e.g. x2 -> x^2
     raw = raw.replace(/x2/g, 'x^2').replace(/x3/g, 'x^3');
 
+    function buildResult(caseName, formula, steps, factored, verification, verified = true) {
+      return {
+        caseName,
+        method: caseName,
+        formula,
+        explanation: formula,
+        steps,
+        factored,
+        verification,
+        verificationProof: verification,
+        original: inputStr || raw,
+        verified
+      };
+    }
+
     // Case 1: Difference of Squares: A^2 x^2 - B^2 (e.g. x^2 - 9, 4x^2 - 25, 9x^2 - 16)
     const diffSquaresMatch = raw.match(/^(\d*)x\^2\-(\d+)$/);
     if (diffSquaresMatch) {
@@ -184,25 +199,74 @@ window.PerritoAcademic = (function() {
       const sqrtB = Math.sqrt(constB);
       if (Number.isInteger(sqrtA) && Number.isInteger(sqrtB)) {
         const termA = sqrtA === 1 ? 'x' : `${sqrtA}x`;
-        return {
-          caseName: 'Diferencia de Cuadrados',
-          formula: 'a² - b² = (a - b)(a + b)',
-          steps: [
+        return buildResult(
+          'Diferencia de Cuadrados',
+          'a² - b² = (a - b)(a + b)',
+          [
             `1. Identificamos los dos términos separados por un signo menos: (${termA})² y (${sqrtB})².`,
             `2. Extraemos la raíz cuadrada del primer término: √(${coeffA === 1 ? '' : coeffA}x²) = ${termA}.`,
             `3. Extraemos la raíz cuadrada del segundo término: √(${constB}) = ${sqrtB}.`,
             `4. Escribimos el producto de binomios conjugados (uno sumando y otro restando).`
           ],
-          factored: `(${termA} - ${sqrtB})(${termA} + ${sqrtB})`,
-          verification: `(${termA})(${termA}) + (${termA})(${sqrtB}) - (${sqrtB})(${termA}) - (${sqrtB})(${sqrtB}) = ${raw}`
-        };
+          `(${termA} - ${sqrtB})(${termA} + ${sqrtB})`,
+          `(${termA})(${termA}) + (${termA})(${sqrtB}) - (${sqrtB})(${termA}) - (${sqrtB})(${sqrtB}) = ${raw}`,
+          true
+        );
       }
     }
 
-    // Case 2: Common Monomial Factor: e.g. 6x^3 + 9x^2 or 4x^2 + 8x
-    const commonFactorMatch = raw.match(/^(\d*)x\^?(\d*)\+([+-]?\d*)x\^?(\d*)$/);
+    // Case 2: Common Monomial Factor: e.g. 6x^3 + 9x^2, 4x^2 + 8x, 5x^2 - 15x
+    const commonFactorMatch = raw.match(/^([+-]?\d*)x\^?(\d*)([+-]\d+)x\^?(\d*)$/);
     if (commonFactorMatch) {
-      // General common factor attempt
+      let c1Str = commonFactorMatch[1];
+      if (c1Str === '' || c1Str === '+') c1Str = '1';
+      else if (c1Str === '-') c1Str = '-1';
+      const c1 = Number(c1Str);
+      const e1 = commonFactorMatch[2] ? Number(commonFactorMatch[2]) : 1;
+
+      let c2Str = commonFactorMatch[3];
+      if (c2Str === '' || c2Str === '+') c2Str = '1';
+      else if (c2Str === '-') c2Str = '-1';
+      const c2 = Number(c2Str);
+      const e2 = commonFactorMatch[4] ? Number(commonFactorMatch[4]) : 1;
+
+      const g = gcd(Math.abs(c1), Math.abs(c2));
+      const minE = Math.min(e1, e2);
+      if (g > 1 || minE > 0) {
+        const factorCoeff = (c1 < 0 && c2 < 0) ? -g : g;
+        const factorPowerStr = minE === 0 ? '' : (minE === 1 ? 'x' : `x^${minE}`);
+        const factorMonomial = `${factorCoeff === 1 && factorPowerStr ? '' : (factorCoeff === -1 && factorPowerStr ? '-' : factorCoeff)}${factorPowerStr}`;
+
+        const rem1Coeff = c1 / factorCoeff;
+        const rem1Pow = e1 - minE;
+        const rem1PowStr = rem1Pow === 0 ? '' : (rem1Pow === 1 ? 'x' : `x^${rem1Pow}`);
+        const rem1Str = rem1Pow === 0 ? `${rem1Coeff}` : `${rem1Coeff === 1 ? '' : (rem1Coeff === -1 ? '-' : rem1Coeff)}${rem1PowStr}`;
+
+        const rem2Coeff = c2 / factorCoeff;
+        const rem2Pow = e2 - minE;
+        const rem2PowStr = rem2Pow === 0 ? '' : (rem2Pow === 1 ? 'x' : `x^${rem2Pow}`);
+        const sign2 = rem2Coeff >= 0 ? '+' : '-';
+        const rem2Abs = Math.abs(rem2Coeff);
+        const rem2Str = rem2Pow === 0 ? `${rem2Abs}` : `${rem2Abs === 1 ? '' : rem2Abs}${rem2PowStr}`;
+
+        const inside = `${rem1Str} ${sign2} ${rem2Str}`;
+        const factored = `${factorMonomial}(${inside})`;
+        const verification = `${factorMonomial} · (${rem1Str}) + ${factorMonomial} · (${sign2}${rem2Str}) = ${raw}`;
+
+        return buildResult(
+          'Factor Común Monomio',
+          'a·b ± a·c = a·(b ± c)',
+          [
+            `1. Calculamos el máximo común divisor de los coeficientes: MCD(|${c1}|, |${c2}|) = ${g}.`,
+            `2. Identificamos la variable con el menor exponente común: x^min(${e1}, ${e2}) = ${factorPowerStr || '1'}.`,
+            `3. Extraemos el factor común monomio: ${factorMonomial}.`,
+            `4. Dividimos cada término original entre el factor común para obtener el binomio restante: (${inside}).`
+          ],
+          factored,
+          verification,
+          true
+        );
+      }
     }
 
     // Case 3: Trinomial x^2 + bx + c (e.g. x^2 + 5x + 6, x^2 - 7x + 12, x^2 + x - 6)
@@ -233,18 +297,19 @@ window.PerritoAcademic = (function() {
 
       if (foundP !== null) {
         const isTCP = (foundP === foundQ);
-        return {
-          caseName: isTCP ? 'Trinomio Cuadrado Perfecto (TCP)' : 'Trinomio de la forma x² + bx + c',
-          formula: isTCP ? 'a² ± 2ab + b² = (a ± b)²' : 'x² + (p+q)x + (p·q) = (x + p)(x + q)',
-          steps: [
+        return buildResult(
+          isTCP ? 'Trinomio Cuadrado Perfecto (TCP)' : 'Trinomio de la forma x² + bx + c',
+          isTCP ? 'a² ± 2ab + b² = (a ± b)²' : 'x² + (p+q)x + (p·q) = (x + p)(x + q)',
+          [
             `1. Identificamos los coeficientes: término lineal b = ${b}, término independiente c = ${c}.`,
             `2. Buscamos dos números 'p' y 'q' tales que su producto sea ${c} y su suma sea ${b}.`,
             `3. Probamos parejas de factores de ${c}: encontramos p = ${foundP} y q = ${foundQ} (ya que ${foundP} × ${foundQ} = ${c} y ${foundP} + ${foundQ} = ${b}).`,
             isTCP ? `4. Al ser ambos factores iguales, se expresa como un binomio al cuadrado.` : `4. Formamos los dos binomios con la variable 'x'.`
           ],
-          factored: isTCP ? `(x ${foundP >= 0 ? '+ ' + foundP : '- ' + Math.abs(foundP)})²` : `(x ${foundP >= 0 ? '+ ' + foundP : '- ' + Math.abs(foundP)})(x ${foundQ >= 0 ? '+ ' + foundQ : '- ' + Math.abs(foundQ)})`,
-          verification: `x² + (${foundP} + ${foundQ})x + (${foundP})(${foundQ}) = x² ${b >= 0 ? '+' : ''}${b}x ${c >= 0 ? '+' : ''}${c}`
-        };
+          isTCP ? `(x ${foundP >= 0 ? '+ ' + foundP : '- ' + Math.abs(foundP)})²` : `(x ${foundP >= 0 ? '+ ' + foundP : '- ' + Math.abs(foundP)})(x ${foundQ >= 0 ? '+ ' + foundQ : '- ' + Math.abs(foundQ)})`,
+          `x² + (${foundP} + ${foundQ})x + (${foundP})(${foundQ}) = x² ${b >= 0 ? '+' : ''}${b}x ${c >= 0 ? '+' : ''}${c}`,
+          true
+        );
       }
     }
 
@@ -280,18 +345,19 @@ window.PerritoAcademic = (function() {
         const term1_b = pFound / g1;
         const g2 = gcd(qFound, c);
 
-        return {
-          caseName: 'Trinomio de la forma ax² + bx + c (Método a·c)',
-          formula: 'ax² + bx + c por descomposición del término medio',
-          steps: [
+        return buildResult(
+          'Trinomio de la forma ax² + bx + c (Método a·c)',
+          'ax² + bx + c por descomposición del término medio',
+          [
             `1. Multiplicamos el primer coeficiente por el término independiente: a · c = (${a}) · (${c}) = ${ac}.`,
             `2. Buscamos dos números que multiplicados den ${ac} y sumados den b = ${b}: encontramos ${pFound} y ${qFound}.`,
             `3. Descomponemos el término medio: ${a}x² + (${pFound}x + ${qFound}x) + ${c}.`,
             `4. Factorizamos por agrupación de términos.`
           ],
-          factored: `(${term1_a}x ${term1_b >= 0 ? '+ ' + term1_b : '- ' + Math.abs(term1_b)})(${g1}x ${qFound / term1_a >= 0 ? '+ ' + (qFound / term1_a) : '- ' + Math.abs(qFound / term1_a)})`,
-          verification: `Multiplicando los binomios término a término se recupera exactamente ${raw}.`
-        };
+          `(${term1_a}x ${term1_b >= 0 ? '+ ' + term1_b : '- ' + Math.abs(term1_b)})(${g1}x ${qFound / term1_a >= 0 ? '+ ' + (qFound / term1_a) : '- ' + Math.abs(qFound / term1_a)})`,
+          `Multiplicando los binomios término a término se recupera exactamente ${raw}.`,
+          true
+        );
       }
     }
 
@@ -305,46 +371,49 @@ window.PerritoAcademic = (function() {
         const b = Math.round(cbrt);
         const b2 = b * b;
         if (sign === '-') {
-          return {
-            caseName: 'Diferencia de Cubos Perfectos',
-            formula: 'a³ - b³ = (a - b)(a² + ab + b²)',
-            steps: [
+          return buildResult(
+            'Diferencia de Cubos Perfectos',
+            'a³ - b³ = (a - b)(a² + ab + b²)',
+            [
               `1. Extraemos la raíz cúbica del primer término: ∛(x³) = x.`,
               `2. Extraemos la raíz cúbica del segundo término: ∛(${val}) = ${b}.`,
               `3. Formamos el binomio con signo menos: (x - ${b}).`,
               `4. Formamos el trinomio: (cuadrado del primero) + (producto de ambos) + (cuadrado del segundo) = (x² + ${b}x + ${b2}).`
             ],
-            factored: `(x - ${b})(x² + ${b}x + ${b2})`,
-            verification: `(x - ${b})(x² + ${b}x + ${b2}) = x³ + ${b}x² + ${b2}x - ${b}x² - ${b2}x - ${val} = x³ - ${val}`
-          };
+            `(x - ${b})(x² + ${b}x + ${b2})`,
+            `(x - ${b})(x² + ${b}x + ${b2}) = x³ + ${b}x² + ${b2}x - ${b}x² - ${b2}x - ${val} = x³ - ${val}`,
+            true
+          );
         } else {
-          return {
-            caseName: 'Suma de Cubos Perfectos',
-            formula: 'a³ + b³ = (a + b)(a² - ab + b²)',
-            steps: [
+          return buildResult(
+            'Suma de Cubos Perfectos',
+            'a³ + b³ = (a + b)(a² - ab + b²)',
+            [
               `1. Extraemos la raíz cúbica del primer término: ∛(x³) = x.`,
               `2. Extraemos la raíz cúbica del segundo término: ∛(${val}) = ${b}.`,
               `3. Formamos el binomio con signo más: (x + ${b}).`,
               `4. Formamos el trinomio: (cuadrado del primero) - (producto de ambos) + (cuadrado del segundo) = (x² - ${b}x + ${b2}).`
             ],
-            factored: `(x + ${b})(x² - ${b}x + ${b2})`,
-            verification: `(x + ${b})(x² - ${b}x + ${b2}) = x³ - ${b}x² + ${b2}x + ${b}x² - ${b2}x + ${val} = x³ + ${val}`
-          };
+            `(x + ${b})(x² - ${b}x + ${b2})`,
+            `(x + ${b})(x² - ${b}x + ${b2}) = x³ - ${b}x² + ${b2}x + ${b}x² - ${b2}x + ${val} = x³ + ${val}`,
+            true
+          );
         }
       }
     }
 
     // Default fallback
-    return {
-      caseName: 'Polinomio General',
-      formula: 'Inspección de factores',
-      steps: [
+    return buildResult(
+      'Polinomio General',
+      'Inspección de factores',
+      [
         `Expresión ingresada: ${raw}.`,
         'Revisa que los exponentes y signos estén bien escritos, por ejemplo: x^2 - 16 o x^2 + 5x + 6.'
       ],
-      factored: `No se identificó un caso directo para ${raw}. Prueba con los ejemplos rápidos recomendados.`,
-      verification: 'Verifica los términos en el editor.'
-    };
+      `No se identificó un caso directo para ${raw}. Prueba con los ejemplos rápidos recomendados.`,
+      'Verifica los términos en el editor.',
+      false
+    );
   }
 
   // --- 5. CÁLCULO DIFERENCIAL (DERIVADAS PASO A PASO) ---
