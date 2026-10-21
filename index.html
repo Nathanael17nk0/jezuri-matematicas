@@ -51,27 +51,15 @@
         </div>
         
         <div class="header-actions">
-          <button id="btnInstallApp" class="btn btn-primary btn-sm btn-install-app" title="Descargar e Instalar Perrito Math en tu Celular o Computadora" style="background: linear-gradient(135deg, #10b981, #059669); border-color: #059669;">
+          <button id="btnInstallApp" class="btn btn-primary btn-sm btn-install-app" title="Descargar e Instalar Perrito Math en tu Celular o Computadora">
             📲 <span class="install-btn-text">Instalar App</span>
           </button>
-          <button id="btnHeaderGoEquations" class="btn btn-primary btn-sm btn-header-module" title="Ir al Resolver de Ecuaciones y Expresiones">
-            📐 Resolver Ecuaciones
-          </button>
-          <button id="btnHeaderGoRationals" class="btn btn-primary btn-sm btn-header-module" title="Ir a Adición y Sustracción de Racionales / Fracciones" style="background: linear-gradient(135deg, #f59e0b, #d97706); border-color: #d97706;">
-            🍕 Fracciones / Racionales
-          </button>
-          <button id="btnHeaderGoCompFrac" class="btn btn-primary btn-sm btn-header-module" title="Ir al Simplificador de Fracciones Compuestas" style="background: linear-gradient(135deg, #10b981, #059669); border-color: #059669;">
-            🪜 Fracciones Compuestas
-          </button>
-          <button id="btnHeaderGoAiTutor" class="btn btn-primary btn-sm btn-header-module" title="Consultar al Profesor Perrito IA" style="background: linear-gradient(135deg, #8b5cf6, #6366f1); border-color: #6366f1;">
-            🐶 Perrito IA
-          </button>
-          <button id="themeToggleBtn" class="btn btn-icon" title="Cambiar tema (Claro / Oscuro)" aria-label="Cambiar tema">
+          <button id="themeToggleBtn" class="btn btn-icon theme-toggle-pill" title="Cambiar tema (Claro / Oscuro)" aria-label="Cambiar tema">
             <span class="theme-icon light-icon">☀️</span>
             <span class="theme-icon dark-icon">🌙</span>
           </button>
           <a href="Tablas_Dinamicas_MCD.xlsx" download class="btn btn-secondary btn-sm btn-header-excel" id="btnDownloadTemplate" title="Descargar libro Excel preconfigurado">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
               <polyline points="7 10 12 15 17 10"/>
               <line x1="12" y1="15" x2="12" y2="3"/>
@@ -88,75 +76,67 @@
       <!-- Master Navigation Hub: 8 Módulos Temáticos Especializados (Prepa y Universidad) -->
       <nav class="module-nav-hub" aria-label="Módulos de Aprendizaje Matemático">
         <button type="button" class="module-nav-btn active" data-mod="mcd" id="navModMcd">
-          <span class="module-icon">🎯</span>
+          <span class="module-icon-wrap icon-mcd"><span class="module-icon">🎯</span></span>
           <div class="module-info">
-            <span class="module-title">M.C.D. y m.c.m.</span>
-            <span class="module-subtitle">Factores, Euclides, Divisores y Múltiplos</span>
+            <span class="module-title">M.C.D. & m.c.m.</span>
+            <span class="module-tag">Divisibilidad</span>
           </div>
-          <span class="module-badge">Módulo 1</span>
         </button>
 
         <button type="button" class="module-nav-btn" data-mod="equations" id="navModEquations">
-          <span class="module-icon">⚖️</span>
+          <span class="module-icon-wrap icon-equations"><span class="module-icon">⚖️</span></span>
           <div class="module-info">
-            <span class="module-title">Ecuaciones y Sistemas</span>
-            <span class="module-subtitle">1er Grado, Cuadráticas 2º, 2x2 y 3x3</span>
+            <span class="module-title">Ecuaciones</span>
+            <span class="module-tag">1º, 2º & Sistemas</span>
           </div>
-          <span class="module-badge">Módulo 2</span>
         </button>
 
         <button type="button" class="module-nav-btn" data-mod="factorization" id="navModFactorization">
-          <span class="module-icon">🧩</span>
+          <span class="module-icon-wrap icon-factorization"><span class="module-icon">🧩</span></span>
           <div class="module-info">
             <span class="module-title">Factorización</span>
-            <span class="module-subtitle">Factor Común, Trinomios y Cuadrados</span>
+            <span class="module-tag">Trinomios & Cuad.</span>
           </div>
-          <span class="module-badge">Módulo 3</span>
         </button>
 
         <button type="button" class="module-nav-btn" data-mod="rationals" id="navModRationals">
-          <span class="module-icon">🍕</span>
+          <span class="module-icon-wrap icon-rationals"><span class="module-icon">🍕</span></span>
           <div class="module-info">
-            <span class="module-title">Fracciones y Racionales</span>
-            <span class="module-subtitle">Operaciones directas y Cascada/Herradura</span>
+            <span class="module-title">Fracciones</span>
+            <span class="module-tag">Aritmética & Cascada</span>
           </div>
-          <span class="module-badge">Módulo 4</span>
         </button>
 
         <button type="button" class="module-nav-btn" data-mod="grapher" id="navModGrapher">
-          <span class="module-icon">📈</span>
+          <span class="module-icon-wrap icon-grapher"><span class="module-icon">📈</span></span>
           <div class="module-info">
             <span class="module-title">Graficador 2D</span>
-            <span class="module-subtitle">Raíces, Vértice, Ejes y Tabla</span>
+            <span class="module-tag">Raíces & Vértice</span>
           </div>
-          <span class="module-badge">Módulo 5</span>
         </button>
 
         <button type="button" class="module-nav-btn" data-mod="calculus" id="navModCalculus">
-          <span class="module-icon">🧮</span>
+          <span class="module-icon-wrap icon-calculus"><span class="module-icon">⚡</span></span>
           <div class="module-info">
-            <span class="module-title">Cálculo y Límites</span>
-            <span class="module-subtitle">Derivadas paso a paso e Indet. 0/0</span>
+            <span class="module-title">Cálculo</span>
+            <span class="module-tag">d/dx & Límites 0/0</span>
           </div>
-          <span class="module-badge">Módulo 6</span>
         </button>
 
         <button type="button" class="module-nav-btn" data-mod="quiz" id="navModQuiz">
-          <span class="module-icon">🏆</span>
+          <span class="module-icon-wrap icon-quiz"><span class="module-icon">🏆</span></span>
           <div class="module-info">
-            <span class="module-title">Entrenador Exámenes</span>
-            <span class="module-subtitle">Admisión UNAM/IPN/UAM y Quizzes</span>
+            <span class="module-title">Entrenador</span>
+            <span class="module-tag">Exámenes & Quizzes</span>
           </div>
-          <span class="module-badge">Módulo 7</span>
         </button>
 
         <button type="button" class="module-nav-btn ai-special-nav" data-mod="aitutor" id="navModAiTutor">
-          <span class="module-icon">🐶</span>
+          <span class="module-icon-wrap icon-aitutor ai-icon-pulse"><span class="module-icon">🐶</span></span>
           <div class="module-info">
-            <span class="module-title">Profesor Perrito IA</span>
-            <span class="module-subtitle">Tutor Pedagógico y Cuaderno</span>
+            <span class="module-title">Profesor IA</span>
+            <span class="module-tag">Tutor & Cuaderno</span>
           </div>
-          <span class="module-badge ai-badge">Tutor & Cuaderno</span>
         </button>
       </nav>
 

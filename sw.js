@@ -1,5 +1,5 @@
 // Service Worker for Perrito Math PWA - 100% Offline First Engine
-const CACHE_NAME = 'perrito-math-offline-v4.0';
+const CACHE_NAME = 'perrito-math-offline-v5.0';
 
 const PRECACHE_ASSETS = [
   './',
@@ -85,41 +85,26 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url);
 
-  // 1. Navigation requests (opening or refreshing the page / PWA app)
+  // 1. Navigation requests (opening or refreshing the page / PWA app) - Network first with offline fallback
   if (event.request.mode === 'navigate') {
     event.respondWith(
       (async () => {
-        // Fast response: Check cache first for instant launch (offline or online)
-        const cached = await caches.match(event.request, { ignoreSearch: true }) ||
-                       await getCachedIndex();
-
-        // If in cache, return immediately! Then fetch update in background
-        if (cached) {
-          fetch(event.request).then((networkResponse) => {
-            if (networkResponse && networkResponse.status === 200) {
-              const clone = networkResponse.clone();
-              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-            }
-          }).catch(() => {/* Offline: silent */});
-          return cached;
-        }
-
-        // If not in cache yet, fetch from network and cache
         try {
           const networkResponse = await fetch(event.request);
           if (networkResponse && networkResponse.status === 200) {
             const clone = networkResponse.clone();
             const cache = await caches.open(CACHE_NAME);
-            cache.put(event.request, clone);
+            await cache.put(event.request, clone);
+            await cache.put('./index.html', networkResponse.clone());
+            return networkResponse;
           }
-          return networkResponse;
-        } catch (err) {
-          const fallback = await getCachedIndex();
-          if (fallback) return fallback;
-          return new Response('Perrito Math está listo para usarse sin conexión.', {
-            headers: { 'Content-Type': 'text/html; charset=utf-8' }
-          });
+        } catch (e) {
+          // Network failed or offline - use cache fallback
         }
+        const cached = await caches.match(event.request, { ignoreSearch: true }) ||
+                       await getCachedIndex();
+        if (cached) return cached;
+        return new Response('Perrito Math Offline', { status: 200, headers: { 'Content-Type': 'text/plain' } });
       })()
     );
     return;
