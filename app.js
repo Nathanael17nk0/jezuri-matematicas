@@ -5182,8 +5182,8 @@
         state.aiState.messages = [
           {
             sender: 'bot',
-            text: `🐾 ¡Guau! ¡Hola! Soy tu <strong>Profesor Perrito Math 🐶</strong>.<br><br>
-                   Estoy aquí a tu lado mientras resuelves tus matemáticas. Puedes preguntarme cualquier duda sobre tu ejercicio en pantalla (<strong>${ctx.typeName}</strong>), pedirme que te resuelva cualquier cuenta paso a paso, o elegir un tema de las pestañas de arriba. ¿En qué te ayudo hoy?`
+            text: `🐾 ¡Guau! ¡Hola! Soy tu <strong>Profesor Perrito Math 🐶</strong>, catedrático universal de matemáticas.<br><br>
+                   Estoy programado para <strong>resolver y explicar cualquier tipo de duda o problema matemático</strong> (aritmética, fracciones, álgebra, ecuaciones, cálculo, geometría, trigonometría, estadística y más). Puedes escribir cualquier ejercicio para resolverlo paso a paso o consultarme tus dudas conceptuales. ¿En qué problema o tema trabajamos hoy?`
           }
         ];
       }
@@ -5530,7 +5530,11 @@
               statusBox.innerHTML = `✅ <strong>¡Conexión Exitosa!</strong><br>${res.message}`;
             } else {
               statusBox.className = 'gemini-test-result error';
-              statusBox.innerHTML = `❌ <strong>Error reportado por Google:</strong><br><code>${res.error}</code><br><small style="color: var(--text-dim); display: block; margin-top: 4px;">Verifica que la clave comience con "AIzaSy..." y que tu proyecto en Google AI Studio esté activo.</small>`;
+              let helpNotice = 'Verifica que la clave comience con "AIzaSy..." y que tu proyecto en Google AI Studio esté activo.';
+              if ((res.error || '').includes('not found') || (res.error || '').includes('generateContent')) {
+                helpNotice = '💡 <strong>Nota sobre modelos:</strong> Google actualiza periódicamente el catálogo de modelos disponibles. El sistema ahora consulta dinámicamente <code>ModelService.ListModels</code> y cascada hacia Gemini 2.5 / 2.0. Puedes verificar tus modelos o generar una clave fresca en <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" style="color: #c4b5fd; text-decoration: underline;">Google AI Studio</a>.';
+              }
+              statusBox.innerHTML = `❌ <strong>Error reportado por Google:</strong><br><code>${res.error}</code><br><small style="color: var(--text-dim); display: block; margin-top: 6px; line-height: 1.4;">${helpNotice}</small>`;
             }
           }
         } catch (err) {

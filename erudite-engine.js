@@ -1990,11 +1990,22 @@
   // ==========================================================================
 
   const GEMINI_KEY_STORAGE = 'perrito_math_gemini_api_key';
+  const GEMINI_ACTIVE_MODEL_STORAGE = 'perrito_math_gemini_active_model';
+  const GEMINI_ACTIVE_VER_STORAGE = 'perrito_math_gemini_active_ver';
 
-  const GEMINI_MODELS = [
+  // Catálogo moderno y ampliado de modelos Gemini ordenado por prioridad
+  const DEFAULT_GEMINI_MODELS = [
+    'gemini-2.5-flash',
     'gemini-2.0-flash',
+    'gemini-2.0-flash-001',
+    'gemini-flash-latest',
+    'gemini-2.5-pro',
+    'gemini-2.0-pro-exp',
     'gemini-1.5-flash',
-    'gemini-1.5-pro'
+    'gemini-1.5-flash-8b',
+    'gemini-1.5-flash-latest',
+    'gemini-1.5-pro',
+    'gemini-1.5-pro-latest'
   ];
 
   function cleanApiKey(key) {
@@ -2002,76 +2013,205 @@
     return key.trim().replace(/^["']|["']$/g, '').replace(/^key=/, '').trim();
   }
 
-  // Conversor elegante de Markdown a HTML para respuestas de Gemini
+  // Consulta directa a ModelService.ListModels de Google para obtener exactamente los modelos autorizados para esta clave
+  async function listAvailableGeminiModels(cleanKey) {
+    if (!cleanKey) return null;
+    const versions = ['v1beta', 'v1'];
+    let lastErr = null;
+
+    for (const ver of versions) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/${ver}/models?key=${cleanKey}`;
+        const res = await fetch(url);
+        if (!res.ok) {
+          let msg = `HTTP ${res.status}`;
+          try {
+            const ej = await res.json();
+            if (ej && ej.error) msg = ej.error.message || msg;
+          } catch (_) {}
+          const err = new Error(msg);
+          err.status = res.status;
+          lastErr = err;
+          // Si la clave es inválida (400) o denegada (403), lanzar para alertar de inmediato
+          if (res.status === 400 || res.status === 403) {
+            throw err;
+          }
+          continue;
+        }
+
+        const data = await res.json();
+        if (data && Array.isArray(data.models)) {
+          const contentModels = data.models
+            .filter(m => {
+              const methods = m.supportedGenerationMethods || [];
+              return methods.includes('generateContent');
+            })
+            .map(m => (m.name || '').replace(/^models\//, '').trim())
+            .filter(Boolean);
+
+          if (contentModels.length > 0) {
+            // Ordenar por prioridad óptima (Flash rápidos primero)
+            contentModels.sort((a, b) => {
+              let idxA = DEFAULT_GEMINI_MODELS.indexOf(a);
+              let idxB = DEFAULT_GEMINI_MODELS.indexOf(b);
+              if (idxA === -1) idxA = 999;
+              if (idxB === -1) idxB = 999;
+              return idxA - idxB;
+            });
+            return { apiVersion: ver, models: contentModels };
+          }
+        }
+      } catch (err) {
+        lastErr = err;
+        if (err.status === 400 || err.status === 403) throw err;
+      }
+    }
+    if (lastErr && (lastErr.status === 400 || lastErr.status === 403)) throw lastErr;
+    return null;
+  }
+
+  // Conversor elegante de Markdown y notación matemática a HTML para respuestas de Gemini
   function renderMarkdown(md) {
     if (!md) return '';
     let html = md;
-    // Evitar scripts
+    // Sanitización básica: evitar scripts
     html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
-    // Headers
-    html = html.replace(/^### (.*$)/gim, '<h5 style="color:#e2e8f0; margin:0.8rem 0 0.35rem 0;">$1</h5>');
-    html = html.replace(/^## (.*$)/gim, '<h4 style="color:#f8fafc; margin:1rem 0 0.4rem 0;">$1</h4>');
-    html = html.replace(/^# (.*$)/gim, '<h3 style="color:#ffffff; margin:1rem 0 0.5rem 0;">$1</h3>');
-
     // Code blocks
-    html = html.replace(/```([a-z]*)\n([\s\S]*?)```/gim, '<pre style="background:rgba(0,0,0,0.4); padding:0.75rem; border-radius:8px; overflow-x:auto;"><code>$2</code></pre>');
+    html = html.replace(/```([a-z]*)\n([\s\S]*?)```/gim, '<pre style="background:rgba(0,0,0,0.4); padding:0.75rem; border-radius:8px; overflow-x:auto; margin:0.6rem 0;"><code>$2</code></pre>');
     // Inline code
     html = html.replace(/`([^`]+)`/g, '<code style="background:rgba(255,255,255,0.08); padding:0.15rem 0.4rem; border-radius:4px; color:#a78bfa;">$1</code>');
+
+    // Headers
+    html = html.replace(/^#### (.*$)/gim, '<h6 style="color:#cbd5e1; margin:0.8rem 0 0.3rem 0; font-weight:700; font-size:0.95rem;">$1</h6>');
+    html = html.replace(/^### (.*$)/gim, '<h5 style="color:#e2e8f0; margin:0.9rem 0 0.35rem 0; font-weight:700; font-size:1.05rem;">$1</h5>');
+    html = html.replace(/^## (.*$)/gim, '<h4 style="color:#f8fafc; margin:1.1rem 0 0.4rem 0; font-weight:700; font-size:1.15rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:0.25rem;">$1</h4>');
+    html = html.replace(/^# (.*$)/gim, '<h3 style="color:#ffffff; margin:1.2rem 0 0.5rem 0; font-weight:800; font-size:1.3rem;">$1</h3>');
+
+    // Blockquotes
+    html = html.replace(/^>\s+(.*$)/gim, '<blockquote style="border-left:3px solid #7c3aed; padding:0.4rem 0.8rem; margin:0.6rem 0; background:rgba(124,58,237,0.08); border-radius:0 6px 6px 0; color:#e2e8f0;">$1</blockquote>');
+
+    // Block math ($$ ... $$)
+    html = html.replace(/\$\$([\s\S]+?)\$\$/g, (m, formula) => {
+      let cleanForm = formula.trim()
+        .replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1)/($2)')
+        .replace(/\\times/g, '×')
+        .replace(/\\cdot/g, '·')
+        .replace(/\\pm/g, '±')
+        .replace(/\\le/g, '≤')
+        .replace(/\\ge/g, '≥')
+        .replace(/\\ne/g, '≠')
+        .replace(/\\approx/g, '≈')
+        .replace(/\\sqrt\{([^}]+)\}/g, '√($1)');
+      return `<div style="text-align:center; margin:0.75rem 0; padding:0.55rem 0.8rem; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; font-weight:600; color:#38bdf8; font-family:'Courier New', monospace; font-size:1.05rem; overflow-x:auto;">${cleanForm}</div>`;
+    });
+
+    // Inline math ($ ... $)
+    html = html.replace(/\$([^\$\n]+)\$/g, (m, formula) => {
+      let cleanForm = formula.trim()
+        .replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1)/($2)')
+        .replace(/\\times/g, '×')
+        .replace(/\\cdot/g, '·')
+        .replace(/\\pm/g, '±')
+        .replace(/\\sqrt\{([^}]+)\}/g, '√($1)');
+      return `<code style="background:rgba(56,189,248,0.1); color:#38bdf8; padding:0.12rem 0.35rem; border-radius:4px; font-weight:600; font-family:monospace;">${cleanForm}</code>`;
+    });
 
     // Bold & italic
     html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
     html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
 
-    // List items
-    html = html.replace(/^\s*[\-\*]\s+(.*$)/gim, '<li style="margin-bottom:0.25rem;">$1</li>');
-    html = html.replace(/(<li.*<\/li>)/s, '<ul style="padding-left:1.3rem; margin:0.5rem 0;">$1</ul>');
+    // Horizontal rule
+    html = html.replace(/^---$/gim, '<hr style="border:0; border-top:1px solid rgba(255,255,255,0.12); margin:1rem 0;">');
 
-    // LaTeX fractions like \frac{a}{b} -> a/b
-    html = html.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '$1/$2');
-    html = html.replace(/\$([^\$]+)\$/g, '<code>$1</code>');
+    // Numbered and bullet list items
+    html = html.replace(/^\s*(\d+)\.\s+(.*$)/gim, '<li style="margin-bottom:0.35rem;"><strong>$1.</strong> $2</li>');
+    html = html.replace(/^\s*[\-\*]\s+(.*$)/gim, '<li style="margin-bottom:0.35rem;">$1</li>');
+
+    // Wrap consecutive li elements in ul
+    html = html.replace(/(<li style="margin-bottom:0\.35rem;">[\s\S]*?<\/li>\s*)+/g, (match) => {
+      return `<ul style="padding-left:1.3rem; margin:0.6rem 0;">${match}</ul>`;
+    });
 
     // Paragraphs
     const paragraphs = html.split(/\n\s*\n/);
     return paragraphs.map(p => {
       p = p.trim();
       if (!p) return '';
-      if (p.startsWith('<h') || p.startsWith('<pre') || p.startsWith('<ul') || p.startsWith('<div')) return p;
-      return `<p style="margin:0.5rem 0; line-height:1.6;">${p.replace(/\n/g, '<br>')}</p>`;
+      if (p.startsWith('<h') || p.startsWith('<pre') || p.startsWith('<ul') || p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<hr')) return p;
+      return `<p style="margin:0.55rem 0; line-height:1.65;">${p.replace(/\n/g, '<br>')}</p>`;
     }).join('');
   }
 
-  async function callGeminiApi(model, cleanKey, body) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${cleanKey}`;
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
+  async function callGeminiApi(model, cleanKey, body, preferredVersion = null) {
+    const cleanModel = (model || '').replace(/^models\//, '').trim();
+    const versionsToTry = preferredVersion ? [preferredVersion] : ['v1beta', 'v1'];
+    let lastErr = null;
 
-    if (!res.ok) {
-      let errMsg = `HTTP ${res.status}`;
+    for (const ver of versionsToTry) {
+      const url = `https://generativelanguage.googleapis.com/${ver}/models/${cleanModel}:generateContent?key=${cleanKey}`;
       try {
-        const errJson = await res.json();
-        if (errJson && errJson.error) {
-          errMsg = errJson.error.message || errJson.error.status || errMsg;
-        }
-      } catch (_) {}
-      const err = new Error(errMsg);
-      err.status = res.status;
-      err.model = model;
-      throw err;
-    }
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
 
-    const data = await res.json();
-    const candidate = data.candidates && data.candidates[0];
-    if (candidate && candidate.content && candidate.content.parts && candidate.content.parts[0]) {
-      return {
-        text: candidate.content.parts[0].text,
-        model: model
-      };
+        if (!res.ok) {
+          let errMsg = `HTTP ${res.status}`;
+          let errStatus = '';
+          try {
+            const errJson = await res.json();
+            if (errJson && errJson.error) {
+              errMsg = errJson.error.message || errJson.error.status || errMsg;
+              errStatus = errJson.error.status || '';
+            }
+          } catch (_) {}
+          const err = new Error(errMsg);
+          err.status = res.status;
+          err.apiStatus = errStatus;
+          err.model = cleanModel;
+          err.apiVersion = ver;
+          lastErr = err;
+
+          // Si es 404 (modelo no encontrado en esta versión de API), probamos en la otra versión si hay más
+          if (res.status === 404) {
+            continue;
+          }
+          // Para otros errores (400 clave inválida, 429 cuota, 403 permisos), lanzar de inmediato
+          throw err;
+        }
+
+        const data = await res.json();
+        const candidate = data.candidates && data.candidates[0];
+        if (candidate && candidate.content && Array.isArray(candidate.content.parts) && candidate.content.parts.length > 0) {
+          // Filtrar partes de pensamiento interno (thought: true) y extraer únicamente texto útil
+          const textParts = candidate.content.parts
+            .filter(p => !p.thought && typeof p.text === 'string')
+            .map(p => p.text);
+          let fullText = textParts.join('');
+          if (!fullText.trim()) {
+            fullText = candidate.content.parts.map(p => p.text || '').join('');
+          }
+          if (fullText.trim()) {
+            if (candidate.finishReason === 'MAX_TOKENS') {
+              fullText += '\n\n*(Nota: La respuesta alcanzó el límite máximo de longitud de tokens).*';
+            }
+            return {
+              text: fullText,
+              model: cleanModel,
+              apiVersion: ver,
+              finishReason: candidate.finishReason
+            };
+          }
+        }
+        throw new Error('Respuesta vacía o bloqueada por políticas de seguridad de Gemini');
+      } catch (e) {
+        lastErr = e;
+        if (e.status !== 404) throw e;
+      }
     }
-    throw new Error('Respuesta vacía o bloqueada por políticas de seguridad de Gemini');
+    throw lastErr || new Error(`No se pudo obtener respuesta del modelo ${cleanModel}`);
   }
 
   async function testGeminiKey(key) {
@@ -2089,31 +2229,77 @@
         parts: [{ text: 'Responde estrictamente con la palabra: CONECTADO' }]
       }],
       generationConfig: {
-        maxOutputTokens: 20
+        maxOutputTokens: 300
       }
     };
 
-    let lastError = null;
-    for (const model of GEMINI_MODELS) {
+    // 1. Descubrimiento dinámico de modelos autorizados con ModelService.ListModels
+    let candidateModels = [];
+    let detectedVersion = 'v1beta';
+    let discoveryError = null;
+
+    try {
+      const discovered = await listAvailableGeminiModels(cleanKey);
+      if (discovered && discovered.models && discovered.models.length > 0) {
+        candidateModels = discovered.models;
+        detectedVersion = discovered.apiVersion || 'v1beta';
+        console.log('[Perrito Erudite] Modelos detectados via ListModels:', candidateModels);
+      }
+    } catch (err) {
+      discoveryError = err;
+      if (err.status === 400 && (err.message || '').includes('API key not valid')) {
+        return {
+          ok: false,
+          error: 'Clave de API no válida en Google. Por favor verifica que la hayas copiado completa desde Google AI Studio.'
+        };
+      }
+      if (err.status === 403) {
+        return {
+          ok: false,
+          error: `Google denegó el acceso (403): ${err.message}. Verifica que tu clave no tenga restricciones en Google Cloud Console que bloqueen la "Generative Language API".`
+        };
+      }
+    }
+
+    // 2. Si ListModels no arrojó modelos o falló la llamada, usar la lista por defecto moderna
+    if (candidateModels.length === 0) {
+      candidateModels = DEFAULT_GEMINI_MODELS;
+    }
+
+    // 3. Probar los modelos candidatos en orden de prioridad hasta hallar uno activo
+    let lastError = discoveryError;
+    for (const model of candidateModels) {
       try {
-        const result = await callGeminiApi(model, cleanKey, testBody);
+        const result = await callGeminiApi(model, cleanKey, testBody, detectedVersion);
+        // Guardar modelo activo verificado y versión en localStorage
+        try {
+          localStorage.setItem(GEMINI_ACTIVE_MODEL_STORAGE, result.model);
+          localStorage.setItem(GEMINI_ACTIVE_VER_STORAGE, result.apiVersion);
+        } catch (_) {}
+
+        const detectedInfo = candidateModels.length > 1
+          ? `<br><small style="opacity: 0.9; display: inline-block; margin-top: 6px;">🎯 Modelos activos detectados en tu cuenta: <code>${candidateModels.slice(0, 3).join('</code>, <code>')}</code>${candidateModels.length > 3 ? '...' : ''}</small>`
+          : '';
+
         return {
           ok: true,
           model: result.model,
-          message: `¡Conexión exitosa! El modelo <strong>${result.model}</strong> está activo y respondiendo correctamente.`
+          apiVersion: result.apiVersion,
+          message: `¡Conexión exitosa! El modelo <strong>${result.model}</strong> (${result.apiVersion}) está activo y respondiendo correctamente.${detectedInfo}`
         };
       } catch (err) {
         lastError = err;
-        // Si la clave es inválida (400 API_KEY_INVALID), no insistir con otros modelos
+        // Si la clave es inválida, no seguir probando otros modelos
         if (err.status === 400 && (err.message || '').includes('API key not valid')) {
           break;
         }
       }
     }
 
+    let errMsg = lastError ? lastError.message : 'No se pudo conectar con los servidores de Google Generative AI.';
     return {
       ok: false,
-      error: lastError ? lastError.message : 'No se pudo conectar con los servidores de Google Generative AI.'
+      error: errMsg
     };
   }
 
@@ -2122,15 +2308,35 @@
     if (!cleanKey) throw new Error('Clave de API no provista');
 
     const systemInstruction = `
-Eres el "Profesor Perrito Math 🐶", un erudito y virtuoso catedrático de matemáticas con doctorado en pedagogía y didáctica matemática.
-Tu misión es enseñar y responder CUALQUIER duda o ejercicio matemático que el estudiante plantee con:
-1. Tono culto, amable, motivador, claro y paciente (con toques sutiles y cariñosos de perrito profesor 🐾).
-2. Explicación conceptual profunda pero sumamente intuitiva con analogías comprensibles.
-3. Principios y fórmulas bien explicadas.
-4. SIEMPRE incluye la resolución COMPLETA PASO A PASO con números reales, mostrando cada cálculo intermedio.
-5. Si te piden una operación (ej: 3/8 + 9/3), RESUÉLVELA DE INMEDIATO paso a paso con su m.c.m., amplificación, simplificación por M.C.D., número mixto y equivalente decimal.
-6. Destaca trampas típicas y errores comunes de examen.
-Contexto actual del estudiante en la app: ${activeContext ? activeContext.typeName : 'Matemáticas Generales'}.
+Eres el "Profesor Perrito Math 🐶", una eminencia académica y virtuoso catedrático de matemáticas con maestría y doctorado en didáctica y pedagogía de las ciencias exactas.
+Tu misión sagrada e inquebrantable es RESPONDER Y RESOLVER CUALQUIER TIPO DE DUDA O PROBLEMA MATEMÁTICO que el alumno te plantee, sin importar su nivel de dificultad ni la rama de las matemáticas a la que pertenezca:
+
+📚 DOMINIO UNIVERSAL DE DISCIPLINAS:
+1. Aritmética & Teoría de Números: Operaciones combinadas (PEMDAS), fracciones simples y compuestas, números mixtos, razones, proporciones, porcentajes, regla de tres simple e inversa, m.c.m., M.C.D., números primos, criterios de divisibilidad, potencias y radicales, notación científica.
+2. Álgebra Elemental y Superior: Reducción de términos semejantes, productos notables, todos los métodos de factorización (factor común, trinomios, diferencia de cuadrados, suma/diferencia de cubos, Ruffini), fracciones algebraicas, leyes de exponentes, logaritmos, números complejos.
+3. Ecuaciones, Inecuaciones y Sistemas: Ecuaciones de 1er grado, sistemas de ecuaciones lineales 2x2, 3x3 y nxn (Cramer, sustitución, igualación, reducción, Gauss-Jordan), ecuaciones cuadráticas (fórmula general/chicharronera, factorización, completación de cuadrados), ecuaciones de grado superior, exponenciales, logarítmicas, inecuaciones lineales y cuadráticas, valor absoluto.
+4. Problemas Verbales y de Aplicación Práctica: Problemas de edades, mezclas, móviles/cinemática (velocidad, distancia, tiempo), trabajo compartido y grifos, dinero, interés simple y compuesto, optimización geométrica.
+5. Geometría Euclidiana & Trigonometría: Perímetros, áreas y volúmenes de figuras 2D y 3D, Teorema de Pitágoras, Teorema de Tales y semejanza, razones trigonométricas (SOH-CAH-TOA), identidades fundamentales, Ley de Senos y Cosenos, ángulos notables, radianes.
+6. Geometría Analítica: Distancia entre puntos, punto medio, pendiente, todas las formas de la ecuación de la recta, paralelismo y perpendicularidad, distancia de un punto a una recta, cónicas (circunferencia, parábola, elipse, hipérbola) con sus centros, vértices, focos y directrices.
+7. Cálculo Diferencial: Límites algebraicos e indeterminaciones (0/0, ∞/∞, L'Hôpital), continuidad, derivadas por definición (cociente de Newton) y por reglas (potencia, producto, cociente, cadena), derivación implícita, máximos, mínimos, concavidad y puntos de inflexión.
+8. Cálculo Integral: Antiderivadas, integrales inmediatas, métodos de integración (sustitución/cambio de variable, integración por partes, fracciones parciales, sustitución trigonométrica), Teorema Fundamental del Cálculo, cálculo de áreas bajo la curva.
+9. Álgebra Lineal: Vectores en ℝ² y ℝ³ (módulo, dirección, producto escalar, producto vectorial, proyección), matrices (suma, producto, determinantes 2x2 y 3x3 por Sarrus/Cofactores, matriz inversa, rango).
+10. Probabilidad & Estadística: Medidas de tendencia central (media, mediana, moda), medidas de dispersión (rango, varianza, desviación estándar), combinatoria (principio multiplicativo, permutaciones, combinaciones), probabilidad clásica, condicional y Teorema de Bayes.
+11. Dudas Conceptuales, Historia y Paradojas: "¿Por qué no se puede dividir por cero?", "¿Por qué a⁰ = 1?", "¿Por qué (-)(-) = +?", el número Pi, el número e, la unidad imaginaria i, paradojas matemáticas, dudas teóricas de cualquier estudiante.
+
+🎯 PAUTAS ESTRICTAS DE RESOLUCIÓN:
+- Tono: Culto, cordial, motivador, paciente y didáctico (con toques sutiles y cariñosos de perrito profesor 🐾).
+- SI TE DAN UN EJERCICIO O PROBLEMA (con números, ecuaciones o texto): RESUÉLVELO DE PRINCIPIO A FIN DE FORMA COMPLETA Y DETALLADA. No te detengas a medias ni omitas pasos de cálculo. Muestra cada sustitución, simplificación y operación intermedia hasta llegar al resultado final.
+- SI TE DAN UNA DUDA TEÓRICA O CONCEPTUAL: Explica la intuición física/geométrica, la demostración formal y luego plantea y resuelve un ejemplo práctico completo ilustrativo.
+- Estructura la respuesta con elegancia:
+  1. 📌 Planteamiento e Identificación de Datos/Incógnitas.
+  2. 📐 Principio Matemático o Fórmula Rectora.
+  3. 🔢 Desarrollo Paso a Paso Exhaustivo.
+  4. 🏆 Resultado Final Definitivo (destacado en negrita, en su mínima expresión, con unidades o formas alternativas como mixto y decimal si aplica).
+  5. ⚠️ Trampa Típica de Examen (errores frecuentes que cometen los alumnos en este tema).
+  6. 💡 Consejo de Oro Didáctico del Profesor Perrito.
+
+Contexto actual del estudiante en la plataforma: ${activeContext ? activeContext.typeName : 'Matemáticas Universales'}.
     `.trim();
 
     const body = {
@@ -2145,14 +2351,46 @@ Contexto actual del estudiante en la app: ${activeContext ? activeContext.typeNa
       },
       generationConfig: {
         temperature: 0.3,
-        maxOutputTokens: 1400
+        maxOutputTokens: 8192
       }
     };
 
+    // Construir lista de modelos a probar: modelo activo guardado primero, luego descubiertos o por defecto
+    const modelsToTry = [];
+    const cachedModel = localStorage.getItem(GEMINI_ACTIVE_MODEL_STORAGE);
+    const cachedVer = localStorage.getItem(GEMINI_ACTIVE_VER_STORAGE) || 'v1beta';
+
+    if (cachedModel) {
+      modelsToTry.push({ model: cachedModel, ver: cachedVer });
+    }
+
+    try {
+      const discovered = await listAvailableGeminiModels(cleanKey);
+      if (discovered && discovered.models) {
+        for (const m of discovered.models) {
+          if (!modelsToTry.some(item => item.model === m)) {
+            modelsToTry.push({ model: m, ver: discovered.apiVersion || 'v1beta' });
+          }
+        }
+      }
+    } catch (_) {}
+
+    for (const defModel of DEFAULT_GEMINI_MODELS) {
+      if (!modelsToTry.some(item => item.model === defModel)) {
+        modelsToTry.push({ model: defModel, ver: 'v1beta' });
+      }
+    }
+
     let lastError = null;
-    for (const model of GEMINI_MODELS) {
+    for (const item of modelsToTry) {
       try {
-        const result = await callGeminiApi(model, cleanKey, body);
+        const result = await callGeminiApi(item.model, cleanKey, body, item.ver);
+        // Guardar modelo activo verificado
+        try {
+          localStorage.setItem(GEMINI_ACTIVE_MODEL_STORAGE, result.model);
+          localStorage.setItem(GEMINI_ACTIVE_VER_STORAGE, result.apiVersion);
+        } catch (_) {}
+
         const parsedHtml = renderMarkdown(result.text);
         return `
           <div class="erudite-card-response erudite-gemini-card">
@@ -2167,11 +2405,11 @@ Contexto actual del estudiante en la app: ${activeContext ? activeContext.typeNa
         `;
       } catch (err) {
         lastError = err;
-        // Si el modelo no existe (404), intentamos con el siguiente en GEMINI_MODELS
+        // Si el modelo no existe (404), intentamos con el siguiente modelo de la lista
         if (err.status === 404 || (err.message || '').includes('not found')) {
           continue;
         }
-        // Si es otro error (ej: clave inválida o cuota), lanzamos el error
+        // Si es otro error (ej: cuota agotada o clave inválida), lanzamos el error
         throw err;
       }
     }
@@ -2308,12 +2546,18 @@ Contexto actual del estudiante en la app: ${activeContext ? activeContext.typeNa
       return true;
     } else {
       localStorage.removeItem(GEMINI_KEY_STORAGE);
+      localStorage.removeItem(GEMINI_ACTIVE_MODEL_STORAGE);
+      localStorage.removeItem(GEMINI_ACTIVE_VER_STORAGE);
       return false;
     }
   }
 
   function getApiKey() {
     return localStorage.getItem(GEMINI_KEY_STORAGE) || '';
+  }
+
+  function getActiveModel() {
+    return localStorage.getItem(GEMINI_ACTIVE_MODEL_STORAGE) || '';
   }
 
   // Exportar en window
@@ -2323,8 +2567,10 @@ Contexto actual del estudiante en la app: ${activeContext ? activeContext.typeNa
     getTopicById,
     setApiKey,
     getApiKey,
+    getActiveModel,
     testGeminiKey,
     cleanApiKey,
+    listAvailableGeminiModels,
     solver: PerritoSolver
   };
 
