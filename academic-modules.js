@@ -172,8 +172,8 @@ window.PerritoAcademic = (function() {
     let raw = (inputStr || '').trim().replace(/\s+/g, '');
     if (!raw) raw = 'x^2 + 5x + 6';
 
-    // Normalize: e.g. x2 -> x^2
-    raw = raw.replace(/x2/g, 'x^2').replace(/x3/g, 'x^3');
+    // Normalize: e.g. x2 -> x^2, x² -> x^2, x³ -> x^3
+    raw = raw.replace(/²/g, '^2').replace(/³/g, '^3').replace(/x2/g, 'x^2').replace(/x3/g, 'x^3');
 
     function buildResult(caseName, formula, steps, factored, verification, verified = true) {
       return {

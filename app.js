@@ -6161,6 +6161,19 @@
         navigator.serviceWorker.register('./sw.js')
           .then((registration) => {
             console.log('[PWA] ServiceWorker registrado con éxito, ámbito:', registration.scope);
+
+            // Escuchar si hay una actualización disponible en segundo plano
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              if (newWorker) {
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    showToast('🚀 ¡Nueva versión de Perrito Math disponible! Actualizando...', 3000);
+                    setTimeout(() => window.location.reload(), 1200);
+                  }
+                });
+              }
+            });
             
             if (registration.installing) {
               registration.installing.addEventListener('statechange', (e) => {
@@ -6173,6 +6186,14 @@
           .catch((error) => {
             console.log('[PWA] Error registrando ServiceWorker:', error);
           });
+
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
+        });
       });
     }
 
