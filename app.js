@@ -271,7 +271,23 @@
     floatingChatMessages: document.getElementById('floatingChatMessages'),
     floatingChatForm: document.getElementById('floatingChatForm'),
     floatingChatInput: document.getElementById('floatingChatInput'),
-    btnFloatingSend: document.getElementById('btnFloatingSend')
+    btnFloatingSend: document.getElementById('btnFloatingSend'),
+    // KPI Procedure Modal elements
+    kpiProcedureModalOverlay: document.getElementById('kpiProcedureModalOverlay'),
+    kpiProcedureModalCard: document.getElementById('kpiProcedureModalCard'),
+    btnCloseKpiModal: document.getElementById('btnCloseKpiModal'),
+    btnCloseKpiModalBtn: document.getElementById('btnCloseKpiModalBtn'),
+    btnCopyKpiProcedure: document.getElementById('btnCopyKpiProcedure'),
+    btnJumpToMethodTab: document.getElementById('btnJumpToMethodTab'),
+    kpiModalIcon: document.getElementById('kpiModalIcon'),
+    kpiModalEyebrow: document.getElementById('kpiModalEyebrow'),
+    kpiModalTitle: document.getElementById('kpiModalTitle'),
+    kpiModalSubtitle: document.getElementById('kpiModalSubtitle'),
+    kpiModalHero: document.getElementById('kpiModalHero'),
+    kpiModalHeroLabel: document.getElementById('kpiModalHeroLabel'),
+    kpiModalHeroVal: document.getElementById('kpiModalHeroVal'),
+    kpiModalHeroBadge: document.getElementById('kpiModalHeroBadge'),
+    kpiModalBody: document.getElementById('kpiModalBody')
   };
 
   // --- MATEMÁTICAS PURAS Y ALGORITMOS DE FACTORES PRIMOS ---
@@ -712,6 +728,976 @@
       const lcmVal = window.PerritoAcademic.calculateArrayLCM(state.numbers);
       kpiLcm.textContent = Number(lcmVal).toLocaleString();
     }
+  }
+
+  // ==========================================================================
+  // PROCEDIMIENTO MATEMÁTICO DETALLADO PARA TARJETAS KPI
+  // ==========================================================================
+
+  let currentKpiProcedureContext = {
+    type: null,
+    textToCopy: '',
+    jumpTab: 'simultaneous'
+  };
+
+  function computeLcmSimultaneousDetailed(numbers) {
+    let current = numbers.map(n => Math.abs(Math.round(n))).filter(n => n > 0);
+    if (!current.length) return { steps: [], primeFactors: [], lcmVal: 0 };
+
+    const steps = [];
+    const primeFactors = [];
+
+    steps.push({
+      stepNum: 0,
+      values: [...current],
+      prime: null,
+      explanation: 'Valores iniciales'
+    });
+
+    let safety = 200;
+    while (current.some(x => x > 1) && safety-- > 0) {
+      let prime = 2;
+      while (prime <= 10000) {
+        if (isPrimeNumber(prime) && current.some(x => x % prime === 0)) {
+          break;
+        }
+        if (prime === 2) prime = 3;
+        else if (prime === 3) prime = 5;
+        else prime += 2;
+      }
+
+      const prev = [...current];
+      const next = current.map(x => (x % prime === 0 ? x / prime : x));
+      primeFactors.push(prime);
+
+      const dividingNums = prev.filter(x => x % prime === 0);
+      steps.push({
+        stepNum: steps.length,
+        values: next,
+        prevValues: prev,
+        prime: prime,
+        dividingNums,
+        explanation: `Dividir entre ${prime} (divide a: ${dividingNums.join(', ')})`
+      });
+
+      current = next;
+    }
+
+    const lcmVal = primeFactors.reduce((acc, p) => acc * p, 1);
+    return { steps, primeFactors, lcmVal };
+  }
+
+  function openKpiModal(kpiType) {
+    if (!elements.kpiProcedureModalOverlay) return;
+
+    const nums = state.numbers.map(n => Math.abs(Math.round(n)));
+    const simData = computeSimultaneousDecomposition(nums);
+    const mcd = simData.mcd;
+    const isCoprime = simData.isCoprime;
+    const mcdDetailed = getDetailedPrimeFactorization(mcd);
+    const lcmVal = window.PerritoAcademic ? window.PerritoAcademic.calculateArrayLCM(nums) : 0;
+
+    let icon = '🎯';
+    let eyebrow = 'PROCEDIMIENTO MATEMÁTICO';
+    let title = 'Máximo Común Divisor';
+    let subtitle = `Evaluando los números: [${nums.join(', ')}]`;
+    let heroTheme = '';
+    let heroLabel = 'Resultado Obtenido:';
+    let heroVal = `${mcd}`;
+    let heroBadge = isCoprime ? '🛡️ Números Coprimos (M.C.D. = 1)' : '✨ Divisor Común Mayor';
+    let jumpTab = 'simultaneous';
+    let jumpTabLabel = '📑 Ver en Pestaña del Método';
+    let bodyHtml = '';
+    let textToCopy = '';
+
+    if (kpiType === 'mcd') {
+      icon = '🎯';
+      eyebrow = 'TEORÍA DE NÚMEROS • MÁXIMO COMÚN DIVISOR';
+      title = 'Máximo Común Divisor (M.C.D.)';
+      subtitle = `Mayor número entero que divide exactamente a [${nums.join(', ')}]`;
+      heroTheme = '';
+      heroLabel = 'Máximo Común Divisor (M.C.D.):';
+      heroVal = `${mcd}`;
+      heroBadge = isCoprime ? '🛡️ Números Coprimos (M.C.D. = 1)' : '👑 Mayor Divisor Común';
+      jumpTab = 'simultaneous';
+      jumpTabLabel = '📑 Ver Tabla Simultánea Completa';
+
+      let euclidHtml = '';
+      if (nums.length === 2) {
+        const euclidSteps = computeEuclidSteps(nums[0], nums[1]);
+        euclidHtml = `
+          <div class="kpi-proc-section">
+            <h4 class="kpi-proc-section-title">📐 Método 3: Algoritmo de Euclides (Divisiones Modulares)</h4>
+            <div class="kpi-proc-step-list">
+              ${euclidSteps.divisions.map(d => `
+                <div class="kpi-proc-step-item">
+                  <span class="kpi-proc-step-badge">Paso #${d.step}</span>
+                  <div>
+                    <code>${d.dividend} ÷ ${d.divisor} = <strong>${d.quotient}</strong> con residuo <strong>${d.remainder}</strong></code>
+                    <div style="font-size: 0.78rem; color: var(--text-dim); margin-top: 0.2rem;">
+                      Fórmula de división: ${d.dividend} = (${d.divisor} × ${d.quotient}) + ${d.remainder}
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            <div class="kpi-proc-callout" style="margin-top: 0.5rem;">
+              El último residuo no nulo antes de llegar a cero es <strong>${euclidSteps.finalGcd}</strong>, confirmando que <strong>M.C.D. = ${euclidSteps.finalGcd}</strong>.
+            </div>
+          </div>
+        `;
+      }
+
+      bodyHtml = `
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">💡 Significado y Verificación Matemática</h4>
+          <p style="margin: 0; line-height: 1.5; color: var(--text-main);">
+            El <strong>Máximo Común Divisor</strong> de <code>[${nums.join(', ')}]</code> es <strong>${mcd}</strong>.
+            Es el número entero positivo más grande que puede dividir a todos ellos a la vez dejando un residuo exacto de cero:
+          </p>
+          <div class="kpi-proc-step-list">
+            ${nums.map(n => `
+              <div class="kpi-proc-step-item">
+                <span class="kpi-proc-step-badge">Comprobación</span>
+                <div>
+                  <code>${n} ÷ ${mcd} = <strong>${n / mcd}</strong></code> (exacto, residuo = 0).
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.45;">
+            Los cocientes que resultan de esta división son <code>[${simData.finalQuotients.join(', ')}]</code>. Estos números ya son <strong>primos entre sí (coprimos)</strong>, lo cual demuestra formalmente que no existe ningún otro divisor común posible.
+          </p>
+        </div>
+
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">⚡ Método 1: Descomposición Simultánea en Factores Primos</h4>
+          ${simData.commonPrimeFactors.length > 0 ? `
+            <p style="margin: 0; font-size: 0.88rem; color: var(--text-muted);">
+              Se colocaron los números juntos y se dividieron de forma continua entre los factores primos que dividieron a todos simultáneamente:
+            </p>
+            <div class="kpi-proc-step-list">
+              ${simData.stepExplanations.map(s => `
+                <div class="kpi-proc-step-item">
+                  <span class="kpi-proc-step-badge">Paso #${s.stepNumber}</span>
+                  <div>
+                    Dividir entre <strong>${s.prime}</strong>: 
+                    <code>[${s.prevValues.join(', ')}] ÷ ${s.prime} ⟹ [${s.nextValues.join(', ')}]</code>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            <div class="kpi-formula-box">
+              <span>Multiplicación de factores comunes:</span>
+              <span class="kpi-formula-text">${simData.commonPrimeFactors.join(' × ')} = ${mcd}</span>
+            </div>
+          ` : `
+            <div class="kpi-proc-callout">
+              No hubo ningún número primo que dividiera a todos ellos simultáneamente. Cuando dos o más números no comparten factores primos, se denominan <strong>números coprimos</strong> y su M.C.D. es estrictamente igual a <strong>1</strong>.
+            </div>
+          `}
+        </div>
+
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">🔢 Método 2: Descomposición Canónica (Menor Exponente)</h4>
+          <p style="margin: 0; font-size: 0.88rem; color: var(--text-muted);">
+            Descomponemos cada número individualmente en potencias de números primos:
+          </p>
+          <div style="background: var(--bg-card); padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 0.35rem;">
+            ${nums.map(n => `<div>• <code>${n}</code> = <strong>${getDetailedPrimeFactorization(n).canonicalStr}</strong></div>`).join('')}
+          </div>
+          <p style="margin: 0; font-size: 0.88rem; line-height: 1.5; color: var(--text-main);">
+            <strong>Regla Fundamental del M.C.D.:</strong> Se multiplican únicamente los factores primos <strong>comunes a todos</strong> elevados a su <strong>menor exponente</strong>:
+          </p>
+          <div class="kpi-formula-box">
+            <span>M.C.D. =</span>
+            <span class="kpi-formula-text">${mcdDetailed.canonicalStr} = ${mcd}</span>
+          </div>
+        </div>
+
+        ${euclidHtml}
+
+        <div class="kpi-proc-callout">
+          💡 <strong>Consejo del Profesor Perrito 🐶:</strong> El M.C.D. de una lista de números siempre debe ser <strong>menor o igual</strong> que el más pequeño de ellos (en este caso, ${mcd} ≤ ${Math.min(...nums)}).
+        </div>
+      `;
+
+      textToCopy = `=============================================
+PERRITO MATH 🐶 • PROCEDIMIENTO MATEMÁTICO
+=============================================
+Tarjeta: MÁXIMO COMÚN DIVISOR (M.C.D.)
+Números: [${nums.join(', ')}]
+Resultado: M.C.D. = ${mcd} ${isCoprime ? '(Números Coprimos)' : ''}
+
+1. DEFINICIÓN Y VERIFICACIÓN:
+   El número ${mcd} es el mayor entero que divide exactamente a todos:
+${nums.map(n => `   • ${n} ÷ ${mcd} = ${n / mcd}`).join('\n')}
+   Cocientes resultantes: [${simData.finalQuotients.join(', ')}] (Coprimos entre sí).
+
+2. DESCOMPOSICIÓN SIMULTÁNEA:
+${simData.stepExplanations.map(s => `   • Paso #${s.stepNumber}: [${s.prevValues.join(', ')}] ÷ ${s.prime} = [${s.nextValues.join(', ')}]`).join('\n') || '   • No hay factores comunes: MCD = 1'}
+   Factores primos multiplicados: ${simData.commonPrimeFactors.join(' × ') || '1'} = ${mcd}
+
+3. FORMA CANÓNICA (MENOR EXPONENTE COMÚN):
+${nums.map(n => `   • ${n} = ${getDetailedPrimeFactorization(n).canonicalStr}`).join('\n')}
+   M.C.D. = ${mcdDetailed.canonicalStr} = ${mcd}
+=============================================
+Generado con Perrito Math 🐶`;
+
+    } else if (kpiType === 'canonical') {
+      icon = '🔢';
+      eyebrow = 'FACTORIZACIÓN CANÓNICA • MENOR EXPONENTE';
+      title = 'Factores Primos Comunes';
+      subtitle = `Potencias y exponentes comunes para [${nums.join(', ')}]`;
+      heroTheme = 'theme-purple';
+      heroLabel = 'Forma Canónica del M.C.D.:';
+      heroVal = `${mcdDetailed.canonicalStr}`;
+      heroBadge = `= ${mcd}`;
+      jumpTab = 'individual';
+      jumpTabLabel = '📑 Ver Desglose de Factores Primos';
+
+      const factorizations = nums.map(n => ({ num: n, fact: getDetailedPrimeFactorization(n) }));
+      const allPrimesSet = new Set();
+      factorizations.forEach(f => {
+        Object.keys(f.fact.factorsMap).forEach(p => allPrimesSet.add(Number(p)));
+      });
+      const allPrimesSorted = Array.from(allPrimesSet).sort((a, b) => a - b);
+
+      let tableRows = '';
+      allPrimesSorted.forEach(p => {
+        const exps = factorizations.map(f => f.fact.factorsMap[p] || 0);
+        const isCommon = exps.every(e => e > 0);
+        const minExp = isCommon ? Math.min(...exps) : 0;
+        const sup = minExp === 1 ? '' : (minExp === 2 ? '²' : (minExp === 3 ? '³' : `<sup>${minExp}</sup>`));
+        const term = isCommon ? `${p}${sup}` : '—';
+        const reason = isCommon 
+          ? `<strong style="color: #34d399;">Común (menor exponente: ${minExp})</strong>` 
+          : `<span style="color: var(--text-dim);">No común (no divide a todos)</span>`;
+
+        tableRows += `
+          <tr>
+            <td><strong style="color: #c084fc;">${p}</strong></td>
+            ${exps.map(e => `<td><code>${e > 0 ? (e === 1 ? '1' : e) : '0'}</code></td>`).join('')}
+            <td>${isCommon ? '✅ Sí' : '❌ No'}</td>
+            <td><strong>${minExp > 0 ? minExp : '—'}</strong></td>
+            <td><code>${term}</code></td>
+            <td style="font-size: 0.8rem;">${reason}</td>
+          </tr>
+        `;
+      });
+
+      bodyHtml = `
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">🌳 Paso 1: Factorización Canónica de Cada Número</h4>
+          <p style="margin: 0; font-size: 0.88rem; color: var(--text-muted);">
+            Cada número se descompone en el producto de sus factores primos indivisibles:
+          </p>
+          <div class="kpi-proc-step-list">
+            ${factorizations.map(f => `
+              <div class="kpi-proc-step-item">
+                <span class="kpi-proc-step-badge">Núm ${f.num}</span>
+                <div>
+                  <code>${f.num} = ${f.fact.steps.filter(s => s.primeFactor).map(s => s.primeFactor).join(' × ') || f.num} = <strong>${f.fact.canonicalStr}</strong></code>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">📊 Paso 2: Matriz Comparativa de Exponentes</h4>
+          <p style="margin: 0; font-size: 0.88rem; color: var(--text-muted);">
+            Comparamos cuántas veces aparece cada factor primo en cada uno de los números:
+          </p>
+          <div style="overflow-x: auto;">
+            <table class="kpi-proc-table">
+              <thead>
+                <tr>
+                  <th>Primo</th>
+                  ${nums.map(n => `<th>Exp(${n})</th>`).join('')}
+                  <th>¿En todos?</th>
+                  <th>Menor Exp</th>
+                  <th>Factor M.C.D.</th>
+                  <th>Criterio</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${tableRows}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">💡 ¿Por qué se toma el MENOR exponente?</h4>
+          <p style="margin: 0; font-size: 0.86rem; line-height: 1.5; color: var(--text-main);">
+            El M.C.D. debe ser un divisor común a <strong>todos</strong> los números. Si tomáramos una potencia mayor (por ejemplo 2⁴ en lugar de 2³), el número 48 sí se podría dividir entre 16, ¡pero 72 no (72/16 = 4.5)!
+            Por ello, el mayor exponente que garantiza la división exacta simultánea es el <strong>menor exponente que comparten todos</strong>.
+          </p>
+          <div class="kpi-formula-box">
+            <span>Producto Canónico del M.C.D.:</span>
+            <span class="kpi-formula-text">${mcdDetailed.canonicalStr} = ${mcd}</span>
+          </div>
+        </div>
+      `;
+
+      textToCopy = `=============================================
+PERRITO MATH 🐶 • FACTORES PRIMOS COMUNES
+=============================================
+Números: [${nums.join(', ')}]
+Forma Canónica: ${mcdDetailed.canonicalStr} = ${mcd}
+
+1. FACTORIZACIÓN EN PRIMOS:
+${factorizations.map(f => `   • ${f.num} = ${f.fact.canonicalStr}`).join('\n')}
+
+2. REGLA DEL MENOR EXPONENTE COMÚN:
+   Para que un primo forme parte del M.C.D., debe estar presente en TODOS
+   los números y se selecciona con su MENOR potencia común.
+
+3. PRODUCTO CANÓNICO FINAL:
+   M.C.D. = ${mcdDetailed.canonicalStr} = ${mcd}
+=============================================
+Generado con Perrito Math 🐶`;
+
+    } else if (kpiType === 'steps') {
+      const rounds = simData.commonPrimeFactors.length;
+      icon = '📊';
+      eyebrow = 'DESCOMPOSICIÓN SIMULTÁNEA • HISTORIAL DE DIVISIONES';
+      title = 'Pasos de División Común';
+      subtitle = `Rondas sucesivas para resolver [${nums.join(', ')}]`;
+      heroTheme = 'theme-blue';
+      heroLabel = 'Rondas de División Completadas:';
+      heroVal = `${rounds} ${rounds === 1 ? 'Paso' : 'Pasos'}`;
+      heroBadge = rounds === 0 ? 'Coprimos iniciales (0 rondas)' : 'División común continua';
+      jumpTab = 'simultaneous';
+      jumpTabLabel = '📑 Ver Animación Paso a Paso';
+
+      let stepsHtml = '';
+      if (rounds > 0) {
+        stepsHtml = simData.steps.slice(1).map(st => {
+          const p = st.prime;
+          const operations = st.prevValues.map((v, i) => `<code>${v} ÷ ${p} = <strong>${st.values[i]}</strong></code>`).join(' &nbsp;•&nbsp; ');
+          return `
+            <div class="kpi-proc-step-item">
+              <span class="kpi-proc-step-badge">Paso #${st.stepNumber}</span>
+              <div style="flex: 1;">
+                <div style="font-weight: 700; color: #60a5fa; margin-bottom: 0.25rem;">
+                  Dividir simultáneamente entre el número primo ${p}
+                </div>
+                <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.35rem;">
+                  Justificación: Todos los números [${st.prevValues.join(', ')}] son divisibles exactamente entre ${p}.
+                </div>
+                <div style="background: var(--bg-surface); padding: 0.45rem 0.75rem; border-radius: 6px; border: 1px solid var(--border-subtle);">
+                  ${operations}
+                </div>
+                <div style="font-size: 0.78rem; color: var(--text-dim); margin-top: 0.35rem;">
+                  Nuevos cocientes para la siguiente ronda: <code>[${st.values.join(', ')}]</code>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        stepsHtml = `
+          <div class="kpi-proc-callout">
+            <strong>0 Pasos de división:</strong> No existe ningún número primo (2, 3, 5, 7...) que divida a todos los números <code>[${nums.join(', ')}]</code> al mismo tiempo. Los números ya son coprimos desde el inicio, por lo que el M.C.D. es inmediatamente igual a <strong>1</strong> sin requerir rondas de división.
+          </div>
+        `;
+      }
+
+      bodyHtml = `
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">🎯 Regla de las Rondas de División Simultánea</h4>
+          <p style="margin: 0; font-size: 0.88rem; line-height: 1.5; color: var(--text-main);">
+            El método simultáneo busca en cada ronda el menor número primo (comenzando por 2, luego 3, 5, etc.) que divida a <strong>TODOS</strong> los números de la fila. Si divide a todos, se ejecuta la ronda y se guardan los nuevos cocientes.
+          </p>
+        </div>
+
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">⏱️ Desglose Cronológico de cada Paso</h4>
+          <div class="kpi-proc-step-list">
+            ${stepsHtml}
+          </div>
+        </div>
+
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">🛑 Condición de Parada (¿Por qué terminaron los pasos?)</h4>
+          <p style="margin: 0; font-size: 0.86rem; line-height: 1.5; color: var(--text-main);">
+            Tras <strong>${rounds}</strong> ${rounds === 1 ? 'ronda' : 'rondas'}, los cocientes finales obtenidos son <code>[${simData.finalQuotients.join(', ')}]</code>.
+            Dado que ya no comparten ningún factor primo en común (su M.C.D. es 1), el algoritmo se detiene formalmente.
+          </p>
+          <div class="kpi-formula-box">
+            <span>Divisores multiplicados:</span>
+            <span class="kpi-formula-text">${simData.commonPrimeFactors.length > 0 ? simData.commonPrimeFactors.join(' × ') + ' = ' + mcd : 'M.C.D. = 1'}</span>
+          </div>
+        </div>
+      `;
+
+      textToCopy = `=============================================
+PERRITO MATH 🐶 • PASOS DE DIVISIÓN SIMULTÁNEA
+=============================================
+Números: [${nums.join(', ')}]
+Total de Rondas: ${rounds} pasos
+Resultado: M.C.D. = ${mcd}
+
+RONDAS DE DIVISIÓN:
+${simData.steps.slice(1).map(st => `   • Paso #${st.stepNumber} (÷${st.prime}): [${st.prevValues.join(', ')}] ⟹ [${st.values.join(', ')}]`).join('\n') || '   • Ninguna ronda (coprimos iniciales)'}
+
+Cocientes finales: [${simData.finalQuotients.join(', ')}] (Coprimos)
+Factores primos acumulados: ${simData.commonPrimeFactors.join(' × ') || '1'} = ${mcd}
+=============================================
+Generado con Perrito Math 🐶`;
+
+    } else if (kpiType === 'lcm') {
+      icon = '🔄';
+      eyebrow = 'TEORÍA DE NÚMEROS • MÍNIMO COMÚN MÚLTIPLO';
+      title = 'Mínimo Común Múltiplo (m.c.m.)';
+      subtitle = `Menor múltiplo positivo compartido por [${nums.join(', ')}]`;
+      heroTheme = 'theme-amber';
+      heroLabel = 'Mínimo Común Múltiplo (m.c.m.):';
+      heroVal = `${Number(lcmVal).toLocaleString()}`;
+      heroBadge = 'Menor múltiplo positivo común';
+      jumpTab = 'simultaneous';
+      jumpTabLabel = '📑 Ver Tabla Simultánea';
+
+      const lcmSim = computeLcmSimultaneousDetailed(nums);
+      const factorizations = nums.map(n => ({ num: n, fact: getDetailedPrimeFactorization(n) }));
+      const allPrimesSet = new Set();
+      factorizations.forEach(f => {
+        Object.keys(f.fact.factorsMap).forEach(p => allPrimesSet.add(Number(p)));
+      });
+      const allPrimesSorted = Array.from(allPrimesSet).sort((a, b) => a - b);
+
+      let lcmParts = [];
+      let lcmMatrixRows = '';
+      allPrimesSorted.forEach(p => {
+        const exps = factorizations.map(f => f.fact.factorsMap[p] || 0);
+        const maxExp = Math.max(...exps);
+        const sup = maxExp === 1 ? '' : (maxExp === 2 ? '²' : (maxExp === 3 ? '³' : `<sup>${maxExp}</sup>`));
+        lcmParts.push(`${p}${sup}`);
+
+        lcmMatrixRows += `
+          <tr>
+            <td><strong style="color: #f59e0b;">${p}</strong></td>
+            ${exps.map(e => `<td><code>${e > 0 ? (e === 1 ? '1' : e) : '0'}</code></td>`).join('')}
+            <td><strong style="color: #fbbf24;">${maxExp}</strong></td>
+            <td><code>${p}${sup}</code> (${Math.pow(p, maxExp)})</td>
+          </tr>
+        `;
+      });
+
+      let productTheoremHtml = '';
+      if (nums.length === 2) {
+        const prod = nums[0] * nums[1];
+        productTheoremHtml = `
+          <div class="kpi-proc-section">
+            <h4 class="kpi-proc-section-title">📐 Método 3: Teorema del Producto (Relación M.C.D. y m.c.m.)</h4>
+            <p style="margin: 0; font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">
+              Para dos números enteros cualesquiera, se cumple siempre la relación fundamental:
+            </p>
+            <div style="background: var(--bg-card); padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border-subtle); margin: 0.35rem 0;">
+              <code>a × b = M.C.D.(a, b) × m.c.m.(a, b)</code>
+            </div>
+            <p style="margin: 0; font-size: 0.88rem; color: var(--text-main); line-height: 1.5;">
+              Despejando el <strong>m.c.m.</strong>:
+              <br><code>m.c.m. = (${nums[0]} × ${nums[1]}) / ${mcd} = ${prod} / ${mcd} = <strong>${lcmVal}</strong></code>.
+            </p>
+          </div>
+        `;
+      }
+
+      let lcmTableRows = '';
+      lcmSim.steps.forEach(st => {
+        lcmTableRows += `
+          <tr>
+            <td>${st.stepNum === 0 ? 'Inicio' : st.stepNum}</td>
+            ${st.values.map(v => `<td><strong>${v}</strong></td>`).join('')}
+            <td>${st.prime ? `<span class="prime-chip" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4);">${st.prime}</span>` : '—'}</td>
+            <td style="font-size: 0.8rem; color: var(--text-muted);">${st.explanation}</td>
+          </tr>
+        `;
+      });
+
+      bodyHtml = `
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">💡 ¿Qué es el m.c.m. y qué significa este resultado?</h4>
+          <p style="margin: 0; font-size: 0.88rem; line-height: 1.5; color: var(--text-main);">
+            El <strong>Mínimo Común Múltiplo</strong> de <code>[${nums.join(', ')}]</code> es <strong>${lcmVal}</strong>.
+            Es el primer y más pequeño número entero positivo que es múltiplo de todos ellos exactamente:
+          </p>
+          <div class="kpi-proc-step-list">
+            ${nums.map(n => `
+              <div class="kpi-proc-step-item">
+                <span class="kpi-proc-step-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4);">Múltiplo</span>
+                <div>
+                  <code>${lcmVal} ÷ ${n} = <strong>${lcmVal / n}</strong></code> (exacto, residuo = 0).
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">⚡ Método 1: Factores Primos al MAYOR Exponente</h4>
+          <p style="margin: 0; font-size: 0.88rem; line-height: 1.5; color: var(--text-muted);">
+            A diferencia del M.C.D., para el <strong>m.c.m.</strong> tomamos <strong>todos los factores primos</strong> (comunes y no comunes) elevados a su <strong>mayor exponente</strong>:
+          </p>
+          <div style="overflow-x: auto;">
+            <table class="kpi-proc-table">
+              <thead>
+                <tr>
+                  <th>Factor Primo</th>
+                  ${nums.map(n => `<th>Exp(${n})</th>`).join('')}
+                  <th>Mayor Exponente</th>
+                  <th>Potencia para el m.c.m.</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${lcmMatrixRows}
+              </tbody>
+            </table>
+          </div>
+          <div class="kpi-formula-box" style="margin-top: 0.65rem;">
+            <span>Producto de potencias mayores:</span>
+            <span class="kpi-formula-text" style="color: #fbbf24;">${lcmParts.join(' × ')} = ${lcmVal}</span>
+          </div>
+        </div>
+
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">🏫 Método 2: Descomposición Simultánea Escolar (hasta llegar a 1)</h4>
+          <p style="margin: 0; font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">
+            Se divide de forma simultánea entre números primos mientras <em>al menos un número</em> sea divisible. Los números que no dividen bajan intactos hasta que todas las columnas llegan a 1:
+          </p>
+          <div style="overflow-x: auto;">
+            <table class="kpi-proc-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  ${nums.map((_, i) => `<th>Núm ${String.fromCharCode(65 + i)}</th>`).join('')}
+                  <th>Primo</th>
+                  <th>Justificación</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${lcmTableRows}
+              </tbody>
+            </table>
+          </div>
+          <div class="kpi-formula-box" style="margin-top: 0.65rem;">
+            <span>Multiplicación de la columna de primos:</span>
+            <span class="kpi-formula-text" style="color: #fbbf24;">${lcmSim.primeFactors.join(' × ')} = ${lcmVal}</span>
+          </div>
+        </div>
+
+        ${productTheoremHtml}
+
+        <div class="kpi-proc-callout">
+          💡 <strong>Regla Nemotécnica del Profesor Perrito 🐶:</strong><br>
+          • <strong>M.C.D.</strong> = Menor o igual al más pequeño (${mcd} ≤ ${Math.min(...nums)}) • Divide a los números.<br>
+          • <strong>m.c.m.</strong> = Mayor o igual al más grande (${lcmVal} ≥ ${Math.max(...nums)}) • Es dividido por los números.
+        </div>
+      `;
+
+      textToCopy = `=============================================
+PERRITO MATH 🐶 • MÍNIMO COMÚN MÚLTIPLO (m.c.m.)
+=============================================
+Números: [${nums.join(', ')}]
+Resultado: m.c.m. = ${lcmVal}
+
+1. DEFINICIÓN:
+   ${lcmVal} es el menor entero positivo que es múltiplo de todos:
+${nums.map(n => `   • ${lcmVal} ÷ ${n} = ${lcmVal / n}`).join('\n')}
+
+2. FACTORES PRIMOS AL MAYOR EXPONENTE:
+${factorizations.map(f => `   • ${f.num} = ${f.fact.canonicalStr}`).join('\n')}
+   m.c.m. = ${lcmParts.join(' × ')} = ${lcmVal}
+
+3. DESCOMPOSICIÓN SIMULTÁNEA HASTA 1:
+   Factores primos: ${lcmSim.primeFactors.join(' × ')} = ${lcmVal}
+${nums.length === 2 ? `\n4. TEOREMA DEL PRODUCTO:\n   m.c.m. = (${nums[0]} × ${nums[1]}) / ${mcd} = ${nums[0] * nums[1]} / ${mcd} = ${lcmVal}` : ''}
+=============================================
+Generado con Perrito Math 🐶`;
+
+    } else if (kpiType === 'excel') {
+      icon = '⚡';
+      eyebrow = 'MICROSOFT EXCEL & GOOGLE SHEETS';
+      title = 'Fórmulas para Hojas de Cálculo';
+      subtitle = `Sintaxis oficial en español e inglés para [${nums.join(', ')}]`;
+      heroTheme = 'theme-blue';
+      heroLabel = 'Fórmula de M.C.D.:';
+      heroVal = `=M.C.D(${nums.join('; ')})`;
+      heroBadge = `= ${mcd}`;
+      jumpTab = 'simultaneous';
+      jumpTabLabel = '📑 Ir a la Calculadora';
+
+      const letters = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1'].slice(0, nums.length);
+      const fMcdVals = `=M.C.D(${nums.join('; ')})`;
+      const fMcdCells = `=M.C.D(${letters.join('; ')})`;
+      const fLcmVals = `=M.C.M(${nums.join('; ')})`;
+      const fLcmCells = `=M.C.M(${letters.join('; ')})`;
+      const fGcdEn = `=GCD(${nums.join(', ')})`;
+      const fLcmEn = `=LCM(${nums.join(', ')})`;
+
+      bodyHtml = `
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">📋 Fórmulas Listas para Copiar</h4>
+          <p style="margin: 0; font-size: 0.88rem; color: var(--text-muted);">
+            Haz clic en "Copiar" y pégala directamente en cualquier celda de Excel o Google Sheets:
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-top: 0.25rem;">
+            <div class="kpi-formula-box">
+              <div>
+                <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">M.C.D. con valores directos:</div>
+                <div class="kpi-formula-text">${fMcdVals}</div>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm btn-copy-inline-formula" data-formula="${fMcdVals}">Copiar</button>
+            </div>
+
+            <div class="kpi-formula-box">
+              <div>
+                <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">M.C.D. con referencias de celdas:</div>
+                <div class="kpi-formula-text">${fMcdCells}</div>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm btn-copy-inline-formula" data-formula="${fMcdCells}">Copiar</button>
+            </div>
+
+            <div class="kpi-formula-box">
+              <div>
+                <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">m.c.m. en Excel (Español):</div>
+                <div class="kpi-formula-text" style="color: #fbbf24;">${fLcmVals}</div>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm btn-copy-inline-formula" data-formula="${fLcmVals}">Copiar</button>
+            </div>
+
+            <div class="kpi-formula-box">
+              <div>
+                <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Excel en Inglés (US/UK) / Google Sheets:</div>
+                <div class="kpi-formula-text" style="color: #34d399;">${fGcdEn} &nbsp;|&nbsp; ${fLcmEn}</div>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm btn-copy-inline-formula" data-formula="${fGcdEn}">Copiar GCD</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">🛠️ Instrucciones de Uso en Excel</h4>
+          <ol style="margin: 0; padding-left: 1.25rem; font-size: 0.88rem; line-height: 1.6; color: var(--text-main);">
+            <li>Abre tu libro en <strong>Microsoft Excel</strong> o una hoja en <strong>Google Sheets</strong>.</li>
+            <li>Coloca los números en celdas consecutivas (por ejemplo, A1: <code>${nums[0]}</code>, B1: <code>${nums[1]}</code>).</li>
+            <li>En la celda donde quieres el resultado escribe <code>=M.C.D(A1; B1)</code>.</li>
+            <li>Presiona <strong>Enter</strong> y Excel devolverá instantáneamente <code>${mcd}</code>.</li>
+          </ol>
+        </div>
+
+        <div class="kpi-proc-callout">
+          📌 <strong>Separador de Argumentos Regional:</strong> En hojas de cálculo en idioma español se utiliza el punto y coma (<code>;</code>) como separador de parámetros para evitar ambigüedades con la coma decimal. Si tu Excel está configurado en inglés, usa la coma (<code>,</code>).
+        </div>
+      `;
+
+      textToCopy = `=============================================
+PERRITO MATH 🐶 • FÓRMULAS PARA EXCEL / SHEETS
+=============================================
+Números: [${nums.join(', ')}]
+M.C.D. = ${mcd} | m.c.m. = ${lcmVal}
+
+FÓRMULAS EN ESPAÑOL:
+• M.C.D. directo: ${fMcdVals}
+• M.C.D. celdas:  ${fMcdCells}
+• m.c.m. directo: ${fLcmVals}
+• m.c.m. celdas:  ${fLcmCells}
+
+FÓRMULAS EN INGLÉS:
+• GCD: ${fGcdEn}
+• LCM: ${fLcmEn}
+=============================================
+Generado con Perrito Math 🐶`;
+    }
+
+    currentKpiProcedureContext = {
+      type: kpiType,
+      textToCopy: textToCopy,
+      jumpTab: jumpTab
+    };
+
+    // Populate modal DOM
+    if (elements.kpiModalIcon) elements.kpiModalIcon.textContent = icon;
+    if (elements.kpiModalEyebrow) elements.kpiModalEyebrow.textContent = eyebrow;
+    if (elements.kpiModalTitle) elements.kpiModalTitle.textContent = title;
+    if (elements.kpiModalSubtitle) elements.kpiModalSubtitle.textContent = subtitle;
+
+    if (elements.kpiModalHero) {
+      elements.kpiModalHero.className = `kpi-modal-hero ${heroTheme}`;
+    }
+    if (elements.kpiModalHeroLabel) elements.kpiModalHeroLabel.textContent = heroLabel;
+    if (elements.kpiModalHeroVal) elements.kpiModalHeroVal.innerHTML = heroVal;
+    if (elements.kpiModalHeroBadge) elements.kpiModalHeroBadge.textContent = heroBadge;
+
+    if (elements.kpiModalBody) {
+      elements.kpiModalBody.innerHTML = bodyHtml;
+
+      // Attach inline copy buttons in formula section if any
+      elements.kpiModalBody.querySelectorAll('.btn-copy-inline-formula').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const formula = btn.dataset.formula;
+          if (formula && navigator.clipboard) {
+            navigator.clipboard.writeText(formula).then(() => {
+              showToast(`✅ Fórmula copiada: ${formula}`);
+            });
+          }
+        });
+      });
+    }
+
+    if (elements.btnJumpToMethodTab) {
+      elements.btnJumpToMethodTab.textContent = jumpTabLabel;
+    }
+
+    // Open Modal
+    elements.kpiProcedureModalOverlay.style.display = 'flex';
+  }
+
+  function openRatKpiModal(ratKpiType) {
+    if (!elements.kpiProcedureModalOverlay) return;
+
+    const sol = state.ratState.solution || solveRationalsStepByStep(state.ratState.terms);
+    if (!sol || sol.error) {
+      showToast('Ingresa fracciones válidas primero.');
+      return;
+    }
+
+    let icon = '🎯';
+    let eyebrow = 'NÚMEROS RACIONALES • PROCEDIMIENTO';
+    let title = 'Fracción Irreducible';
+    let subtitle = `Expresión: ${state.ratState.expression || 'Operación de fracciones'}`;
+    let heroTheme = '';
+    let heroLabel = 'Resultado:';
+    let heroVal = '';
+    let heroBadge = '';
+    let bodyHtml = '';
+    let textToCopy = '';
+
+    const finalNumAbs = Math.abs(sol.finalNum);
+    const finalDen = sol.finalDen;
+    const sign = sol.finalNum < 0 ? '−' : '';
+    const fracStr = `${sign}${finalNumAbs}/${finalDen}`;
+
+    if (ratKpiType === 'result') {
+      icon = '🎯';
+      title = 'Fracción Irreducible (Simplificación)';
+      eyebrow = 'FRACCIONES • SIMPLIFICACIÓN CANÓNICA';
+      heroVal = formatFractionHtml(finalNumAbs, finalDen, 0, sol.finalNum < 0 ? -1 : 1);
+      heroBadge = sol.isAlreadyIrreducible ? '✨ Ya era irreducible' : `Simplificado ÷${sol.gcdValue}`;
+
+      bodyHtml = `
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">💡 ¿Cómo se obtuvo la Fracción Irreducible?</h4>
+          <p style="margin: 0; line-height: 1.5; color: var(--text-main);">
+            Tras sumar y restar los términos homogenizados con el m.c.m. de los denominadores (<code>${sol.lcmVal}</code>), se obtuvo la fracción previa:
+            <br><code>${sign}${Math.abs(sol.rawNum)} / ${sol.lcmVal}</code>.
+          </p>
+        </div>
+
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">⚡ Simplificación por Máximo Común Divisor (M.C.D.)</h4>
+          <p style="margin: 0; font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">
+            Calculamos el M.C.D. entre el numerador (<code>${Math.abs(sol.rawNum)}</code>) y el denominador (<code>${sol.lcmVal}</code>):
+          </p>
+          <div class="kpi-formula-box">
+            <span>M.C.D.(${Math.abs(sol.rawNum)}, ${sol.lcmVal}) =</span>
+            <span class="kpi-formula-text">${sol.gcdValue}</span>
+          </div>
+          <p style="margin: 0; font-size: 0.88rem; color: var(--text-main); line-height: 1.5;">
+            Dividimos numerador y denominador entre ${sol.gcdValue}:
+            <br>• Numerador: <code>${Math.abs(sol.rawNum)} ÷ ${sol.gcdValue} = <strong>${finalNumAbs}</strong></code>
+            <br>• Denominador: <code>${sol.lcmVal} ÷ ${sol.gcdValue} = <strong>${finalDen}</strong></code>
+          </p>
+          <div class="kpi-formula-box">
+            <span>Fracción más simple irreducible:</span>
+            <span class="kpi-formula-text">${fracStr}</span>
+          </div>
+        </div>
+      `;
+
+      textToCopy = `Fracción Irreducible: ${fracStr}\nSimplificación por M.C.D. = ${sol.gcdValue}\nOriginal: ${sol.rawNum}/${sol.lcmVal}`;
+
+    } else if (ratKpiType === 'lcm') {
+      icon = '🔢';
+      eyebrow = 'DENOMINADORES • M.C.M.';
+      title = 'M.C.M. de los Denominadores';
+      subtitle = `Homogenización de fracciones`;
+      heroTheme = 'theme-amber';
+      heroLabel = 'Denominador Común Mínimo:';
+      heroVal = `${sol.lcmVal}`;
+      heroBadge = sol.isHomogeneous ? 'Denominadores ya eran iguales' : 'Homogenización requerida';
+
+      bodyHtml = `
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">📊 Denominadores de la Operación</h4>
+          <p style="margin: 0; font-size: 0.88rem; color: var(--text-muted);">
+            Denominadores originales: <code>[${sol.denominators.join(', ')}]</code>.
+          </p>
+          <p style="margin: 0; font-size: 0.88rem; color: var(--text-main); line-height: 1.5;">
+            Para poder sumar o restar fracciones heterogéneas, es indispensable convertirlas al mismo tamaño de porción hallando su <strong>Mínimo Común Múltiplo</strong>:
+          </p>
+          <div class="kpi-formula-box">
+            <span>m.c.m.([${sol.denominators.join(', ')}]) =</span>
+            <span class="kpi-formula-text" style="color: #fbbf24;">${sol.lcmVal}</span>
+          </div>
+        </div>
+
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">🔄 Factores de Amplificación de cada Fracción</h4>
+          <div class="kpi-proc-step-list">
+            ${sol.normalizedTerms.map((t, i) => {
+              const factor = sol.lcmVal / t.den;
+              return `
+                <div class="kpi-proc-step-item">
+                  <span class="kpi-proc-step-badge">Término #${i + 1}</span>
+                  <div>
+                    Denominador: <code>${t.den}</code> ⟹ Factor: <code>${sol.lcmVal} ÷ ${t.den} = <strong>${factor}</strong></code><br>
+                    Amplificación: <code>(${t.improperNum} × ${factor}) / (${t.den} × ${factor}) = <strong>${t.scaledNum} / ${sol.lcmVal}</strong></code>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+
+      textToCopy = `M.C.M. de Denominadores: ${sol.lcmVal}\nDenominadores: [${sol.denominators.join(', ')}]`;
+
+    } else if (ratKpiType === 'mixed') {
+      icon = '🍰';
+      eyebrow = 'NÚMERO MIXTO • ENTERO + FRACCIÓN';
+      title = 'Conversión a Número Mixto';
+      heroTheme = 'theme-purple';
+      heroLabel = 'Número Mixto:';
+      heroVal = sol.mixedNumber ? `${sign}${sol.mixedNumber.whole} ${sol.mixedNumber.rem}/${sol.mixedNumber.den}` : 'Fracción propia (< 1)';
+      heroBadge = sol.mixedNumber ? 'Fracción impropia convertida' : 'Numerador menor que denominador';
+
+      if (sol.mixedNumber) {
+        bodyHtml = `
+          <div class="kpi-proc-section">
+            <h4 class="kpi-proc-section-title">📐 División Euclidiana (Cociente y Residuo)</h4>
+            <p style="margin: 0; font-size: 0.88rem; line-height: 1.5; color: var(--text-main);">
+              Dado que el numerador (<code>${finalNumAbs}</code>) es mayor que el denominador (<code>${finalDen}</code>), la fracción representa más de una unidad entera (fracción impropia).
+            </p>
+            <div class="kpi-proc-step-item" style="margin-top: 0.5rem;">
+              <span class="kpi-proc-step-badge">División</span>
+              <div>
+                <code>${finalNumAbs} ÷ ${finalDen} = <strong>${sol.mixedNumber.whole}</strong> con residuo <strong>${sol.mixedNumber.rem}</strong></code>
+              </div>
+            </div>
+            <div class="kpi-formula-box" style="margin-top: 0.5rem;">
+              <span>Número Mixto:</span>
+              <span class="kpi-formula-text">${sign}${sol.mixedNumber.whole} ${sol.mixedNumber.rem}/${sol.mixedNumber.den}</span>
+            </div>
+          </div>
+        `;
+      } else {
+        bodyHtml = `
+          <div class="kpi-proc-callout">
+            Esta es una <strong>fracción propia</strong> porque su numerador (${finalNumAbs}) es menor que su denominador (${finalDen}). Su valor absoluto es menor a 1, por lo que no contiene unidades enteras completas.
+          </div>
+        `;
+      }
+
+      textToCopy = `Número Mixto: ${sol.mixedNumber ? `${sign}${sol.mixedNumber.whole} ${sol.mixedNumber.rem}/${sol.mixedNumber.den}` : 'Fracción propia'}`;
+
+    } else if (ratKpiType === 'decimal') {
+      icon = '📐';
+      eyebrow = 'VALOR DECIMAL • EXPRESIÓN NUMÉRICA';
+      title = 'Aproximación y Clasificación Decimal';
+      heroTheme = 'theme-blue';
+      heroLabel = 'Valor Decimal:';
+      heroVal = `${sol.decimal}`;
+      heroBadge = sol.isExact ? 'Decimal Exacto' : 'Decimal Periódico';
+
+      bodyHtml = `
+        <div class="kpi-proc-section">
+          <h4 class="kpi-proc-section-title">🔢 División Decimal</h4>
+          <p style="margin: 0; font-size: 0.88rem; line-height: 1.5; color: var(--text-main);">
+            Dividiendo el numerador entre el denominador:
+            <br><code>${sol.finalNum} ÷ ${finalDen} = <strong>${sol.decimal}</strong></code>.
+          </p>
+          <div class="kpi-proc-callout" style="margin-top: 0.5rem;">
+            ${sol.isExact ? 'Es un <strong>decimal exacto</strong> porque los únicos factores primos de su denominador simplificado son 2 y/o 5.' : 'Es un <strong>decimal periódico</strong> porque el denominador simplificado contiene factores primos distintos de 2 y 5 (como 3, 7, etc.), produciendo una cifra que se repite infinitamente.'}
+          </div>
+        </div>
+      `;
+
+      textToCopy = `Valor Decimal: ${sol.decimal}\nTipo: ${sol.isExact ? 'Exacto' : 'Periódico'}`;
+    }
+
+    currentKpiProcedureContext = {
+      type: ratKpiType,
+      textToCopy: textToCopy,
+      jumpTab: 'rationals'
+    };
+
+    if (elements.kpiModalIcon) elements.kpiModalIcon.textContent = icon;
+    if (elements.kpiModalEyebrow) elements.kpiModalEyebrow.textContent = eyebrow;
+    if (elements.kpiModalTitle) elements.kpiModalTitle.textContent = title;
+    if (elements.kpiModalSubtitle) elements.kpiModalSubtitle.textContent = subtitle;
+
+    if (elements.kpiModalHero) elements.kpiModalHero.className = `kpi-modal-hero ${heroTheme}`;
+    if (elements.kpiModalHeroLabel) elements.kpiModalHeroLabel.textContent = heroLabel;
+    if (elements.kpiModalHeroVal) elements.kpiModalHeroVal.innerHTML = heroVal;
+    if (elements.kpiModalHeroBadge) elements.kpiModalHeroBadge.textContent = heroBadge;
+
+    if (elements.kpiModalBody) elements.kpiModalBody.innerHTML = bodyHtml;
+    if (elements.btnJumpToMethodTab) elements.btnJumpToMethodTab.textContent = '📑 Ver en Módulo de Fracciones';
+
+    elements.kpiProcedureModalOverlay.style.display = 'flex';
+  }
+
+  function closeKpiModal() {
+    if (elements.kpiProcedureModalOverlay) {
+      elements.kpiProcedureModalOverlay.style.display = 'none';
+    }
+  }
+
+  function copyKpiProcedureText() {
+    const text = currentKpiProcedureContext.textToCopy;
+    if (!text) return;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('📋 Procedimiento copiado al portapapeles');
+      }).catch(() => {
+        fallbackCopyText(text);
+      });
+    } else {
+      fallbackCopyText(text);
+    }
+  }
+
+  function fallbackCopyText(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      showToast('📋 Procedimiento copiado al portapapeles');
+    } catch (e) {
+      showToast('No se pudo copiar automáticamente');
+    }
+    document.body.removeChild(ta);
+  }
+
+  function jumpToMethodTabFromKpi(tabId) {
+    closeKpiModal();
+    if (tabId === 'rationals') {
+      switchModule('rationals');
+    } else {
+      switchTab(tabId);
+    }
+    setTimeout(() => {
+      const el = document.querySelector('.results-card') || document.getElementById('mcdControlsWrapper');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 120);
   }
 
   // TAB 1: Tabla de Descomposición Simultánea con Detalles Paso a Paso
@@ -7507,6 +8493,63 @@
           window.PerritoAcademic.clearNotebook();
           renderNotebookCards();
           showToast('🗑️ Cuaderno de Tareas vaciado.');
+        }
+      });
+    }
+
+    // KPI Cards interactive modal triggers (Click & Keyboard Delegation)
+    document.addEventListener('click', (e) => {
+      const kpiCard = e.target.closest('.kpi-card[data-kpi-type]');
+      if (kpiCard) {
+        openKpiModal(kpiCard.dataset.kpiType);
+        return;
+      }
+      const ratCard = e.target.closest('.kpi-card[data-rat-kpi]');
+      if (ratCard) {
+        openRatKpiModal(ratCard.dataset.ratKpi);
+        return;
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        const kpiCard = e.target.closest('.kpi-card[data-kpi-type]');
+        if (kpiCard) {
+          e.preventDefault();
+          openKpiModal(kpiCard.dataset.kpiType);
+          return;
+        }
+        const ratCard = e.target.closest('.kpi-card[data-rat-kpi]');
+        if (ratCard) {
+          e.preventDefault();
+          openRatKpiModal(ratCard.dataset.ratKpi);
+          return;
+        }
+      }
+      if (e.key === 'Escape' && elements.kpiProcedureModalOverlay && elements.kpiProcedureModalOverlay.style.display === 'flex') {
+        closeKpiModal();
+      }
+    });
+
+    // KPI Modal close & actions
+    if (elements.btnCloseKpiModal) {
+      elements.btnCloseKpiModal.addEventListener('click', closeKpiModal);
+    }
+    if (elements.btnCloseKpiModalBtn) {
+      elements.btnCloseKpiModalBtn.addEventListener('click', closeKpiModal);
+    }
+    if (elements.btnCopyKpiProcedure) {
+      elements.btnCopyKpiProcedure.addEventListener('click', copyKpiProcedureText);
+    }
+    if (elements.btnJumpToMethodTab) {
+      elements.btnJumpToMethodTab.addEventListener('click', () => {
+        jumpToMethodTabFromKpi(currentKpiProcedureContext.jumpTab);
+      });
+    }
+    if (elements.kpiProcedureModalOverlay) {
+      elements.kpiProcedureModalOverlay.addEventListener('click', (e) => {
+        if (e.target === elements.kpiProcedureModalOverlay) {
+          closeKpiModal();
         }
       });
     }

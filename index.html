@@ -24,7 +24,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=5.8">
+  <link rel="stylesheet" href="style.css?v=5.9">
   
   <!-- Local SheetJS for offline Excel export -->
   <script src="xlsx.full.min.js"></script>
@@ -208,51 +208,56 @@
         </div>
       </section>
 
-      <!-- KPI Summary Cards -->
-      <section class="kpi-grid">
-        <div class="kpi-card highlight-card">
+      <!-- KPI Summary Cards (Interactivas: Clic para ver resultado y procedimiento paso a paso) -->
+      <section class="kpi-grid" aria-label="Tarjetas de resumen y resultados de M.C.D. y m.c.m.">
+        <div class="kpi-card highlight-card kpi-card-clickable" id="cardKpiMcd" data-kpi-type="mcd" role="button" tabindex="0" title="Toca para ver el resultado y procedimiento completo del M.C.D." aria-label="Ver resultado y procedimiento del Máximo Común Divisor">
           <div class="kpi-icon">🎯</div>
           <div class="kpi-details">
             <span class="kpi-label">Máximo Común Divisor</span>
             <div class="kpi-val" id="kpiMcd">--</div>
             <span class="kpi-badge" id="kpiStatusBadge">Calculando...</span>
           </div>
+          <span class="kpi-hint-pill" aria-hidden="true">🔍 Procedimiento</span>
         </div>
 
-        <div class="kpi-card">
+        <div class="kpi-card kpi-card-clickable" id="cardKpiCanonical" data-kpi-type="canonical" role="button" tabindex="0" title="Toca para ver la descomposición canónica y comparación de exponentes" aria-label="Ver desglose y procedimiento de factores primos comunes">
           <div class="kpi-icon">🔢</div>
           <div class="kpi-details">
             <span class="kpi-label">Factores Primos Comunes</span>
             <div class="kpi-val text-sm font-mono" id="kpiCanonical">--</div>
             <span class="kpi-sub">Menor exponente común</span>
           </div>
+          <span class="kpi-hint-pill" aria-hidden="true">🔍 Procedimiento</span>
         </div>
 
-        <div class="kpi-card">
+        <div class="kpi-card kpi-card-clickable" id="cardKpiSteps" data-kpi-type="steps" role="button" tabindex="0" title="Toca para ver las rondas de división y justificación de divisibilidad" aria-label="Ver el desglose paso a paso de cada ronda de división">
           <div class="kpi-icon">📊</div>
           <div class="kpi-details">
             <span class="kpi-label">Pasos de División</span>
             <div class="kpi-val" id="kpiSteps">--</div>
             <span class="kpi-sub" id="kpiStepsSub">Rondas de división común</span>
           </div>
+          <span class="kpi-hint-pill" aria-hidden="true">🔍 Procedimiento</span>
         </div>
 
-        <div class="kpi-card highlight-card-amber">
+        <div class="kpi-card highlight-card-amber kpi-card-clickable" id="cardKpiLcm" data-kpi-type="lcm" role="button" tabindex="0" title="Toca para ver el resultado y procedimiento completo del m.c.m." aria-label="Ver resultado y procedimiento detallado del Mínimo Común Múltiplo">
           <div class="kpi-icon">🔄</div>
           <div class="kpi-details">
             <span class="kpi-label">Mínimo Común Múltiplo</span>
             <div class="kpi-val font-mono" id="kpiLcm">--</div>
             <span class="kpi-sub">m.c.m. simultáneo</span>
           </div>
+          <span class="kpi-hint-pill" aria-hidden="true">🔍 Procedimiento</span>
         </div>
 
-        <div class="kpi-card">
+        <div class="kpi-card kpi-card-clickable" id="cardKpiExcel" data-kpi-type="excel" role="button" tabindex="0" title="Toca para ver fórmulas, sintaxis y copiar para Excel o Google Sheets" aria-label="Ver fórmulas y sintaxis en Excel y Google Sheets">
           <div class="kpi-icon">⚡</div>
           <div class="kpi-details">
             <span class="kpi-label">Fórmula Excel</span>
             <div class="kpi-val text-xs font-mono" id="kpiExcelFormula">=M.C.D(...)</div>
             <span class="kpi-sub">Función nativa de hoja de cálculo</span>
           </div>
+          <span class="kpi-hint-pill" aria-hidden="true">🔍 Fórmulas</span>
         </div>
       </section>
       </div> <!-- /#mcdControlsWrapper -->
@@ -1329,41 +1334,45 @@
           </div>
 
           <!-- KPI Summary Cards for Rationals -->
-          <div class="kpi-grid rat-kpi-grid" id="ratKpiGrid" style="margin-top: 1.5rem;">
-            <div class="kpi-card highlight-card" style="border-color: rgba(245, 158, 11, 0.4); background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(17, 24, 39, 0.8));">
+          <div class="kpi-grid rat-kpi-grid" id="ratKpiGrid" style="margin-top: 1.5rem;" aria-label="Tarjetas de fracciones: toca para ver procedimiento">
+            <div class="kpi-card highlight-card kpi-card-clickable" id="cardRatKpiResult" data-rat-kpi="result" role="button" tabindex="0" style="border-color: rgba(245, 158, 11, 0.4); background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(17, 24, 39, 0.8));" title="Toca para ver el procedimiento de simplificación irreducible">
               <div class="kpi-icon">🎯</div>
               <div class="kpi-details">
                 <span class="kpi-label">Fracción Irreducible</span>
                 <div class="kpi-val" id="kpiRatResult">--</div>
                 <span class="kpi-badge" id="kpiRatStatusBadge">Calculando...</span>
               </div>
+              <span class="kpi-hint-pill" aria-hidden="true">🔍 Procedimiento</span>
             </div>
 
-            <div class="kpi-card">
+            <div class="kpi-card kpi-card-clickable" id="cardRatKpiLcm" data-rat-kpi="lcm" role="button" tabindex="0" title="Toca para ver el cálculo del m.c.m. de denominadores">
               <div class="kpi-icon">🔢</div>
               <div class="kpi-details">
                 <span class="kpi-label">M.C.M. Denominadores</span>
                 <div class="kpi-val text-sm font-mono" id="kpiRatLcm">--</div>
                 <span class="kpi-sub">Denominador común mínimo</span>
               </div>
+              <span class="kpi-hint-pill" aria-hidden="true">🔍 Procedimiento</span>
             </div>
 
-            <div class="kpi-card">
+            <div class="kpi-card kpi-card-clickable" id="cardRatKpiMixed" data-rat-kpi="mixed" role="button" tabindex="0" title="Toca para ver la conversión a número mixto">
               <div class="kpi-icon">🍰</div>
               <div class="kpi-details">
                 <span class="kpi-label">Número Mixto</span>
                 <div class="kpi-val" id="kpiRatMixed">--</div>
                 <span class="kpi-sub" id="kpiRatMixedSub">Entero + Fracción propia</span>
               </div>
+              <span class="kpi-hint-pill" aria-hidden="true">🔍 Procedimiento</span>
             </div>
 
-            <div class="kpi-card">
+            <div class="kpi-card kpi-card-clickable" id="cardRatKpiDecimal" data-rat-kpi="decimal" role="button" tabindex="0" title="Toca para ver el cálculo y clasificación decimal">
               <div class="kpi-icon">📐</div>
               <div class="kpi-details">
                 <span class="kpi-label">Valor Decimal</span>
                 <div class="kpi-val text-sm font-mono" id="kpiRatDecimal">--</div>
                 <span class="kpi-sub" id="kpiRatType">Clasificación</span>
               </div>
+              <span class="kpi-hint-pill" aria-hidden="true">🔍 Procedimiento</span>
             </div>
           </div>
 
@@ -2458,11 +2467,57 @@
     </div>
   </div>
 
+  <!-- Modal de Resultado y Procedimiento Detallado de Tarjetas -->
+  <div class="modal-overlay" id="kpiProcedureModalOverlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="kpiModalTitle">
+    <div class="modal-card kpi-procedure-modal" id="kpiProcedureModalCard">
+      <button class="modal-close-btn" id="btnCloseKpiModal" aria-label="Cerrar ventana de procedimiento">✕</button>
+      
+      <!-- Modal Header -->
+      <div class="kpi-modal-header">
+        <div class="kpi-modal-icon-badge" id="kpiModalIcon">🎯</div>
+        <div class="kpi-modal-title-wrap">
+          <span class="kpi-modal-eyebrow" id="kpiModalEyebrow">PROCEDIMIENTO MATEMÁTICO</span>
+          <h3 class="kpi-modal-title" id="kpiModalTitle">Máximo Común Divisor</h3>
+          <span class="kpi-modal-subtitle" id="kpiModalSubtitle">Evaluando: 48 y 72</span>
+        </div>
+      </div>
+
+      <!-- Result Hero Box -->
+      <div class="kpi-modal-hero" id="kpiModalHero">
+        <div>
+          <div class="kpi-modal-hero-label" id="kpiModalHeroLabel">Resultado Obtenido:</div>
+          <div class="kpi-modal-hero-val font-mono" id="kpiModalHeroVal">24</div>
+        </div>
+        <div class="kpi-modal-hero-badge" id="kpiModalHeroBadge">✨ Divisor común encontrado</div>
+      </div>
+
+      <!-- Procedure Body Content (scrollable) -->
+      <div class="kpi-modal-body" id="kpiModalBody">
+        <!-- Dynamically injected math procedure -->
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="kpi-modal-footer">
+        <div class="kpi-modal-footer-left">
+          <button type="button" class="btn btn-secondary btn-sm" id="btnCopyKpiProcedure" title="Copiar explicación y pasos al portapapeles">
+            📋 Copiar Procedimiento
+          </button>
+          <button type="button" class="btn btn-ghost btn-sm" id="btnJumpToMethodTab" title="Ir a la pestaña completa de este método">
+            📑 Ver en Pestaña
+          </button>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" id="btnCloseKpiModalBtn">
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Academic Engines & Offline Algorithms -->
-  <script src="academic-modules.js?v=5.8"></script>
+  <script src="academic-modules.js?v=5.9"></script>
   <!-- Universal Mathematical Erudite Engine -->
-  <script src="erudite-engine.js?v=5.8"></script>
+  <script src="erudite-engine.js?v=5.9"></script>
   <!-- Main JavaScript Logic -->
-  <script src="app.js?v=5.8"></script>
+  <script src="app.js?v=5.9"></script>
 </body>
 </html>
