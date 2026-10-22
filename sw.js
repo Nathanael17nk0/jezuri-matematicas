@@ -1,5 +1,5 @@
 // Service Worker for Perrito Math PWA - 100% Offline First Engine
-const CACHE_NAME = 'perrito-math-offline-v5.9';
+const CACHE_NAME = 'perrito-math-offline-v6.0';
 
 const PRECACHE_ASSETS = [
   './',

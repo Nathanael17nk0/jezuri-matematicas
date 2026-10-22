@@ -4882,6 +4882,55 @@ details.collapsible-card[open] .collapsible-chevron-icon {
   color: #e2e8f0;
 }
 
+/* CBTIS 7 & University Multi-Subject Showcase */
+.cbtis-showcase-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.85rem 1.1rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(59, 130, 246, 0.08));
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.cbtis-showcase-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  letter-spacing: 0.2px;
+}
+
+.cbtis-showcase-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.cbtis-tag {
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius-pill);
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-medium);
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.cbtis-tag:hover {
+  color: #ffffff;
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.2);
+  transform: translateY(-1px);
+}
+
 /* Category Filter Pills in Tutor Chat */
 .ai-categories-container {
   overflow-x: auto;

@@ -24,7 +24,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=5.9">
+  <link rel="stylesheet" href="style.css?v=6.0">
   
   <!-- Local SheetJS for offline Excel export -->
   <script src="xlsx.full.min.js"></script>
@@ -46,7 +46,7 @@
                 <span class="offline-badge-text">100% Offline</span>
               </div>
             </div>
-            <p class="brand-subtitle">Máximo Común Divisor, Álgebra y Fracciones con el Profesor Perrito IA</p>
+            <p class="brand-subtitle">Calculadora Científica & Tutor Multidisciplinario con el Profesor Perrito 🐶🎓</p>
           </div>
         </div>
         
@@ -138,8 +138,8 @@
         <button type="button" class="module-nav-btn ai-special-nav" data-mod="aitutor" id="navModAiTutor">
           <span class="module-icon-wrap icon-aitutor ai-icon-pulse"><span class="module-icon">🐶</span></span>
           <div class="module-info">
-            <span class="module-title">Profesor IA</span>
-            <span class="module-tag">Tutor & Cuaderno</span>
+            <span class="module-title">Profesor Perrito</span>
+            <span class="module-tag">Tutor Multidisciplinario</span>
           </div>
         </button>
       </nav>
@@ -1927,13 +1927,13 @@
         <div class="module-header-main">
           <div class="module-header-icon icon-aitutor">🐶</div>
           <div>
-            <h2 class="module-header-title">Profesor Perrito IA y Cuaderno de Tareas</h2>
+            <h2 class="module-header-title">Profesor Perrito 🐶🎓 — Catedrático Multidisciplinario</h2>
             <p class="module-header-desc">
-              Tu tutor matemático interactivo offline y tu cuaderno digital con ejercicios guardados para repasar cuando quieras sin conexión a internet.
+              Tutor pedagógico universal para Preparatoria (CBTIS 7 Reynosa / Bachillerato) y Universidad: Matemáticas, Química (La Materia), Física, Lengua/APA, Inglés, Cultura Digital (Excel) y Humanidades, 100% offline o con Google Gemini.
             </p>
           </div>
         </div>
-        <span class="module-header-tag ai-badge">Tutor & Cuaderno</span>
+        <span class="module-header-tag ai-badge">🎓 Prepa (CBTIS 7) & Universidad</span>
       </div>
 
       <!-- Submodule Tabs for AI Tutor & Notebook -->
@@ -1954,11 +1954,11 @@
               </div>
               <div>
                 <h3 class="pane-title" style="display: flex; align-items: center; gap: 0.6rem;">
-                  Profesor Perrito Math 🐶 — Tutor Pedagógico Inteligente
-                  <span class="ai-online-badge">En línea y listo para enseñarte</span>
+                  Profesor Perrito 🐶🎓 — Catedrático Multidisciplinario Universal
+                  <span class="ai-online-badge">Todas las materias de Prepa (CBTIS 7) & Universidad</span>
                 </h3>
                 <p class="pane-desc">
-                  ¡Guau! Soy tu profesor perrito de matemáticas. Te explico con calma <strong>cómo se resolvió tu problema</strong>, por qué cambió cada signo, qué regla se aplicó y cómo comprobar tus resultados paso a paso.
+                  ¡Guau! Soy tu profesor perrito polímata. Te resuelvo y explico paso a paso cualquier duda o ejercicio de <strong>Pensamiento Matemático, Química (La Materia y Enlaces), Física (Energía y Leyes), Biología, Lengua y Redacción (Normas APA 7), Inglés (I a VI), Cultura Digital (Excel y Algoritmos), Ciencias Sociales y Filosofía</strong>.
                 </p>
               </div>
             </div>
@@ -1970,6 +1970,22 @@
               <button type="button" class="btn btn-secondary btn-sm" id="btnAiAnalyzeCurrent">
                 🔄 Sincronizar con Ejercicio Activo
               </button>
+            </div>
+          </div>
+
+          <!-- CBTIS 7 & University Multi-Subject Quick Showcase -->
+          <div class="cbtis-showcase-bar">
+            <span class="cbtis-showcase-title">📚 Plan de Estudios Bachillerato Tecnológico (CBTIS 7) & Universidad:</span>
+            <div class="cbtis-showcase-tags">
+              <span class="cbtis-tag" data-cat="chemistry">🧪 Química (La Materia)</span>
+              <span class="cbtis-tag" data-cat="physics">⚡ Física & Cinemática</span>
+              <span class="cbtis-tag" data-cat="spanish_apa">✍️ Lengua & APA 7</span>
+              <span class="cbtis-tag" data-cat="english">🇬🇧 Inglés I a VI</span>
+              <span class="cbtis-tag" data-cat="digital_culture">💻 Cultura Digital & Excel</span>
+              <span class="cbtis-tag" data-cat="biology">🧬 Biología & Célula</span>
+              <span class="cbtis-tag" data-cat="social_studies">🏛️ Ciencias Sociales</span>
+              <span class="cbtis-tag" data-cat="humanities">🧠 Lógica & Filosofía</span>
+              <span class="cbtis-tag" data-cat="study_skills">🎯 Técnicas Pomodoro & Feynman</span>
             </div>
           </div>
 
@@ -2079,13 +2095,21 @@
                 <div class="ai-categories-container">
                   <div class="ai-cat-pills" id="aiCatPills">
                     <button type="button" class="ai-cat-pill active" data-cat="current" id="catPillCurrent">📌 Este Problema</button>
-                    <button type="button" class="ai-cat-pill" data-cat="compfrac" id="catPillCompFrac">🪜 Fracciones Compuestas</button>
+                    <button type="button" class="ai-cat-pill" data-cat="chemistry" id="catPillChemistry">🧪 Química (La Materia)</button>
+                    <button type="button" class="ai-cat-pill" data-cat="physics" id="catPillPhysics">⚡ Física (Leyes & MRU)</button>
+                    <button type="button" class="ai-cat-pill" data-cat="spanish_apa" id="catPillSpanishApa">✍️ Lengua & APA 7</button>
+                    <button type="button" class="ai-cat-pill" data-cat="english" id="catPillEnglish">🇬🇧 Inglés (I a VI)</button>
+                    <button type="button" class="ai-cat-pill" data-cat="digital_culture" id="catPillDigitalCulture">💻 Cultura Digital & Excel</button>
+                    <button type="button" class="ai-cat-pill" data-cat="biology" id="catPillBiology">🧬 Biología & Célula</button>
+                    <button type="button" class="ai-cat-pill" data-cat="social_studies" id="catPillSocialStudies">🏛️ Ciencias Sociales</button>
+                    <button type="button" class="ai-cat-pill" data-cat="humanities" id="catPillHumanities">🧠 Humanidades & Lógica</button>
+                    <button type="button" class="ai-cat-pill" data-cat="study_skills" id="catPillStudySkills">🎯 Técnicas de Estudio</button>
                     <button type="button" class="ai-cat-pill" data-cat="algebra" id="catPillAlgebra">📐 Álgebra & Factorización</button>
-                    <button type="button" class="ai-cat-pill" data-cat="quadratic" id="catPillQuadratic">⚡ Cuadráticas & Chicharronera</button>
-                    <button type="button" class="ai-cat-pill" data-cat="calculus" id="catPillCalculus">📈 Límites & Derivadas</button>
+                    <button type="button" class="ai-cat-pill" data-cat="quadratic" id="catPillQuadratic">⚡ Cuadráticas & Parábolas</button>
+                    <button type="button" class="ai-cat-pill" data-cat="calculus" id="catPillCalculus">📈 Cálculo & Derivadas</button>
                     <button type="button" class="ai-cat-pill" data-cat="geometry" id="catPillGeometry">🔺 Pitágoras & Trigonometría</button>
                     <button type="button" class="ai-cat-pill" data-cat="rationals" id="catPillRationals">🍕 Fracciones & m.c.m.</button>
-                    <button type="button" class="ai-cat-pill" data-cat="mysteries" id="catPillMysteries">🔥 Paradojas & Curiosidades</button>
+                    <button type="button" class="ai-cat-pill" data-cat="mysteries" id="catPillMysteries">🔥 Enigmas & Paradojas</button>
                   </div>
                 </div>
 
@@ -2126,7 +2150,7 @@
                       type="text" 
                       id="aiChatInput" 
                       class="ai-input-field" 
-                      placeholder="Escribe cualquier duda o problema matemático (ej: 3/4 + 5/6, 2x+5=15, derivada de x²)..."
+                      placeholder="Pregunta lo que sea al Profesor Perrito: Matemáticas, Química, Física, Lengua/APA, Inglés, Excel, Filosofía..."
                       autocomplete="off"
                     >
                     <button type="submit" class="btn btn-primary" id="btnAiSend">
@@ -2296,7 +2320,15 @@
       <div class="floating-categories-bar">
         <div class="ai-cat-pills" id="floatingCatPills">
           <button type="button" class="ai-cat-pill active" data-cat="current" id="fCatPillCurrent">📌 Este Problema</button>
-          <button type="button" class="ai-cat-pill" data-cat="compfrac" id="fCatPillCompFrac">🪜 Fracciones Compuestas</button>
+          <button type="button" class="ai-cat-pill" data-cat="chemistry" id="fCatPillChemistry">🧪 Química</button>
+          <button type="button" class="ai-cat-pill" data-cat="physics" id="fCatPillPhysics">⚡ Física</button>
+          <button type="button" class="ai-cat-pill" data-cat="spanish_apa" id="fCatPillSpanishApa">✍️ Lengua & APA</button>
+          <button type="button" class="ai-cat-pill" data-cat="english" id="fCatPillEnglish">🇬🇧 Inglés</button>
+          <button type="button" class="ai-cat-pill" data-cat="digital_culture" id="fCatPillDigitalCulture">💻 Excel</button>
+          <button type="button" class="ai-cat-pill" data-cat="biology" id="fCatPillBiology">🧬 Biología</button>
+          <button type="button" class="ai-cat-pill" data-cat="social_studies" id="fCatPillSocialStudies">🏛️ Sociales</button>
+          <button type="button" class="ai-cat-pill" data-cat="humanities" id="fCatPillHumanities">🧠 Filosofía</button>
+          <button type="button" class="ai-cat-pill" data-cat="study_skills" id="fCatPillStudySkills">🎯 Técnicas Estudio</button>
           <button type="button" class="ai-cat-pill" data-cat="algebra" id="fCatPillAlgebra">📐 Álgebra</button>
           <button type="button" class="ai-cat-pill" data-cat="quadratic" id="fCatPillQuadratic">⚡ Cuadráticas</button>
           <button type="button" class="ai-cat-pill" data-cat="calculus" id="fCatPillCalculus">📈 Cálculo</button>
@@ -2322,7 +2354,7 @@
             type="text" 
             id="floatingChatInput" 
             class="ai-input-field" 
-            placeholder="Escribe cualquier duda o problema matemático (ej: 3/4 + 5/6, 2x+5=15, derivada de x²)..."
+            placeholder="Pregunta lo que sea al Profesor Perrito: Matemáticas, Química, Física, Lengua/APA, Inglés, Excel, Filosofía..."
             autocomplete="off"
           >
           <button type="submit" class="btn btn-primary" id="btnFloatingSend" title="Enviar consulta">

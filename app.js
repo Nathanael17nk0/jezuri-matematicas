@@ -6014,9 +6014,9 @@ Generado con Perrito Math 🐶`;
       state.aiState.messages = [
         {
           sender: 'bot',
-          text: `🐾 ¡Guau! ¡Hola! Soy tu <strong>Profesor Perrito Math 🐶</strong>. He analizado tu <strong>${ctx.typeName}</strong>:<br><br>
-                 📌 <code>${ctx.formula}</code><br><br>
-                 ¿Tienes dudas sobre cómo se llegó al resultado, por qué cambió algún signo, o cómo resolverlo paso a paso? Haz clic en las preguntas rápidas de arriba o escribe tu consulta abajo y te lo explico con mucho cariño perruno.`
+          text: `🐾 ¡Guau! ¡Hola! Soy tu <strong>Profesor Perrito 🐶🎓</strong>, Catedrático y Tutor Multidisciplinario para Preparatoria (con especial cariño para estudiantes del <strong>CBTIS 7 de Reynosa</strong> y bachilleratos) y Universidad.<br><br>
+                 He analizado tu <strong>${ctx.typeName}</strong>: <code>${ctx.formula}</code>.<br><br>
+                 Ahora cuento con <strong>todo el conocimiento académico</strong> para ayudarte en cualquiera de tus asignaturas: <strong>Pensamiento Matemático, Química (La Materia), Física (Energía y Leyes), Biología, Lengua y Redacción (APA 7), Inglés, Cultura Digital (Excel y Algoritmos), Ciencias Sociales y Filosofía</strong>. ¡Toca las materias arriba o escribe tu duda abajo!`
         }
       ];
     }
@@ -6055,7 +6055,7 @@ Generado con Perrito Math 🐶`;
     renderAiChatMessages();
   }
 
-  // Categorías de preguntas y catálogo temático del Catedrático
+  // Categorías de preguntas y catálogo temático del Catedrático Multidisciplinario
   const CATEGORY_QUERIES = {
     current: [
       { text: '❓ ¿Por qué da este resultado?', query: 'por_que_resultado' },
@@ -6064,6 +6064,57 @@ Generado con Perrito Math 🐶`;
       { text: '🪜 ¿Por qué se resuelve de abajo hacia arriba?', query: 'orden_abajo_arriba' },
       { text: '💡 Explícamelo con una analogía simple', query: 'analogia' },
       { text: '🔍 ¿Cómo comprobar mi respuesta?', query: 'como_comprobar' }
+    ],
+    chemistry: [
+      { text: '⚛️ Enlace Iónico vs Covalente (Regla del Octeto)', prompt: 'Cuál es la diferencia entre enlace iónico y covalente y cómo se aplica la regla del octeto' },
+      { text: '🧪 Balanceo de ecuaciones por tanteo (Lavoisier)', prompt: 'Cómo balancear una ecuación química por tanteo paso a paso' },
+      { text: '📊 Tabla Periódica: Grupos, Periodos y Configuración', prompt: 'Cómo funciona la tabla periódica con grupos, periodos y configuración electrónica de Aufbau' },
+      { text: '🔬 Estructura atómica: Protones, Neutrones y Electrones', prompt: 'Explícame la estructura del átomo con protones, neutrones, electrones y número atómico Z' }
+    ],
+    physics: [
+      { text: '🍎 Las 3 Leyes de Newton con ejemplos', prompt: 'Cuáles son las 3 leyes del movimiento de Isaac Newton con ejemplos' },
+      { text: '🚗 Fórmulas de Cinemática: MRU y MRUA', prompt: 'Cuáles son las fórmulas de MRU y MRUA en física y cómo usarlas' },
+      { text: '⚡ Ley de Ohm (V = I · R) y Circuitos', prompt: 'Cómo se aplica la ley de ohm en circuitos eléctricos en serie y paralelo' },
+      { text: '🔋 Energía Cinética vs Energía Potencial', prompt: 'Cuál es la diferencia entre energía cinética y energía potencial gravitatoria' }
+    ],
+    spanish_apa: [
+      { text: '✍️ Cómo redactar un ensayo académico escolar', prompt: 'Cómo hacer un ensayo académico con introducción, tesis, desarrollo y conclusión' },
+      { text: '📖 Guía práctica de normas APA 7ª edición', prompt: 'Cómo citar en formato APA 7ma edición con ejemplos de libros y páginas web' },
+      { text: '⚡ Reglas de Acentuación SEGA (Agudas, Graves, Esdrújulas)', prompt: 'Cuáles son las reglas de acentuación SEGA para palabras agudas, graves y esdrújulas' },
+      { text: '🔍 Acento Diacrítico y Monosílabos (él/el, tú/tu)', prompt: 'Cuándo se usa la tilde diacrítica en español con ejemplos' }
+    ],
+    english: [
+      { text: '🇬🇧 Verb To Be: Presente, Pasado y Preguntas', prompt: 'Cómo se conjuga y se usa el verb to be en inglés con ejemplos' },
+      { text: '⏱️ Present Simple vs Present Continuous', prompt: 'Cuál es la diferencia entre Present Simple y Present Continuous en inglés' },
+      { text: '🔮 First & Second Conditional con ejemplos', prompt: 'Cómo funcionan los condicionales first conditional y second conditional en inglés' },
+      { text: '📚 Verbos Irregulares clave en inglés', prompt: 'Cuáles son los verbos irregulares más importantes en inglés y cómo aprenderlos' }
+    ],
+    digital_culture: [
+      { text: '📊 Fórmulas esenciales de Excel (=SUMA, =PROMEDIO, =SI)', prompt: 'Cuáles son las fórmulas más importantes de Excel para estudiantes con ejemplos' },
+      { text: '🧠 Función =SI(...) y =BUSCARV en Excel', prompt: 'Cómo usar la función SI y la función BUSCARV en Excel' },
+      { text: '🔄 Algoritmos y Diagramas de Flujo (ISO/ANSI)', prompt: 'Qué es un algoritmo y cuáles son los símbolos de los diagramas de flujo' },
+      { text: '🛡️ Consejos de Ciberseguridad y Huella Digital', prompt: 'Qué es la huella digital y cómo mantener la seguridad y privacidad en internet' }
+    ],
+    biology: [
+      { text: '🧬 Célula Procariota vs Eucariota y Organelos', prompt: 'Cuál es la diferencia entre célula procariota y eucariota y funciones de los organelos' },
+      { text: '🔬 Funciones de la Mitocondria y el Núcleo', prompt: 'Cuál es la función de la mitocondria y del núcleo celular en biología' },
+      { text: '🧫 Leyes de Mendel y Cuadro de Punnett', prompt: 'Explícame las leyes de Mendel y cómo resolver un cuadro de Punnett de genética' }
+    ],
+    social_studies: [
+      { text: '🏛️ Los 3 Poderes de la Unión en México', prompt: 'Cuáles son los 3 poderes de la unión en México y qué hace cada uno' },
+      { text: '📜 Constitución de 1917 y Derechos Humanos', prompt: 'Qué importancia tiene la Constitución de 1917 y los derechos humanos en México' },
+      { text: '🤝 Estructura social y desarrollo en la frontera', prompt: 'Cómo se compone la estructura social y económica en México' }
+    ],
+    humanities: [
+      { text: '🧠 Qué es una Falacia Lógica y ejemplos comunes', prompt: 'Qué es una falacia lógica y ejemplos de ad hominem y hombre de paja' },
+      { text: '⚖️ Diferencia entre Ética y Moral', prompt: 'Cuál es la diferencia fundamental entre ética y moral en filosofía' },
+      { text: '📜 Silogismos y tablas de verdad', prompt: 'Cómo funciona la lógica formal y los silogismos deductivos' }
+    ],
+    study_skills: [
+      { text: '⏰ Técnica Pomodoro para estudiar sin agotarte', prompt: 'Cómo aplicar la técnica Pomodoro para estudiar con alta concentración' },
+      { text: '💡 Técnica Feynman para aprender temas difíciles', prompt: 'Cómo funciona la técnica Feynman para entender cualquier tema en 4 pasos' },
+      { text: '📝 Método Cornell para tomar apuntes ordenados', prompt: 'Cómo tomar apuntes de clase con el método Cornell' },
+      { text: '🎯 Estrategias para exámenes de opción múltiple', prompt: 'Cómo responder exámenes de opción múltiple con la técnica del descarte' }
     ],
     compfrac: [
       { text: '🧲 ¿Cómo funciona la Ley de la Herradura?', prompt: 'Explícame la ley de la herradura con extremos y medios' },
@@ -6115,6 +6166,15 @@ Generado con Perrito Math 🐶`;
 
     const labelMap = {
       current: 'Preguntas frecuentes del problema actual:',
+      chemistry: '🧪 Química & La Materia y sus Interacciones (CBTIS):',
+      physics: '⚡ Física & Conservación de la Energía (Leyes, Cinemática & Circuitos):',
+      spanish_apa: '✍️ Lengua y Comunicación, Ensayos & Normas APA 7ª Edición:',
+      english: '🇬🇧 Inglés I a VI (Gramática, Verb To Be, Tiempos & Conditionals):',
+      digital_culture: '💻 Cultura Digital, Hojas de Cálculo (Excel) & Algoritmos:',
+      biology: '🧬 Biología Celular, Genética & Ecosistemas:',
+      social_studies: '🏛️ Ciencias Sociales, Estado Mexicano & Constitución:',
+      humanities: '🧠 Humanidades, Filosofía, Lógica & Falacias Argumentativas:',
+      study_skills: '🎯 Técnicas de Estudio de Alto Rendimiento (Pomodoro / Feynman / Exámenes):',
       compfrac: 'Temas de Fracciones Compuestas & Ley de la Herradura:',
       algebra: 'Álgebra, Factorización & Despejes:',
       quadratic: 'Ecuaciones Cuadráticas & Parábolas:',
@@ -6124,9 +6184,25 @@ Generado con Perrito Math 🐶`;
       mysteries: 'Enigmas, Paradojas & Demostraciones:'
     };
 
+    const placeholderMap = {
+      chemistry: 'Pregunta sobre química (ej: enlace iónico vs covalente, balancear C3H8 + O2, tabla periódica)...',
+      physics: 'Pregunta sobre física (ej: 2da ley de Newton, fórmula de velocidad en MRUA, ley de Ohm)...',
+      spanish_apa: 'Pregunta sobre lengua o APA (ej: cómo citar un libro en APA 7, reglas de acentuación SEGA, estructura de ensayo)...',
+      english: 'Ask anything in English (e.g.: verb to be conjugation, present simple vs continuous, first conditional)...',
+      digital_culture: 'Pregunta sobre Excel o informática (ej: fórmula =SI en Excel, cómo usar BUSCARV, diagrama de flujo)...',
+      biology: 'Pregunta sobre biología (ej: célula procariota vs eucariota, funciones de la mitocondria, cuadro de Punnett)...',
+      social_studies: 'Pregunta sobre ciencias sociales (ej: los 3 poderes del estado en México, Constitución de 1917)...',
+      humanities: 'Pregunta sobre humanidades (ej: qué es una falacia ad hominem, diferencia entre ética y moral)...',
+      study_skills: 'Pregunta sobre estudio (ej: cómo aplicar técnica Pomodoro, método Feynman, cómo prepararme para un examen)...'
+    };
+
     if (elements.quickQueriesLabel) {
       elements.quickQueriesLabel.textContent = labelMap[catId] || 'Preguntas recomendadas:';
     }
+
+    const newPlaceholder = placeholderMap[catId] || 'Escribe cualquier duda o tarea (Matemáticas, Química, Física, Lengua/APA, Inglés, Excel, Filosofía)...';
+    if (elements.aiChatInput) elements.aiChatInput.placeholder = newPlaceholder;
+    if (elements.floatingChatInput) elements.floatingChatInput.placeholder = newPlaceholder;
 
     const grids = [elements.aiQuickChipsGrid, elements.floatingQuickChipsGrid].filter(Boolean);
     grids.forEach(grid => {
@@ -6192,8 +6268,8 @@ Generado con Perrito Math 🐶`;
         state.aiState.messages = [
           {
             sender: 'bot',
-            text: `🐾 ¡Guau! ¡Hola! Soy tu <strong>Profesor Perrito Math 🐶</strong>, catedrático universal de matemáticas.<br><br>
-                   Estoy programado para <strong>resolver y explicar cualquier tipo de duda o problema matemático</strong> (aritmética, fracciones, álgebra, ecuaciones, cálculo, geometría, trigonometría, estadística y más). Puedes escribir cualquier ejercicio para resolverlo paso a paso o consultarme tus dudas conceptuales. ¿En qué problema o tema trabajamos hoy?`
+            text: `🐾 ¡Guau! ¡Hola! Soy tu <strong>Profesor Perrito 🐶🎓</strong>, Catedrático y Tutor Multidisciplinario para Preparatoria (con especial atención al <strong>CBTIS 7 de Reynosa</strong> y bachilleratos) y Universidad.<br><br>
+                   Cuento con todo el conocimiento pedagógico para <strong>resolver y explicar cualquier duda académica</strong>: Matemáticas, Química (La Materia y Enlaces), Física (Leyes de Newton y MRU), Lengua y Redacción (APA 7), Inglés (Grammar y Tiempos), Cultura Digital (Excel y Algoritmos), Ciencias Sociales y Filosofía. ¿En qué materia o tarea trabajamos hoy?`
           }
         ];
       }
@@ -6418,6 +6494,25 @@ Generado con Perrito Math 🐶`;
         });
       });
     }
+
+    // CBTIS Showcase tags: click switches directly to that subject category
+    document.querySelectorAll('.cbtis-tag').forEach(tag => {
+      tag.addEventListener('click', () => {
+        const cat = tag.dataset.cat;
+        if (elements.aiCatPills) {
+          elements.aiCatPills.querySelectorAll('.ai-cat-pill').forEach(b => {
+            b.classList.toggle('active', b.dataset.cat === cat);
+          });
+        }
+        if (elements.floatingCatPills) {
+          elements.floatingCatPills.querySelectorAll('.ai-cat-pill').forEach(b => {
+            b.classList.toggle('active', b.dataset.cat === cat);
+          });
+        }
+        renderCategoryChips(cat);
+        if (elements.aiChatInput) elements.aiChatInput.focus();
+      });
+    });
 
     // Quick FAQ chips iniciales
     renderCategoryChips('current');

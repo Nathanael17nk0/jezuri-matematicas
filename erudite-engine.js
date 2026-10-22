@@ -1867,6 +1867,607 @@
         'Creer que los números imaginarios no existen en la vida real: son la base indispensable de la ingeniería eléctrica, telecomunicaciones, señales de audio, física cuántica y radar.'
       ],
       goldenTip: 'Para cualquier potencia alta de i (ej. i²⁷), simplemente divide el exponente entre 4 y quédate con el residuo: 27 ÷ 4 da residuo 3, por tanto i²⁷ = i³ = -i.'
+    },
+
+    // ========================================================================
+    // QUÍMICA & LA MATERIA Y SUS INTERACCIONES (CBTIS 1er Semestre & Prepa)
+    // ========================================================================
+    {
+      id: 'quimica_enlaces_quimicos',
+      title: 'Enlaces Químicos: Iónico, Covalente y Metálico (Regla del Octeto)',
+      category: 'Química & La Materia y sus Interacciones (CBTIS 1er Semestre)',
+      badge: 'Química CBTIS',
+      keywords: ['enlace quimico', 'enlaces quimicos', 'enlace ionico', 'enlace covalente', 'enlace metalico', 'covalente polar', 'covalente no polar', 'regla del octeto', 'electronegatividad', 'lewis', 'enlaces'],
+      concept: `Un <strong>enlace químico</strong> es la fuerza electromagnética que mantiene unidos a los átomos para formar moléculas y redes cristalinas más estables, buscando completar 8 electrones en su último nivel de energía (<strong>Regla del Octeto de Gilbert N. Lewis</strong>). La diferencia de electronegatividad (ΔEN) entre los elementos determina la naturaleza del enlace.`,
+      formulas: [
+        'Diferencia de Electronegatividad (ΔEN) = EN_mayor - EN_menor',
+        '• ΔEN ≥ 1.7 ➔ Enlace IÓNICO (transferencia total de electrones: Metal + No metal, ej. NaCl, KBr)',
+        '• 0.4 < ΔEN < 1.7 ➔ Enlace COVALENTE POLAR (compartición desigual con polos δ+ y δ-, ej. H₂O, HCl)',
+        '• ΔEN ≤ 0.4 ➔ Enlace COVALENTE NO POLAR / PURO (compartición simétrica, ej. O₂, CH₄, Cl₂)',
+        '• Metal + Metal ➔ Enlace METÁLICO (red de cationes inmersos en un mar de electrones deslocalizados)'
+      ],
+      example: {
+        statement: 'Determinar el tipo de enlace entre el Sodio (Na, EN = 0.93) y el Cloro (Cl, EN = 3.16)',
+        steps: [
+          '1. Consultar la electronegatividad de Pauling en la tabla periódica: EN(Na) = 0.93 y EN(Cl) = 3.16.',
+          '2. Calcular la diferencia: ΔEN = 3.16 - 0.93 = 2.23.',
+          '3. Evaluar el criterio: Dado que 2.23 > 1.7 y la unión ocurre entre un metal alcalino y un halógeno no metal, el sodio cede su único electrón de valencia (formando Na⁺) y el cloro lo acepta completando su octeto (formando Cl⁻).'
+        ],
+        result: 'Enlace Iónico (formación de la sal común o cloruro de sodio, NaCl)'
+      },
+      pitfalls: [
+        'Creer que en el enlace covalente se transfieren electrones: en el covalente los electrones SIEMPRE se comparten.',
+        'Olvidar que el Hidrógeno (H) solo requiere 2 electrones (regla del dueto) para asemejarse al gas noble Helio.',
+        'Confundir enlaces interatómicos (iónico, covalente) con fuerzas intermoleculares (puentes de hidrógeno, Van der Waals).'
+      ],
+      goldenTip: 'En exámenes del CBTIS, si ves un metal junto a un no metal (ej. CaO, MgCl₂), casi siempre es iónico; si solo hay no metales (ej. CO₂, NH₃), es covalente.'
+    },
+    {
+      id: 'quimica_balanceo_ecuaciones',
+      title: 'Balanceo de Ecuaciones Químicas por Tanteo (Ley de Lavoisier)',
+      category: 'Química & Reacciones (CBTIS 1er Semestre)',
+      badge: 'Química CBTIS',
+      keywords: ['balanceo', 'balancear ecuacion', 'balanceo por tanteo', 'conservacion de la masa', 'lavoisier', 'coeficientes estequiometricos', 'reactivos y productos', 'reaccion quimica'],
+      concept: `La <strong>Ley de Conservación de la Masa</strong> (Antoine Lavoisier) postula que <em>"en una reacción química la materia no se crea ni se destruye, solo se transforma"</em>. Por consiguiente, el número de átomos de cada elemento presente en los reactivos (lado izquierdo) debe ser rigurosamente igual al de los productos (lado derecho).`,
+      formulas: [
+        'Orden mnemotécnico infalible para balancear por tanteo: 1º Metales ➔ 2º No Metales ➔ 3º Hidrógenos (H) ➔ 4º Oxígenos (O al final)',
+        'Regla de Oro: Solo se pueden cambiar los COEFICIENTES estequiométricos (los números grandes a la izquierda de la fórmula). ¡JAMÁS modifiques los subíndices químicos!'
+      ],
+      example: {
+        statement: 'Balancear por tanteo la reacción de combustión del gas propano: <code>C₃H₈ + O₂ ➔ CO₂ + H₂O</code>',
+        steps: [
+          '<strong>Paso 1 (No metales - Carbono):</strong> En reactivos hay 3 carbonos (C₃H₈). En productos hay 1 en CO₂. Colocamos coeficiente 3 frente a CO₂: <code>C₃H₈ + O₂ ➔ 3 CO₂ + H₂O</code>.',
+          '<strong>Paso 2 (Hidrógenos):</strong> En reactivos hay 8 hidrógenos (C₃H₈). En productos hay 2 en H₂O. Colocamos coeficiente 4 frente a H₂O (4 × 2 = 8): <code>C₃H₈ + O₂ ➔ 3 CO₂ + 4 H₂O</code>.',
+          '<strong>Paso 3 (Oxígenos al final):</strong> Contamos los átomos de O en productos: (3 × 2 en CO₂) + (4 × 1 en H₂O) = 6 + 4 = 10 oxígenos. Como en reactivos tenemos O₂, colocamos coeficiente 5 (5 × 2 = 10): <code>C₃H₈ + 5 O₂ ➔ 3 CO₂ + 4 H₂O</code>.'
+        ],
+        result: '<code>C₃H₈ + 5 O₂ ➔ 3 CO₂ + 4 H₂O</code> (Comprobación: 3 C, 8 H, 10 O en ambos lados)'
+      },
+      pitfalls: [
+        'Modificar los subíndices de la fórmula (ej. escribir H₈O en lugar de 4 H₂O): alterar los subíndices crea sustancias químicas inexistentes o venenosas.',
+        'No multiplicar el coeficiente por todos los elementos del compuesto (el 3 en 3 CO₂ afecta tanto al C como al O).'
+      ],
+      goldenTip: 'Deja siempre el oxígeno para el final. Al cuadrar metales, no metales e hidrógenos, el oxígeno casi siempre queda balanceado por sí solo.'
+    },
+    {
+      id: 'quimica_tabla_periodica',
+      title: 'Tabla Periódica: Grupos, Periodos y Configuración Electrónica',
+      category: 'Química & Estructura de la Materia',
+      badge: 'Química CBTIS',
+      keywords: ['tabla periodica', 'grupos', 'periodos', 'metales', 'no metales', 'gases nobles', 'configuracion electronica', 'aufbau', 'regla de las diagonales', 'numero atomico', 'electrones de valencia'],
+      concept: `La <strong>Tabla Periódica Moderna</strong> clasifica los 118 elementos químicos en orden creciente de su <strong>número atómico (Z)</strong>. Se estructura en 7 periodos (filas horizontales = niveles principales de energía 'n') y 18 grupos o familias (columnas verticales = elementos con igual número de electrones de valencia y comportamiento químico análogo).`,
+      formulas: [
+        'Z = Número de protones = Número de electrones (en átomo neutro)',
+        'A (Masa Atómica) = Protones (Z) + Neutrones (N) ➔ N = A - Z',
+        'Regla de Aufbau (Mnemotecnia de las diagonales): 1s² ➔ 2s² ➔ 2p⁶ ➔ 3s² ➔ 3p⁶ ➔ 4s² ➔ 3d¹⁰ ➔ 4p⁶ ➔ 5s²...',
+        'Capacidad máxima por subnivel: s = 2 e⁻, p = 6 e⁻, d = 10 e⁻, f = 14 e⁻'
+      ],
+      example: {
+        statement: 'Escribir la configuración electrónica completa del Sodio (Na, Z = 11) e identificar su periodo y grupo',
+        steps: [
+          '1. Distribuir los 11 electrones siguiendo el diagrama de las diagonales: <code>1s² 2s² 2p⁶ 3s¹</code> (Suma: 2 + 2 + 6 + 1 = 11 e⁻).',
+          '2. Identificar el máximo nivel cuántico principal alcanzado: n = 3, por lo tanto pertenece al <strong>Periodo 3</strong>.',
+          '3. Contar los electrones en la última capa (electrones de valencia): tiene 1 electrón en el nivel 3 (3s¹), por lo tanto pertenece al <strong>Grupo 1 (Familia IA de Metales Alcalinos)</strong>.'
+        ],
+        result: 'Configuración: 1s² 2s² 2p⁶ 3s¹ (o [Ne] 3s¹). Periodo 3, Grupo 1 (Alcalinos).'
+      },
+      pitfalls: [
+        'Llenar el subnivel 3d antes del 4s: el subnivel 4s tiene menor energía que el 3d, por lo que se llena primero según el principio de Aufbau.',
+        'Confundir masa atómica (con decimales por el promedio de isótopos) con número másico A (número entero de nucleones).'
+      ],
+      goldenTip: 'Los elementos de un mismo grupo o familia tienen los mismos electrones en su capa externa; por eso el litio, sodio y potasio reaccionan violentamente con el agua de forma similar.'
+    },
+
+    // ========================================================================
+    // FÍSICA & CONSERVACIÓN DE LA ENERGÍA (CBTIS & Preparatoria)
+    // ========================================================================
+    {
+      id: 'fisica_leyes_newton',
+      title: 'Las 3 Leyes del Movimiento de Isaac Newton',
+      category: 'Física Clásica & Dinámica (CBTIS)',
+      badge: 'Física CBTIS',
+      keywords: ['leyes de newton', 'newton', 'primera ley de newton', 'segunda ley de newton', 'tercera ley de newton', 'fuerza', 'f=ma', 'inercia', 'accion y reaccion', 'peso'],
+      concept: `Las <strong>Leyes de Newton</strong> describen la relación matemática fundamental entre las fuerzas que interactúan sobre un objeto y el movimiento acelerado que este adquiere. Son la base de toda la ingeniería mecánica, automotriz, aeroespacial y de construcción civil.`,
+      formulas: [
+        '1ª Ley (Inercia): Si ΣF = 0 ➔ v = constante (un cuerpo permanece en reposo o en velocidad constante a menos que una fuerza neta externa actúe sobre él)',
+        '2ª Ley (Fuerza y Aceleración): F = m · a  (Fuerza en Newtons [N], masa en [kg], aceleración en [m/s²])',
+        '3ª Ley (Acción y Reacción): F_A➔B = - F_B➔A (A toda acción le corresponde una reacción de igual magnitud, misma dirección y sentido contrario en cuerpos distintos)',
+        'Peso o Fuerza Gravitatoria: P = m · g (donde g ≈ 9.81 m/s² en la superficie terrestre)'
+      ],
+      example: {
+        statement: '¿Qué fuerza constante debe aplicar el motor de un automóvil de 1,200 kg para acelerar desde el reposo a razón de 3 m/s²?',
+        steps: [
+          '1. Identificar datos conocidos: masa m = 1200 kg; aceleración deseada a = 3 m/s².',
+          '2. Aplicar la Segunda Ley de Newton: <code>F = m · a</code>.',
+          '3. Sustituir valores numéricos: <code>F = (1200 kg) × (3 m/s²) = 3600 kg·m/s²</code>.',
+          '4. Recordar la definición de unidad del Sistema Internacional: 1 kg·m/s² = 1 Newton (N).'
+        ],
+        result: 'Fuerza neta F = 3,600 N (Newtons)'
+      },
+      pitfalls: [
+        'Confundir masa con peso: tu masa (ej. 60 kg) es la misma en la Tierra y en la Luna; tu peso (P = m·g) cambia porque la gravedad lunar es 6 veces menor.',
+        'Pensar que acción y reacción se cancelan: no se anulan porque actúan sobre cuerpos diferentes (ej. el pie empuja al balón hacia adelante y el balón empuja al pie hacia atrás).'
+      ],
+      goldenTip: 'Siempre dibuja un Diagrama de Cuerpo Libre (DCL): aísla el cuerpo, ubica las flechas de fuerza en los ejes X e Y, y aplica ΣF = m·a para cada eje por separado.'
+    },
+    {
+      id: 'fisica_cinematica_mru_mrua',
+      title: 'Cinemática: Movimiento Rectilíneo Uniforme (MRU) y Acelerado (MRUA)',
+      category: 'Física & Mecánica (CBTIS)',
+      badge: 'Física CBTIS',
+      keywords: ['mru', 'mrua', 'cinematica', 'velocidad', 'aceleracion', 'distancia', 'tiempo', 'caida libre', 'movimiento rectilineo', 'gravedad'],
+      concept: `La <strong>cinemática</strong> estudia el movimiento de los cuerpos sin atender a las causas (fuerzas) que lo producen. En el <strong>MRU</strong> la velocidad permanece inalterable (aceleración = 0). En el <strong>MRUA</strong> la velocidad varía uniformemente en el tiempo debido a una aceleración constante, como ocurre en la <strong>caída libre</strong> bajo la gravedad terrestre (g = 9.8 m/s²).`,
+      formulas: [
+        'MRU: v = d / t  ➔  d = v · t  ➔  t = d / v',
+        'MRUA 1 (Velocidad final): v_f = v_0 + a · t',
+        'MRUA 2 (Distancia recorrida): d = v_0 · t + ½ · a · t²',
+        'MRUA 3 (Sin tiempo): v_f² = v_0² + 2 · a · d',
+        'Conversión de unidades: km/h ÷ 3.6 = m/s  |  m/s × 3.6 = km/h'
+      ],
+      example: {
+        statement: 'Un tráiler parte del reposo (v_0 = 0) en la autopista Reynosa-Monterrey y acelera a 2 m/s² durante 6 segundos. ¿Qué velocidad alcanza y qué distancia recorre?',
+        steps: [
+          '1. Velocidad final: <code>v_f = v_0 + a · t = 0 + (2 m/s² × 6 s) = 12 m/s</code>.',
+          '2. Para convertir a km/h multiplicamos por 3.6: <code>12 × 3.6 = 43.2 km/h</code>.',
+          '3. Distancia recorrida: <code>d = v_0 · t + ½ · a · t² = 0 + 0.5 × (2 m/s²) × (6 s)² = 1 × 36 = 36 metros</code>.'
+        ],
+        result: 'Velocidad = 12 m/s (43.2 km/h) | Distancia recorrida = 36 metros'
+      },
+      pitfalls: [
+        'Olvidar elevar el tiempo al cuadrado en ½·a·t²: (6 s)² = 36 s², no 12.',
+        'Mezclar km/h con segundos: antes de meter cualquier dato a las fórmulas, convierte SIEMPRE las velocidades a m/s.'
+      ],
+      goldenTip: 'Regla rápida: si un problema dice "parte del reposo", automáticamente v_0 = 0; si dice "se detiene o frena totalmente", entonces v_f = 0.'
+    },
+    {
+      id: 'fisica_ley_ohm_circuitos',
+      title: 'Ley de Ohm, Potencia Eléctrica y Circuitos en Serie y Paralelo',
+      category: 'Física & Electricidad (CBTIS & Universidad)',
+      badge: 'Física CBTIS',
+      keywords: ['ley de ohm', 'ohm', 'voltaje', 'corriente', 'resistencia', 'amperios', 'voltios', 'circuito serie', 'circuito paralelo', 'potencia electrica', 'watts'],
+      concept: `La <strong>Ley de Ohm</strong> (Georg Simon Ohm) gobierna el comportamiento de los circuitos eléctricos: la corriente (I, flujo de electrones) es directamente proporcional al voltaje aplicado (V, diferencia de potencial) e inversamente proporcional a la resistencia del conductor (R, oposición al flujo).`,
+      formulas: [
+        'Ley de Ohm: V = I · R  ➔  I = V / R  ➔  R = V / I  (V en Voltios, I en Amperios [A], R en Ohmios [Ω])',
+        'Potencia Eléctrica (Ley de Joule): P = V · I = I² · R = V² / R  (en Watts o Vatios [W])',
+        'Circuito en SERIE: R_eq = R₁ + R₂ + R₃ (misma corriente en todos los focos, si uno se funde se apagan todos)',
+        'Circuito en PARALELO: 1/R_eq = 1/R₁ + 1/R₂ + 1/R₃ (mismo voltaje en todas las ramas, como en las casas)'
+      ],
+      example: {
+        statement: 'Una laptop conectada a la toma de corriente de 120 V consume 2.5 Amperios. ¿Cuál es su resistencia interna y qué potencia consume?',
+        steps: [
+          '1. Calcular la resistencia con la Ley de Ohm: <code>R = V / I = 120 V / 2.5 A = 48 Ω</code> (Ohmios).',
+          '2. Calcular la potencia consumida: <code>P = V · I = 120 V × 2.5 A = 300 Watts (W)</code>.',
+          '3. Expresar en kilowatts para recibo de CFE: 300 W = 0.3 kW.'
+        ],
+        result: 'Resistencia R = 48 Ω | Potencia P = 300 W (0.3 kW)'
+      },
+      pitfalls: [
+        'Sumar resistencias en paralelo directamente: recuerda que en paralelo la resistencia total SIEMPRE es MENOR que la resistencia individual más pequeña.',
+        'Confundir Amperios (corriente que fluye) con Voltios (fuerza o empuje eléctrico).'
+      ],
+      goldenTip: 'Recuerda el triángulo nemotécnico: "Victoria Reina de Inglaterra" (V arriba, R e I abajo). Tapa con tu dedo la letra que buscas y verás la fórmula exacta.'
+    },
+
+    // ========================================================================
+    // LENGUA Y COMUNICACIÓN & NORMAS APA (CBTIS 1er Semestre & Prepa)
+    // ========================================================================
+    {
+      id: 'lengua_reglas_acentuacion',
+      title: 'Reglas de Acentuación RAE: Agudas, Graves, Esdrújulas y Acento Diacrítico',
+      category: 'Lengua y Comunicación (CBTIS 1er Semestre)',
+      badge: 'Español & APA',
+      keywords: ['acentuacion', 'reglas de acentuacion', 'agudas', 'graves', 'llanas', 'esdrujulas', 'sobresdrujulas', 'tilde diacritica', 'hiato', 'diptongo', 'ortografia', 'rae', 'español'],
+      concept: `En la lengua española, <strong>todas las palabras tienen acento prosódico</strong> (la sílaba tónica con mayor intensidad acústica), pero solo un grupo específico lleva <strong>tilde o acento ortográfico (´)</strong> según las normas oficiales de la RAE. El orden se determina contando las sílabas de derecha a izquierda con la regla mnemotécnica <strong>SEGA</strong>.`,
+      formulas: [
+        'Mnemotecnia SEGA (de derecha a izquierda):',
+        '• [S] Sobresdrújulas (antes de antepenúltima sílaba) ➔ ¡SIEMPRE llevan tilde! (ej. cóm-pra-me-lo, trā-e-te-lo)',
+        '• [E] Esdrújulas (antepenúltima sílaba) ➔ ¡SIEMPRE llevan tilde! (ej. má-qui-na, cé-lu-la, quí-mi-ca)',
+        '• [G] Graves o Llanas (penúltima sílaba) ➔ Llevan tilde cuando terminan en consonante distinta de N, S o Vocal (ej. ár-bol, lá-piz, ca-rác-ter)',
+        '• [A] Agudas (última sílaba) ➔ Llevan tilde cuando terminan en vocal o en las consonantes N o S (ej. can-ción, ca-fé, a-rro-z [no lleva tilde porque termina en Z])',
+        '• Tilde Diacrítica: Distingue palabras de igual grafía: él (pronombre) / el (artículo); tú (pronombre) / tu (posesivo); más (cantidad) / mas (pero); sí (afirmación) / si (condición).'
+      ],
+      example: {
+        statement: 'Clasificar silábicamente y justificar la acentuación de: "árbol", "canción", "fácilmente" y "examen"',
+        steps: [
+          '1. <strong>ár-bol:</strong> Tónica en "ár" (penúltima sílaba = Grave). Termina en consonante "L" (diferente de N, S o vocal) ➔ Lleva tilde.',
+          '2. <strong>can-ción:</strong> Tónica en "ción" (última sílaba = Aguda). Termina en "N" ➔ Lleva tilde obligatoria.',
+          '3. <strong>fá-cil-men-te:</strong> Adverbio en -mente. Mantiene la tilde de su adjetivo base "fácil" (Sobresdrújula) ➔ Lleva tilde.',
+          '4. <strong>ex-a-men:</strong> Tónica en "a" (penúltima = Grave). Termina en "N" ➔ NO lleva tilde. (En cambio, su plural "exámenes" es esdrújula y sí lleva tilde).'
+        ],
+        result: 'árbol (grave con tilde) | canción (aguda con tilde) | fácilmente (sobresdrújula) | examen (grave sin tilde)'
+      },
+      pitfalls: [
+        'Ponerle tilde a "examen", "imagen" o "origen": son palabras graves terminadas en N, por tanto jamás llevan tilde.',
+        'Ponerle tilde a monosílabos sin función diacrítica: "ti", "fe", "dio", "vio", "fui" NUNCA llevan tilde en español moderno.'
+      ],
+      goldenTip: 'Aprende la palabra SEGA: escribe las letras S - E - G - A sobre las sílabas de tu palabra de derecha a izquierda y sabrás la categoría en 2 segundos.'
+    },
+    {
+      id: 'lengua_normas_apa_7',
+      title: 'Normas APA 7ª Edición: Citas en el Texto y Referencias Bibliográficas',
+      category: 'Lengua y Comunicación & Metodología Académica',
+      badge: 'Español & APA',
+      keywords: ['apa', 'normas apa', 'apa 7', 'apa 7ma edicion', 'citar en apa', 'citas textuales', 'parafraseo', 'bibliografia', 'referencias', 'citas'],
+      concept: `El manual de la <strong>American Psychological Association (APA 7ª edición)</strong> es el estándar científico internacional exigido en preparatoria y universidad para redactar informes, ensayos y tesis. Su propósito ético central es dar crédito explícito a las fuentes de información y evitar el plagio académico.`,
+      formulas: [
+        '1. Cita Textual Corta (< 40 palabras): Se incorpora en el párrafo entre comillas: "texto" (Apellido, Año, p. XX).',
+        '2. Cita Textual Larga (≥ 40 palabras): Se escribe en bloque aparte con sangría izquierda de 1.27 cm, sin comillas e interlineado doble.',
+        '3. Parafraseo: Explicar la idea con tus propias palabras: según Gómez (2022), las reacciones redox... o al final (Gómez, 2022).',
+        '4. Formato de Referencias al final (con Sangría Francesa de 1.27 cm):',
+        '• Libro: Apellido, A. A. (Año). <em>Título del libro en cursiva</em> (edición). Editorial.',
+        '• Artículo: Apellido, A. A. (Año). Título del artículo. <em>Nombre de Revista en Cursiva</em>, volumen(número), páginas. https://doi.org/...',
+        '• Página Web: Autor u Organización. (Fecha completa). <em>Título del artículo web</em>. Nombre del Sitio. URL'
+      ],
+      example: {
+        statement: 'Cómo citar en APA 7 un libro de Química General de Chang y cómo redactar la referencia final',
+        steps: [
+          '1. Cita parentética dentro del párrafo: "La energía de enlace es la cantidad requerida para romper un mol de moléculas" (Chang & Goldsby, 2017, p. 384).',
+          '2. Cita narrativa: Como afirman Chang y Goldsby (2017), el enlace covalente...',
+          '3. Entrada completa en la lista de referencias al final del documento con sangría francesa:<br><code>Chang, R., & Goldsby, K. A. (2017). <em>Química</em> (12ª ed.). McGraw-Hill Education.</code>'
+        ],
+        result: 'Cita en texto: (Chang & Goldsby, 2017) | Referencia: Chang, R., & Goldsby, K. A. (2017). Química (12ª ed.). McGraw-Hill.'
+      },
+      pitfalls: [
+        'Copiar y pegar solo el link de internet en la bibliografía: un link solo no es una referencia APA válida; siempre debe llevar autor, año y título.',
+        'Confundir cita (mención corta en el cuerpo del texto) con referencia (ficha bibliográfica completa al final).'
+      ],
+      goldenTip: 'En APA 7ª edición ya NO se escribe la frase "Recuperado de:" antes de los enlaces web, ni se incluye la ciudad de la editorial.'
+    },
+    {
+      id: 'lengua_ensayo_academico',
+      title: 'Estructura y Redacción del Ensayo Académico Escolar y Universitario',
+      category: 'Lengua y Comunicación (CBTIS 1er Semestre)',
+      badge: 'Español & APA',
+      keywords: ['ensayo', 'ensayo academico', 'como hacer un ensayo', 'estructura del ensayo', 'tesis', 'conectores', 'conclusion', 'redaccion', 'argumentacion'],
+      concept: `El <strong>ensayo académico</strong> es un género textual en prosa donde el estudiante analiza, interpreta y defiende una postura fundamentada (llamada <strong>Tesis</strong>) sobre un tema científico, social o humanístico, utilizando argumentos racionales y evidencias verificables.`,
+      formulas: [
+        'Estructura Canónica en 3 Partes:',
+        '1. Introducción (15% del texto): Gancho de apertura + delimitación del tema + planteamiento explícito de la TESIS (oración afirmativa que expresa tu postura defendible).',
+        '2. Desarrollo Argumentativo (70% del texto): Párrafos estructurados (Idea temática + Evidencia o cita APA + Explicación y contraargumentación).',
+        '3. Conclusión (15% del texto): Reafirmación sintética de la tesis con nuevas palabras + balance de argumentos + reflexión prospectiva final.',
+        'Conectores argumentativos clave: <em>Por consiguiente, No obstante, En contraste, Sin embargo, Por ende, Asimismo</em>.'
+      ],
+      example: {
+        statement: 'Estructurar la tesis y el plan de argumentos para un ensayo sobre tecnología en el CBTIS',
+        steps: [
+          '1. Tema delimitado: El impacto de la educación tecnológica en los bachilleratos de la frontera.',
+          '2. Formulación de la Tesis (clara, directa y debatible): "La integración temprana de herramientas computacionales avanzadas en el primer semestre de preparatoria en el CBTIS 7 no solo combate el rezago académico en ciencias exactas, sino que resulta determinante para la inserción en la industria tecnológica de Reynosa".',
+          '3. Argumento 1: Evidencia del aprendizaje activo en matemáticas y física.',
+          '4. Argumento 2: Demanda laboral técnica en los parques industriales de Tamaulipas.',
+          '5. Conclusión: Reafirmar la necesidad de capacitar a los jóvenes como agentes de cambio regional.'
+        ],
+        result: 'Esquema de ensayo balanceado, con tesis defendible y argumentos contextualizados.'
+      },
+      pitfalls: [
+        'Confundir un ensayo con un resumen: un resumen dice lo que otros autores escribieron; un ensayo defiende TU propia postura con respaldo crítico.',
+        'Escribir en primera persona informal ("Yo opino que...", "A mí me parece que..."): en preparatoria y universidad se redacta en tercera persona formal o impersonal ("Se argumenta que...", "La evidencia demuestra que...").'
+      ],
+      goldenTip: 'Dedica cada párrafo a una sola idea principal; si cambias de argumento o de enfoque, salta de inmediato a un nuevo párrafo.'
+    },
+
+    // ========================================================================
+    // INGLÉS I A VI (CBTIS & Preparatoria / Universidad)
+    // ========================================================================
+    {
+      id: 'ingles_verb_to_be',
+      title: 'Verb To Be: Conjugation, Personal Pronouns & Sentence Formulas',
+      category: 'Inglés I (CBTIS 1er Semestre)',
+      badge: 'Inglés',
+      keywords: ['verb to be', 'to be', 'am is are', 'was were', 'ingles', 'pronombres', 'personal pronouns', 'english grammar', 'verb'],
+      concept: `El <strong>Verb To Be</strong> (traducido como 'Ser' o 'Estar') es el núcleo vertebral de la gramática inglesa. Es único porque cambia completamente según la persona gramatical y no necesita verbos auxiliares (como do/does) para formular preguntas o negaciones.`,
+      formulas: [
+        'Present Simple: I AM | You / We / They ARE | He / She / It IS',
+        'Past Simple: I / He / She / It WAS | You / We / They WERE',
+        'Estructura Afirmativa: Subject + Be + Complement (ej. She is an intelligent student)',
+        'Estructura Negativa: Subject + Be + NOT + Complement (ej. He is not / isn\'t at school)',
+        'Estructura Interrogativa (Inversión): BE + Subject + Complement? (ej. Are they in the classroom?)'
+      ],
+      example: {
+        statement: 'Formar las 3 estructuras (afirmativa, negativa e interrogativa) para: "Mi hija estudia en la preparatoria CBTIS 7"',
+        steps: [
+          '1. Affirmative: <code>My daughter is a student at CBTIS 7 high school.</code> (Contracted: <code>My daughter\'s a student...</code>).',
+          '2. Negative: <code>My daughter is not a student at CBTIS 7.</code> (Contracted: <code>My daughter isn\'t a student...</code>).',
+          '3. Interrogative (inversión de sujeto y verbo to be): <code>Is your daughter a student at CBTIS 7?</code>',
+          '4. Short Answers: <code>Yes, she is. / No, she isn\'t.</code>'
+        ],
+        result: 'Affirmative: She is... | Negative: She isn\'t... | Question: Is she...?'
+      },
+      pitfalls: [
+        'Usar los auxiliares "do" o "does" con el verbo To Be (¡Error grave! No se dice "Do you be happy?", se dice "Are you happy?").',
+        'Omitir el artículo "a / an" al referirse a profesiones u ocupaciones: en inglés es obligatorio decir "I am A student", nunca "I am student".'
+      ],
+      goldenTip: 'El verbo To Be es el rey de los verbos: él solo niega añadiendo "not" y él solo pregunta saltando al principio de la oración.'
+    },
+    {
+      id: 'ingles_present_simple_continuous',
+      title: 'Present Simple vs Present Continuous: Rules, -s endings & Uses',
+      category: 'Inglés I & II (CBTIS)',
+      badge: 'Inglés',
+      keywords: ['present simple', 'present continuous', 'simple present', 'present progressive', 'do does', 'ing', 'adverbs of frequency', 'grammar rules'],
+      concept: `El <strong>Present Simple</strong> se utiliza para describir hábitos, rutinas diarias, verdades científicas inmutables y horarios fijos. El <strong>Present Continuous</strong> (o progresivo) describe acciones que están ocurriendo en este preciso instante o situaciones temporales en desarrollo.`,
+      formulas: [
+        'Present Simple (Afirmativo): Sujeto + Verbo Base (añadir -s / -es / -ies en 3ª persona He/She/It)',
+        'Present Simple (Negativo & Pregunta): Sujeto + DON\'T / DOESN\'T + Verbo Base | DO / DOES + Sujeto + Verbo Base?',
+        'Present Continuous: Sujeto + AM / IS / ARE + Verbo terminado en -ING',
+        'Pistas temporales (Time Markers):',
+        '• Simple: always, usually, often, every day, on Mondays.',
+        '• Continuous: now, right now, at the moment, currently, Look!, Listen!'
+      ],
+      example: {
+        statement: 'Completar con el tiempo correcto: "Right now, Sofia _____ (solve) a physics problem, but she normally _____ (study) math on Tuesdays."',
+        steps: [
+          '1. Primera cláusula: "Right now" indica una acción en progreso ➔ Present Continuous ➔ <code>is solving</code>.',
+          '2. Segunda cláusula: "normally" expresa una rutina habitual ➔ Present Simple. El sujeto es "she" (3ª persona singular), por lo que el verbo "study" cambia su "y" por "-ies" ➔ <code>studies</code>.'
+        ],
+        result: '"Right now, Sofia is solving a physics problem, but she normally studies math on Tuesdays."'
+      },
+      pitfalls: [
+        'Olvidar la "-s" en 3ª persona afirmativa: se dice "He works", jamás "He work".',
+        'Dejar la "-s" cuando ya está el auxiliar "does": "Does he work?" (correcto) vs "Does he works?" (¡error común!).'
+      ],
+      goldenTip: 'Cuando el auxiliar DOES o DOESN\'T entra por la puerta, la "-s" del verbo sale por la ventana (el verbo regresa a su forma natural).'
+    },
+    {
+      id: 'ingles_conditionals',
+      title: 'Conditional Sentences: Zero, First, Second & Third Conditionals',
+      category: 'Inglés Intermedio & Avanzado (Bachillerato & Universidad)',
+      badge: 'Inglés',
+      keywords: ['conditionals', 'first conditional', 'second conditional', 'zero conditional', 'third conditional', 'if clause', 'would', 'will'],
+      concept: `Las <strong>oraciones condicionales</strong> expresan relaciones de causa y efecto. Dependiendo del grado de certeza o de fantasía hipotética, el inglés emplea cuatro estructuras condicionales con fórmulas verbales exactas.`,
+      formulas: [
+        '• Zero Conditional (Verdades científicas y leyes 100% certeras): If + Present Simple, Present Simple. (ej. If you freeze water, it turns into ice)',
+        '• First Conditional (Situaciones reales con alta probabilidad en el futuro): If + Present Simple, WILL + Verbo Base. (ej. If you study every day, you will pass the exam)',
+        '• Second Conditional (Situaciones hipotéticas, imaginarias o poco probables en el presente): If + Past Simple, WOULD + Verbo Base. (ej. If I won the lottery, I would buy a library)',
+        '• Third Conditional (Lamentos sobre situaciones del pasado imposible de cambiar): If + Past Perfect (had + V3), WOULD HAVE + V3. (ej. If I had prepared better, I would have got a ten)'
+      ],
+      example: {
+        statement: 'Construir una oración en First Conditional y otra en Second Conditional para aconsejar a un estudiante',
+        steps: [
+          '1. First Conditional (real y alcanzable): <code>If you practice with Perrito Math, you will master calculus.</code>',
+          '2. Second Conditional (hipotético): <code>If I had more free time, I would learn German and robotics.</code>'
+        ],
+        result: '1st: If you practice..., you will master... | 2nd: If I had..., I would learn...'
+      },
+      pitfalls: [
+        'Meter "will" o "would" dentro de la cláusula de "if" (¡Error clásico de examen! Nunca digas "If you will study", di "If you study").',
+        'En Second Conditional se prefiere usar "were" para todas las personas: "If I were you..." en vez de "If I was you".'
+      ],
+      goldenTip: 'Asocia cada condicional con un tiempo: Zero = Hechos científicos | First = Futuro real (Will) | Second = Sueños e hipótesis (Would) | Third = Arrepentimientos del pasado (Would have).'
+    },
+
+    // ========================================================================
+    // CULTURA DIGITAL & INFORMÁTICA (CBTIS 1er Semestre & Universidad)
+    // ========================================================================
+    {
+      id: 'cultura_digital_excel_formulas',
+      title: 'Microsoft Excel & Hojas de Cálculo: Fórmulas y Funciones Esenciales',
+      category: 'Cultura Digital I (CBTIS 1er Semestre)',
+      badge: 'Cultura Digital',
+      keywords: ['excel', 'hoja de calculo', 'formulas excel', 'funciones excel', 'suma excel', 'promedio excel', 'si condicional', 'buscarv', 'vlookup', 'fijar celda', 'referencias absolutas'],
+      concept: `Las <strong>hojas de cálculo (Microsoft Excel y Google Sheets)</strong> constituyen la competencia ofimática y técnica más indispensable para la administración, la ingeniería, la ciencia de datos y la industria manufacturera y maquiladora de la frontera norte de México.`,
+      formulas: [
+        'Operaciones Básicas:',
+        '• =SUMA(A1:A10) ➔ Suma continua de un rango numérico.',
+        '• =PROMEDIO(B2:B20) ➔ Media aritmética exacta.',
+        '• =MAX(C1:C50) y =MIN(C1:C50) ➔ Valor máximo y mínimo.',
+        '• =CONTAR.SI(rango, criterio) ➔ Cuenta celdas que cumplen una condición.',
+        'Lógica y Búsqueda Avanzada:',
+        '• =SI(prueba_lógica, valor_si_verdadero, valor_si_falso) ➔ Toma de decisiones condicionales.',
+        '• =BUSCARV(valor_buscado, tabla, indicador_columna, FALSO) ➔ Búsqueda vertical exacta.',
+        'Referencias Absolutas ($A$1): Los signos de pesos fijan la columna ($A) o la fila ($1) para que no se muevan al arrastrar la fórmula.'
+      ],
+      example: {
+        statement: 'Escribir la fórmula en Excel para determinar si un estudiante del CBTIS aprueba o reprueba con promedio en la celda D5 (mínimo aprobatorio: 6)',
+        steps: [
+          '1. Iniciar siempre con el signo igual: <code>=</code>.',
+          '2. Emplear la función lógica condicional: <code>SI(</code>.',
+          '3. Definir la prueba lógica: <code>D5 >= 6</code>.',
+          '4. Establecer el valor verdadero (texto entre comillas): <code>\"APROBADO\"</code>.',
+          '5. Establecer el valor falso (texto entre comillas): <code>\"REPROBADO\"</code>.',
+          '6. Cerrar paréntesis: <code>=SI(D5>=6, \"APROBADO\", \"REPROBADO\")</code>.'
+        ],
+        result: '<code>=SI(D5>=6, "APROBADO", "REPROBADO")</code> (o con punto y coma ";" según la configuración regional)'
+      },
+      pitfalls: [
+        'Confundir coma (,) con punto y coma (;) como separador de argumentos según la configuración regional de Windows o Mac.',
+        'Olvidar colocar las comillas dobles en los textos ("APROBADO"): sin comillas, Excel piensa que es el nombre de una fórmula y arroja el error #¿NOMBRE?.'
+      ],
+      goldenTip: 'Presiona la tecla F4 (o Cmd+T en Mac) mientras seleccionas una celda en tu fórmula para convertirla instantáneamente en referencia absoluta fija ($A$1).'
+    },
+    {
+      id: 'cultura_digital_algoritmos_diagramas',
+      title: 'Pensamiento Computacional: Algoritmos y Diagramas de Flujo',
+      category: 'Cultura Digital I (CBTIS 1er Semestre)',
+      badge: 'Cultura Digital',
+      keywords: ['algoritmo', 'diagrama de flujo', 'pensamiento computacional', 'pseudocodigo', 'simbologia flujo', 'inicio fin', 'decision', 'proceso', 'programacion'],
+      concept: `Un <strong>algoritmo</strong> es un conjunto prescrito de instrucciones o reglas bien definidas, ordenadas y finitas que permite solucionar un problema específico. Un <strong>Diagrama de Flujo</strong> es su esquematización gráfica estandarizada (norma ISO) que facilita el diseño de software y la automatización de procesos.`,
+      formulas: [
+        'Simbología Estándar de Diagramas de Flujo:',
+        '• Óvalo o Elipse: Inicio y Fin del algoritmo.',
+        '• Rectángulo: Proceso u operación interna (ej. suma = a + b).',
+        '• Paralelogramo (Romboide): Entrada o Salida de datos (ej. Leer calificación; Imprimir resultado).',
+        '• Rombo: Decisión o condición con dos caminos posibles (Verdadero / Falso o Sí / No).',
+        '• Flechas: Líneas de flujo que indican el sentido secuencial de ejecución.'
+      ],
+      example: {
+        statement: 'Escribir el pseudocódigo estructurado para calcular el área de un triángulo (Base × Altura ÷ 2)',
+        steps: [
+          '1. Inicio',
+          '2. Escribir "Ingresa el valor de la base (b) y de la altura (h):"',
+          '3. Leer base, altura',
+          '4. area = (base * altura) / 2',
+          '5. Escribir "El área calculada es: ", area',
+          '6. Fin'
+        ],
+        result: 'Algoritmo determinista, finito y secuencial de 6 pasos claros.'
+      },
+      pitfalls: [
+        'Omitir la instrucción de "Fin": todo algoritmo por definición debe ser estrictamente finito.',
+        'Invertir los símbolos de entrada (paralelogramo) y proceso (rectángulo).'
+      ],
+      goldenTip: 'Aplica el principio IPO (Input, Processing, Output): primero determina qué datos necesitas que el usuario ingrese, luego qué operación matemática harás con ellos, y finalmente qué mostrarás en pantalla.'
+    },
+
+    // ========================================================================
+    // BIOLOGÍA & ECOSISTEMAS (CBTIS & Preparatoria)
+    // ========================================================================
+    {
+      id: 'biologia_celula_organelos',
+      title: 'Biología Celular: Procariota vs Eucariota y Funciones de los Organelos',
+      category: 'Biología & Ciencias Naturales',
+      badge: 'Biología',
+      keywords: ['celula', 'procariota', 'eucariota', 'organelos', 'mitocondria', 'nucleo', 'ribosoma', 'membrana celular', 'adn', 'biologia'],
+      concept: `La <strong>célula</strong> es la unidad morfológica, fisiológica y genética de todos los seres vivos (Teoría Celular). Se divide en dos grandes linajes: <strong>Células Procariotas</strong> (sin núcleo definido, material genético disperso en el citoplasma, como las bacterias) y <strong>Células Eucariotas</strong> (con núcleo verdadero rodeado por carioteca y organelos membranosos, como animales, vegetales y hongos).`,
+      formulas: [
+        'Estructura y función de organelos celulares:',
+        '• Núcleo celular: Contiene y protege el genoma (ADN), coordinando la replicación y transcripción.',
+        '• Mitocondria: Central energética celular donde se sintetiza ATP mediante la respiración aeróbica.',
+        '• Ribosomas: Estructuras no membranosas encargadas de la síntesis de proteínas (traducción del ARNm).',
+        '• Retículo Endoplasmático Rugoso (RER): Red de membranas con ribosomas adheridos para procesar proteínas.',
+        '• Cloroplastos (exclusivo vegetal): Contienen clorofila y captan energía solar para la fotosíntesis.',
+        '• Pared Celular (vegetales y bacterias): Estructura rígida de celulosa o peptidoglucano que brinda soporte.'
+      ],
+      example: {
+        statement: '¿Qué organelo se encuentra en mayor densidad en las células musculares de un atleta y por qué razón biológica?',
+        steps: [
+          '1. Analizar el requerimiento metabólico: El tejido muscular esquelético realiza trabajo mecánico continuo y requiere un suministro masivo e ininterrumpido de energía química (ATP).',
+          '2. Identificar el organelo responsable de la fosforilación oxidativa: La mitocondria genera más del 90% del ATP celular mediante el ciclo de Krebs y la cadena de transporte de electrones.',
+          '3. Concluir: Las fibras musculares contienen miles de mitocondrias por célula para soportar la contracción muscular prolongada.'
+        ],
+        result: 'La Mitocondria (debido a su función indispensable de respiración celular y producción de ATP).'
+      },
+      pitfalls: [
+        'Creer que las células vegetales no tienen mitocondrias: las plantas tienen AMBOS (cloroplastos para producir glucosa con luz solar Y mitocondrias para quemar esa glucosa de noche).',
+        'Confundir célula procariota con virus: los virus no son células, son complejos macromoleculares acelulares que requieren una célula viva para replicarse.'
+      ],
+      goldenTip: 'Metáfora mnemotécnica de la célula como una ciudad industrial: Núcleo = Palacio municipal; Mitocondria = Planta eléctrica; Ribosomas = Fábricas de manufactura; Membrana = Aduana perimetral.'
+    },
+    {
+      id: 'biologia_genetica_mendel',
+      title: 'Genética Clásica: Leyes de Mendel y Cuadros de Punnett',
+      category: 'Biología & Genética',
+      badge: 'Biología',
+      keywords: ['mendel', 'leyes de mendel', 'genetica', 'cuadro de punnett', 'genotipo', 'fenotipo', 'alelo dominante', 'recesivo', 'herencia'],
+      concept: `Las <strong>Leyes de Gregorio Mendel</strong> (el padre de la genética moderna) sentaron las bases universales de la transmisión de caracteres hereditarios a través de los genes y alelos, refutando la antigua teoría de la mezcla de fluidos biológicos.`,
+      formulas: [
+        '1ª Ley (Principio de la Uniformidad): Cruzar dos líneas puras homocigotas (AA × aa) genera una primera generación F1 100% heterocigota (Aa) con fenotipo idéntico al progenitor dominante.',
+        '2ª Ley (Principio de la Segregación): Al autocruzar la F1 (Aa × Aa), los alelos se separan en los gametos. En la generación F2 reaparece el carácter recesivo con proporción genotípica 1 AA : 2 Aa : 1 aa (75% dominante y 25% recesivo).',
+        'Genotipo: Dotación alélica interna (letras: AA, Aa, aa).',
+        'Fenotipo: Expresión física o bioquímica observable (ej. ojos castaños, tipo de sangre, altura).'
+      ],
+      example: {
+        statement: 'Calcular las proporciones fenotípicas y genotípicas al cruzar dos plantas heterocigotas de flores moradas (Aa × Aa), donde el alelo "A" (morado) domina sobre "a" (blanco)',
+        steps: [
+          '1. Diseñar el Cuadro de Punnett 2x2: gametos de un progenitor en la fila (A, a) y del otro en la columna (A, a).',
+          '2. Cruzar las casillas: Cuadrante 1 = AA; Cuadrante 2 = Aa; Cuadrante 3 = Aa; Cuadrante 4 = aa.',
+          '3. Proporción Genotípica: 25% AA (homocigoto dominante), 50% Aa (heterocigoto), 25% aa (homocigoto recesivo).',
+          '4. Proporción Fenotípica: Los genotipos AA y Aa expresan color morado (25% + 50% = 75%). El genotipo aa expresa color blanco (25%).'
+        ],
+        result: 'Genotipo: 1 AA : 2 Aa : 1 aa | Fenotipo: 75% Flores Moradas (3/4) y 25% Flores Blancas (1/4)'
+      },
+      pitfalls: [
+        'Confundir homocigoto con heterocigoto: homocigoto tiene alelos iguales (AA o aa); heterocigoto tiene alelos distintos (Aa).',
+        'Creer que el fenotipo recesivo desaparece para siempre: el alelo recesivo permanece intacto en el ADN y reaparece cuando dos portadores heterocigotos se cruzan.'
+      ],
+      goldenTip: 'Un rasgo recesivo (ej. ojos claros) solo se manifiesta cuando ambos alelos son recesivos (aa); la presencia de un solo alelo dominante (A) lo oculta fenotípicamente.'
+    },
+
+    // ========================================================================
+    // CIENCIAS SOCIALES E HISTORIA (CBTIS 1er Semestre)
+    // ========================================================================
+    {
+      id: 'ciencias_sociales_instituciones_estado',
+      title: 'Estructura del Estado Mexicano: Los 3 Poderes y la Constitución',
+      category: 'Ciencias Sociales I (CBTIS 1er Semestre)',
+      badge: 'Ciencias Sociales',
+      keywords: ['ciencias sociales', 'poderes de la union', 'poder ejecutivo', 'poder legislativo', 'poder judicial', 'constitucion de 1917', 'derechos humanos', 'mexico', 'reynosa'],
+      concept: `México es una República representativa, democrática, federal y laica. Su sistema de gobierno se fundamenta en el principio republicano de la <strong>División de Poderes</strong> (formulado por Montesquieu) para evitar la tiranía, garantizar el equilibrio constitucional y salvaguardar los derechos humanos de la ciudadanía.`,
+      formulas: [
+        'Los Tres Poderes de la Unión (Nivel Federal):',
+        '• Poder Ejecutivo: Encabezado por la Presidencia de la República. Se encarga de administrar los recursos públicos, diseñar políticas de estado y promulgar y ejecutar las leyes.',
+        '• Poder Legislativo: Congreso de la Unión, integrado por la Cámara de Diputados (500 diputados: representan al pueblo y aprueban el Presupuesto) y la Cámara de Senadores (128 senadores: representan a las entidades federativas). Elabora, debate y aprueba las leyes.',
+        '• Poder Judicial: Suprema Corte de Justicia de la Nación (SCJN), Tribunales Colegiados y Juzgados de Distrito. Administra justicia, interpreta la Constitución y resuelve controversias mediante el Juicio de Amparo.',
+        'Carta Magna: Constitución Política de los Estados Unidos Mexicanos, promulgada el 5 de febrero de 1917 en Querétaro.'
+      ],
+      example: {
+        statement: '¿Qué órgano del estado mexicano tiene la facultad exclusiva de discutir y aprobar anualmente el Presupuesto de Egresos de la Federación?',
+        steps: [
+          '1. Analizar las facultades constitucionales de los poderes: El artículo 74 de la Constitución establece las facultades exclusivas.',
+          '2. Verificar la exclusividad: A diferencia de las leyes ordinarias (que deben pasar por ambas cámaras), el Presupuesto de Egresos es revisado y aprobado únicamente por los representantes populares directos.',
+          '3. Concluir: La Cámara de Diputados es la facultada constitucionalmente de forma exclusiva.'
+        ],
+        result: 'Cámara de Diputados (Poder Legislativo Federal)'
+      },
+      pitfalls: [
+        'Creer que el Senado aprueba el Presupuesto de Egresos: el Senado analiza la Ley de Ingresos, pero el Presupuesto de Egresos es facultad exclusiva de los Diputados.',
+        'Confundir un estado federal con uno centralista: en México cada estado (como Tamaulipas) es libre y soberano en su régimen interior, con su propio Congreso local y gobernador.'
+      ],
+      goldenTip: 'Recuerda las funciones con verbos clave: El Legislativo CREA las leyes, el Ejecutivo las APLICA y administra, y el Judicial las JUZGA e interpreta.'
+    },
+
+    // ========================================================================
+    // HUMANIDADES & FILOSOFÍA (CBTIS 1er Semestre)
+    // ========================================================================
+    {
+      id: 'humanidades_falacias_logicas',
+      title: 'Lógica y Filosofía: Las Falacias Argumentativas Más Comunes',
+      category: 'Humanidades I (CBTIS 1er Semestre)',
+      badge: 'Humanidades',
+      keywords: ['falacia', 'falacias', 'falacias logicas', 'ad hominem', 'hombre de paja', 'ad verecundiam', 'falsa dicotomia', 'logica', 'filosofia', 'argumentacion'],
+      concept: `En filosofía y lógica formal, una <strong>falacia</strong> es un argumento que parece válido y convincente a primera vista, pero que encierra un vicio o error lógico en su estructura que invalida su conclusión. Identificar falacias es la habilidad principal del pensamiento crítico en preparatoria y universidad.`,
+      formulas: [
+        'Catálogo de falacias clásicas:',
+        '• Ad Hominem (Ataque personal): Descalificar la propuesta atacando a la persona que la emite en vez de refutar sus datos o argumentos.',
+        '• Hombre de Paja (Straw Man): Caricaturizar o distorsionar la postura del oponente haciéndola ver ridícula para derribarla fácilmente.',
+        '• Ad Verecundiam (Apelación a la falsa autoridad): Respaldar una afirmación invocando a una figura pública o celebridad que no es experta en la materia.',
+        '• Falsa Dicotomía (Blanco o Negro): Reducir un problema complejo a solo dos opciones extremas, ignorando las alternativas intermedias.',
+        '• Petición de Principio (Circularidad): La conclusión que se pretende demostrar ya está asumida implícitamente dentro de la premisa.'
+      ],
+      example: {
+        statement: 'Identificar la falacia en la frase: "El maestro reprobó mi ensayo de historia porque a él no le caigo bien y es una persona intolerante"',
+        steps: [
+          '1. Analizar el argumento: Se intenta invalidar una calificación académica objetiva.',
+          '2. Evaluar el fundamento ofrecido: Se ataca la personalidad y los supuestos sentimientos del evaluador, en lugar de contrastar el texto del ensayo con la rúbrica y las citas bibliográficas.',
+          '3. Clasificar: Al desviar la atención hacia un rasgo personal del docente, se comete un ataque ad hominem.'
+        ],
+        result: 'Falacia Ad Hominem (contra la persona).'
+      },
+      pitfalls: [
+        'Creer que cualquier insulto es automáticamente una falacia ad hominem: solo es falacia si el insulto se utiliza COMO la razón para pretender refutar un argumento.',
+        'La falacia de la falacia (Ad Logicam): asumir que porque el argumento de alguien contiene una falacia, su conclusión es automáticamente falsa.'
+      ],
+      goldenTip: 'En un debate o ensayo, ataca las premisas, las evidencias y la coherencia lógica de las ideas, nunca a las personas.'
+    },
+
+    // ========================================================================
+    // TÉCNICAS DE ESTUDIO Y ÉXITO ACADÉMICO (CBTIS 7 & Admisión Universitaria)
+    // ========================================================================
+    {
+      id: 'estudio_tecnicas_examen_cbtis',
+      title: 'Técnicas de Estudio de Alto Rendimiento: Pomodoro, Feynman y Apuntes Cornell',
+      category: 'Metodología & Éxito Académico (CBTIS 7 & Universidad)',
+      badge: 'Técnicas de Estudio',
+      keywords: ['pomodoro', 'tecnica feynman', 'metodo cornell', 'como estudiar', 'tecnicas de estudio', 'examenes cbtis', 'exani', 'habitos de estudio', 'repaso espaciado'],
+      concept: `La neurociencia cognitiva ha demostrado que la lectura pasiva y el desvelo la noche anterior al examen son las formas más ineficientes de aprender. Las metodologías con mayor evidencia científica para retener conocimientos a largo plazo y destacar en preparatoria (CBTIS) y universidad son la <strong>evocación activa</strong> y la <strong>repetición espaciada</strong>.`,
+      formulas: [
+        '1. Técnica Pomodoro: 25 minutos de enfoque absoluto (celular en otra habitación) + 5 minutos de descanso activo. Tras 4 ciclos, tomar un descanso reparador de 20-30 minutos.',
+        '2. Técnica Feynman (Aprender enseñando): Selecciona el tema difícil ➔ Explícaselo a un niño en palabras sencillas sin tecnicismos ➔ Identifica dónde te trabaste ➔ Vuelve al libro y simplifica aún más con analogías.',
+        '3. Método Cornell para Apuntes: Divide la libreta en 3 zonas: Columna izquierda (Preguntas y conceptos clave), Espacio principal (Apuntes breves y diagramas de clase), Pie de página (Resumen de 2 renglones con tus propias palabras).',
+        '4. Regla del Descarte para Exámenes de Opción Múltiple: De 4 opciones (A, B, C, D), 2 suelen ser disparates obvios; descártalas de inmediato para elevar tu probabilidad de acierto del 25% al 50% entre las finalistas.'
+      ],
+      example: {
+        statement: 'Plan de preparación para un examen parcial de Matemáticas o Química en el CBTIS 7',
+        steps: [
+          '1. Cero lectura pasiva: No te limites a releer el cuaderno. Resuelve ejercicios desde cero con una hoja en blanco y lápiz.',
+          '2. Crea una Hoja Resumen de Fórmulas y Errores Típicos: anota dónde sueles equivocarte en los signos o en el despeje.',
+          '3. Aplica 3 ciclos Pomodoro de práctica intensiva y realiza un simulacro con cronómetro de 45 minutos simulando el examen real.'
+        ],
+        result: 'Retención superior al 85%, dominio conceptual y máxima confianza ante la prueba.'
+      },
+      pitfalls: [
+        'Subrayar todo el libro con marcatextos fluorescentes: crea la falsa ilusión de que estás aprendiendo, pero tu cerebro no es capaz de recordar la fórmula si le quitas el libro.',
+        'Estudiar escuchando música con letra cantada: las palabras de la música saturan el bucle fonológico del cerebro, mermando la capacidad de resolver problemas matemáticos.'
+      ],
+      goldenTip: 'Repasa tus apuntes dentro de las primeras 24 horas después de la clase; esto frena la "Curva del Olvido" y ahorra horas de estudio pesado al final del bimestre.'
     }
   ];
 
@@ -1943,43 +2544,50 @@
     `;
   }
 
-  // Generador heurístico general siguiendo el Método de Pólya para cualquier otra consulta matemática
+  // Generador heurístico general multidisciplinario para cualquier otra consulta académica
   function formatGenericEruditeResponse(userQuery, activeContext) {
     return `
       <div class="erudite-card-response">
         <div class="erudite-header">
-          <span class="erudite-badge">🎓 Tutoría Personalizada</span>
-          <h4 class="erudite-title">Análisis Matemático: "${userQuery}"</h4>
-          <span class="erudite-sub">Metodología Universal de George Pólya para Resolver Problemas</span>
+          <span class="erudite-badge">🎓 Cátedra Multidisciplinaria • Tutor Universal</span>
+          <h4 class="erudite-title">Orientación Académica: "${userQuery}"</h4>
+          <span class="erudite-sub">Metodología Científica y Pedagógica de Excelencia para Preparatoria & Universidad</span>
         </div>
 
         <div class="erudite-section">
           <div class="erudite-concept">
-            Como catedrático de matemáticas, para abordar tu inquietud sobre <strong>${userQuery}</strong> aplicamos los 4 pasos universales del rigor científico:
+            Como <strong>Profesor Perrito Catedrático</strong>, para abordar tu consulta sobre <strong>${userQuery}</strong> en tus estudios de preparatoria (como en el <strong>CBTIS 7</strong>) o universidad, aplicamos los 4 pilares del método científico y analítico universal:
           </div>
         </div>
 
         <div class="erudite-steps">
           <div class="erudite-step-item">
-            <span class="step-num-badge">Fase 1</span>
-            <div><strong>Comprender el Problema e Identificar Datos:</strong> Determinar con exactitud cuáles son las incógnitas, cuáles son los datos conocidos y qué condiciones algebraicas o geométricas rigen la situación.</div>
+            <span class="step-num-badge">Pilar 1</span>
+            <div><strong>Diagnóstico del Problema y Área de Estudio:</strong> Identificar la disciplina rectora (Matemáticas, Química, Física, Lengua/APA, Inglés, Excel/Informática, Ciencias Sociales o Filosofía) y delimitar los conceptos, variables, reactivos o premisas fundamentales.</div>
           </div>
           <div class="erudite-step-item">
-            <span class="step-num-badge">Fase 2</span>
-            <div><strong>Concebir un Plan Estratégico:</strong> Seleccionar el teorema o método idóneo (factorización, m.c.m. de denominadores, Ley de la Herradura, Fórmula General o regla de derivación correspondiente).</div>
+            <span class="step-num-badge">Pilar 2</span>
+            <div><strong>Fundamento Teórico y Ley Rectora:</strong> Seleccionar el principio rector: ley física/química (Leyes de Newton, Lavoisier, Ley de Ohm), teorema matemático (Pitágoras, regla de Cramer, derivadas), regla ortográfica de la RAE, estructura gramatical en inglés o fórmula de hoja de cálculo.</div>
           </div>
           <div class="erudite-step-item">
-            <span class="step-num-badge">Fase 3</span>
-            <div><strong>Ejecución Meticulosa:</strong> Realizar cada operación matemática cuidando al 100% las leyes de los signos (<code>-(-) = +</code>), la jerarquía PEMDAS (paréntesis antes de multiplicaciones y sumas) y la simplificación por M.C.D.</div>
+            <span class="step-num-badge">Pilar 3</span>
+            <div><strong>Desarrollo y Ejecución Meticulosa:</strong> Resolver paso a paso sin saltarse etapas intermedias, cuidando el balanceo estequiométrico, la ley de los signos algebraicos, la concordancia gramatical o la sintaxis de programación.</div>
           </div>
           <div class="erudite-step-item">
-            <span class="step-num-badge">Fase 4</span>
-            <div><strong>Comprobación Retrospectiva:</strong> Sustituir la respuesta en la expresión original para verificar la identidad o igualdad matemática.</div>
+            <span class="step-num-badge">Pilar 4</span>
+            <div><strong>Verificación y Comprobación:</strong> Contrastar el resultado con la realidad física, comprobar la igualdad matemática o verificar la coherencia argumentativa y la correcta citación en formato APA 7.</div>
           </div>
         </div>
 
         <div class="erudite-tip-box">
-          🐾 <strong>¡Pregúntame con toda confianza!</strong> Puedes escribir una operación directa como <code>cuanto es 3/4 + 5/6</code>, una ecuación como <code>2x + 5 = 15</code>, o pedirme que te explique temas como <em>"teorema de pitagoras"</em>, <em>"derivadas"</em>, <em>"factorizacion"</em>, o <em>"fracciones compuestas"</em>. ¡Te daré el desarrollo completo paso a paso con ejemplos reales!
+          🐾 <strong>¡Pregúntame con total libertad!</strong> Puedes consultarme cualquier duda de:<br>
+          • <strong>Matemáticas:</strong> operaciones, fracciones compuestas, álgebra, cuadráticas, derivadas, integrales, estadística.<br>
+          • <strong>Química:</strong> enlaces iónicos y covalentes, balanceo por tanteo, tabla periódica, configuración electrónica.<br>
+          • <strong>Física:</strong> leyes de Newton, MRU/MRUA, caída libre, ley de Ohm, circuitos eléctricos, energía y trabajo.<br>
+          • <strong>Lengua & APA:</strong> reglas de acentuación SEGA, estructura del ensayo, cómo citar en APA 7ª edición.<br>
+          • <strong>Inglés:</strong> Verb To Be, Present Simple vs Continuous, verbos irregulares, condicionales.<br>
+          • <strong>Cultura Digital:</strong> fórmulas de Excel (=SI, =BUSCARV), algoritmos, diagramas de flujo y ciberseguridad.<br>
+          • <strong>Ciencias Sociales, Filosofía & Técnicas de Estudio:</strong> poderes del estado, falacias lógicas, técnica Pomodoro y Feynman.
         </div>
       </div>
     `;
@@ -2308,35 +2916,71 @@
     if (!cleanKey) throw new Error('Clave de API no provista');
 
     const systemInstruction = `
-Eres el "Profesor Perrito Math 🐶", una eminencia académica y virtuoso catedrático de matemáticas con maestría y doctorado en didáctica y pedagogía de las ciencias exactas.
-Tu misión sagrada e inquebrantable es RESPONDER Y RESOLVER CUALQUIER TIPO DE DUDA O PROBLEMA MATEMÁTICO que el alumno te plantee, sin importar su nivel de dificultad ni la rama de las matemáticas a la que pertenezca:
+Eres el "Profesor Perrito 🐶🎓", Catedrático Polímata y Virtuoso Tutor Pedagógico Multidisciplinario de Excelencia Académica, con maestría y doctorado en pedagogía de las ciencias, humanidades e idiomas.
+Estás especialmente consagrado a formar y orientar con la máxima devoción didáctica a estudiantes de Preparatoria (con especial reconocimiento y cariño a los alumnos del Bachillerato Tecnológico DGETI / CBTIS —como la destacada alumna de 1er semestre del CBTIS 7 de Reynosa, Tamaulipas—, Bachilleratos Generales y Técnicos) y de Universidad (Ingenierías, Ciencias de la Salud, Ciencias Sociales y Humanidades).
 
-📚 DOMINIO UNIVERSAL DE DISCIPLINAS:
-1. Aritmética & Teoría de Números: Operaciones combinadas (PEMDAS), fracciones simples y compuestas, números mixtos, razones, proporciones, porcentajes, regla de tres simple e inversa, m.c.m., M.C.D., números primos, criterios de divisibilidad, potencias y radicales, notación científica.
-2. Álgebra Elemental y Superior: Reducción de términos semejantes, productos notables, todos los métodos de factorización (factor común, trinomios, diferencia de cuadrados, suma/diferencia de cubos, Ruffini), fracciones algebraicas, leyes de exponentes, logaritmos, números complejos.
-3. Ecuaciones, Inecuaciones y Sistemas: Ecuaciones de 1er grado, sistemas de ecuaciones lineales 2x2, 3x3 y nxn (Cramer, sustitución, igualación, reducción, Gauss-Jordan), ecuaciones cuadráticas (fórmula general/chicharronera, factorización, completación de cuadrados), ecuaciones de grado superior, exponenciales, logarítmicas, inecuaciones lineales y cuadráticas, valor absoluto.
-4. Problemas Verbales y de Aplicación Práctica: Problemas de edades, mezclas, móviles/cinemática (velocidad, distancia, tiempo), trabajo compartido y grifos, dinero, interés simple y compuesto, optimización geométrica.
-5. Geometría Euclidiana & Trigonometría: Perímetros, áreas y volúmenes de figuras 2D y 3D, Teorema de Pitágoras, Teorema de Tales y semejanza, razones trigonométricas (SOH-CAH-TOA), identidades fundamentales, Ley de Senos y Cosenos, ángulos notables, radianes.
-6. Geometría Analítica: Distancia entre puntos, punto medio, pendiente, todas las formas de la ecuación de la recta, paralelismo y perpendicularidad, distancia de un punto a una recta, cónicas (circunferencia, parábola, elipse, hipérbola) con sus centros, vértices, focos y directrices.
-7. Cálculo Diferencial: Límites algebraicos e indeterminaciones (0/0, ∞/∞, L'Hôpital), continuidad, derivadas por definición (cociente de Newton) y por reglas (potencia, producto, cociente, cadena), derivación implícita, máximos, mínimos, concavidad y puntos de inflexión.
-8. Cálculo Integral: Antiderivadas, integrales inmediatas, métodos de integración (sustitución/cambio de variable, integración por partes, fracciones parciales, sustitución trigonométrica), Teorema Fundamental del Cálculo, cálculo de áreas bajo la curva.
-9. Álgebra Lineal: Vectores en ℝ² y ℝ³ (módulo, dirección, producto escalar, producto vectorial, proyección), matrices (suma, producto, determinantes 2x2 y 3x3 por Sarrus/Cofactores, matriz inversa, rango).
-10. Probabilidad & Estadística: Medidas de tendencia central (media, mediana, moda), medidas de dispersión (rango, varianza, desviación estándar), combinatoria (principio multiplicativo, permutaciones, combinaciones), probabilidad clásica, condicional y Teorema de Bayes.
-11. Dudas Conceptuales, Historia y Paradojas: "¿Por qué no se puede dividir por cero?", "¿Por qué a⁰ = 1?", "¿Por qué (-)(-) = +?", el número Pi, el número e, la unidad imaginaria i, paradojas matemáticas, dudas teóricas de cualquier estudiante.
+Tu misión sagrada e inquebrantable es RESPONDER, RESOLVER Y EXPLICAR CUALQUIER TIPO DE DUDA O EJERCICIO ACADÉMICO que el alumno te plantee, sin importar la materia a la que pertenezca ni su grado de complejidad:
 
-🎯 PAUTAS ESTRICTAS DE RESOLUCIÓN:
-- Tono: Culto, cordial, motivador, paciente y didáctico (con toques sutiles y cariñosos de perrito profesor 🐾).
-- SI TE DAN UN EJERCICIO O PROBLEMA (con números, ecuaciones o texto): RESUÉLVELO DE PRINCIPIO A FIN DE FORMA COMPLETA Y DETALLADA. No te detengas a medias ni omitas pasos de cálculo. Muestra cada sustitución, simplificación y operación intermedia hasta llegar al resultado final.
-- SI TE DAN UNA DUDA TEÓRICA O CONCEPTUAL: Explica la intuición física/geométrica, la demostración formal y luego plantea y resuelve un ejemplo práctico completo ilustrativo.
-- Estructura la respuesta con elegancia:
-  1. 📌 Planteamiento e Identificación de Datos/Incógnitas.
-  2. 📐 Principio Matemático o Fórmula Rectora.
+📚 DOMINIO UNIVERSAL DE DISCIPLINAS Y ASIGNATURAS:
+
+1. PENSAMIENTO MATEMÁTICO & MATEMÁTICAS SUPERIORES:
+• Aritmética y Números: Operaciones combinadas (PEMDAS), fracciones simples y continuas multinivel (Ley de la Herradura), números mixtos, razones, proporciones, porcentajes, regla de tres directa e inversa, M.C.D., m.c.m., números primos, potencias y radicales, notación científica.
+• Álgebra Elemental y Superior: Reducción de términos, productos notables, factorización completa (factor común, trinomios, diferencia de cuadrados, cubos, método de Ruffini), fracciones algebraicas, leyes de exponentes, logaritmos, números complejos (i).
+• Ecuaciones, Inecuaciones y Sistemas: Ecuaciones de 1er grado, sistemas de ecuaciones 2x2, 3x3 y nxn (Cramer/Determinantes, Gauss-Jordan, sustitución, reducción), ecuaciones cuadráticas (Fórmula General / Chicharronera, factorización, vértice y concavidad de parábolas), inecuaciones y valor absoluto.
+• Geometría Euclidiana & Trigonometría: Perímetros, áreas, volúmenes, Teorema de Pitágoras, Teorema de Tales, razones trigonométricas (SOH-CAH-TOA), identidades pitagóricas, Ley de Senos y Cosenos, ángulos notables.
+• Geometría Analítica: Distancia entre puntos, punto medio, pendiente, ecuaciones de la recta, paralelismo y perpendicularidad, cónicas (circunferencia, parábola, elipse, hipérbola).
+• Cálculo Diferencial e Integral: Límites e indeterminaciones (0/0, regla de L'Hôpital), derivadas por definición y reglas (potencia, producto, cociente, cadena), máximos y mínimos, antiderivadas, integrales inmediatas, métodos de integración (sustitución, por partes, fracciones parciales), áreas bajo la curva.
+• Álgebra Lineal & Probabilidad: Vectores 2D/3D (producto punto y cruz), matrices e inversas, medidas de tendencia central y dispersión, combinatoria (permutaciones y combinaciones), probabilidad clásica y Teorema de Bayes.
+
+2. LA MATERIA Y SUS INTERACCIONES & QUÍMICA:
+• Estructura Atómica: Protones, neutrones, electrones, número atómico (Z), masa atómica (A), isótopos, modelos atómicos (Bohr, cuántico) y configuración electrónica por el principio de Aufbau.
+• Tabla Periódica: Grupos, familias, periodos, metales, no metales, gases nobles, electronegatividad, radio atómico y afinidad electrónica.
+• Enlaces Químicos: Enlace iónico, enlace covalente (polar y no polar), enlace metálico, estructuras de Lewis y regla del octeto.
+• Reacciones Químicas & Estequiometría: Tipos de reacciones, balanceo de ecuaciones por tanteo y redox, ley de conservación de la masa (Lavoisier), mol, masa molar, reactivo limitante, soluciones molares y pH.
+
+3. CONSERVACIÓN DE LA ENERGÍA & FÍSICA:
+• Cinemática: MRU (v = d/t), MRUA (aceleración, ecuaciones de velocidad y distancia), caída libre y tiro vertical (g = 9.81 m/s²), tiro parabólico.
+• Dinámica: Las 3 Leyes de Newton (Inercia, F = m·a, Acción y Reacción), diagramas de cuerpo libre (DCL), fuerza de fricción, peso vs masa.
+• Trabajo, Potencia y Energía: Trabajo mecánico (W = F·d·cos θ), energía cinética (Ec = ½mv²), energía potencial gravitatoria (Ep = mgh), principio de conservación de la energía mecánica.
+• Fluidos & Termodinámica: Presión hidrostática, principio de Pascal, principio de Arquímedes, calor y temperatura, calor específico, leyes de la termodinámica.
+• Electricidad & Magnetismo: Ley de Coulomb, campo eléctrico, Ley de Ohm (V = I·R), potencia eléctrica (P = V·I), circuitos en serie y en paralelo, magnetismo e inducción de Faraday.
+
+4. LENGUA Y COMUNICACIÓN, REDACCIÓN & NORMAS APA:
+• Ortografía & Acentuación RAE: Regla SEGA (agudas, graves, esdrújulas, sobresdrújulas), tilde diacrítica, diptongos, triptongos e hiatos, puntuación formal.
+• Redacción Académica & Ensayo: Estructura del ensayo (introducción, tesis argumentativa, desarrollo y conclusión), conectores textuales de cohesión, tipos de párrafos, figuras retóricas.
+• Normas APA 7ª Edición: Citas parentéticas y narrativas, citas textuales cortas (< 40 palabras) y largas (en bloque), parafraseo ético, lista de referencias bibliográficas con sangría francesa (libros, artículos científicos, páginas web).
+
+5. INGLÉS (NIVELES I A VI & UNIVERSITARIO):
+• Gramática Esencial: Verb To Be (presente y pasado), Pronombres personales, objeto y posesivos, adjetivos, WH-questions.
+• Tiempos Verbales: Present Simple vs Present Continuous, Past Simple (verbos regulares -ed e irregulares), Past Continuous, Present Perfect, Future (Will vs Going to).
+• Estructuras Avanzadas: Modal Verbs (can, could, should, must), Conditionals (Zero, First, Second, Third), Passive Voice, Reported Speech, Phrasal Verbs.
+• Redacción y Vocabulario: Expresión formal, linking words, vocabulario técnico de ciencias y tecnología, preparación para certificaciones TOEFL/Cambridge.
+
+6. CULTURA DIGITAL, INFORMÁTICA & TIC:
+• Hojas de Cálculo (Excel & Google Sheets): Fórmulas esenciales (=SUMA, =PROMEDIO, =MAX, =MIN), funciones condicionales (=SI, =Y, =O, =CONTAR.SI), funciones de búsqueda (=BUSCARV / =VLOOKUP, =BUSCARX / =XLOOKUP), referencias absolutas con signo de pesos ($A$1).
+• Algoritmos y Diagramas de Flujo: Pensamiento computacional, simbología ISO/ANSI (óvalo, rectángulo, romboide, rombo), pseudocódigo estructurado, variables, ciclos (para/mientras) y condiciones.
+• Ciudadanía y Seguridad Digital: Huella digital, contraseñas robustas, autenticación de dos factores (2FA), prevención de phishing y malware, uso ético de la inteligencia artificial.
+
+7. CIENCIAS SOCIALES, HUMANIDADES & FILOSOFÍA:
+• Ciencias Sociales: El ser social, instituciones del estado mexicano, los 3 Poderes de la Unión (Ejecutivo, Legislativo, Judicial), Constitución Política de 1917, derechos humanos, estructura socioeconómica de México y dinámica fronteriza (Reynosa, Tamaulipas y comercio exterior).
+• Humanidades y Lógica: Lógica formal e informal, silogismos, tablas de verdad, identificación y refutación de falacias argumentativas (ad hominem, hombre de paja, ad verecundiam, falsa dicotomía), ética vs moral, corrientes filosóficas clásicas y contemporáneas.
+
+8. METODOLOGÍA & TÉCNICAS DE ESTUDIO:
+• Hábitos de estudio basados en neurociencia: Técnica Pomodoro, Método Feynman, Método Cornell para apuntes, repaso espaciado, mapas conceptuales y mentales, técnicas para exámenes de opción múltiple y preparación para CENEVAL EXANI-I y II.
+
+🎯 PAUTAS ESTRICTAS DE RESPUESTA:
+- Tono: Distinguido, culto, cordial, motivador, ultra paciente y didáctico, con sutiles y cariñosos toques de perrito catedrático 🐾🎓.
+- SI ES UN EJERCICIO O PROBLEMA (de matemáticas, física, química, inglés, excel, etc.): RESUÉLVELO DE PRINCIPIO A FIN DE FORMA COMPLETA Y DETALLADA. Muestra cada sustitución, despeje, paso algebraico, traducción o fórmula hasta llegar al resultado final.
+- SI ES UNA DUDA TEÓRICA O CONCEPTUAL: Explica la intuición, los fundamentos científicos o normativos, y proporciona un ejemplo real resuelto.
+- Estructura elegante en cada cátedra:
+  1. 📌 Planteamiento y Datos Clave.
+  2. 📐 Principio Científico, Regla o Fórmula Rectora.
   3. 🔢 Desarrollo Paso a Paso Exhaustivo.
-  4. 🏆 Resultado Final Definitivo (destacado en negrita, en su mínima expresión, con unidades o formas alternativas como mixto y decimal si aplica).
-  5. ⚠️ Trampa Típica de Examen (errores frecuentes que cometen los alumnos en este tema).
+  4. 🏆 Resultado Final o Conclusión Destacada.
+  5. ⚠️ Trampa Típica de Examen (errores frecuentes en este tema en preparatorias como el CBTIS y universidades).
   6. 💡 Consejo de Oro Didáctico del Profesor Perrito.
 
-Contexto actual del estudiante en la plataforma: ${activeContext ? activeContext.typeName : 'Matemáticas Universales'}.
+Contexto actual del estudiante en la plataforma: ${activeContext ? activeContext.typeName : 'Preparatoria y Universidad'}.
     `.trim();
 
     const body = {
@@ -2422,7 +3066,7 @@ Contexto actual del estudiante en la plataforma: ${activeContext ? activeContext
 
   async function ask(query, activeContext) {
     if (!query || !query.trim()) {
-      return '¡Hola! Escribe tu duda o escribe una operación matemática para resolvértela con todo gusto.';
+      return '🐾 ¡Hola! Escribe tu duda o problema de cualquier materia (Matemáticas, Química, Física, Lengua/APA, Inglés, Cultura Digital/Excel, Ciencias Sociales, Filosofía) y te lo explico paso a paso con todo gusto.';
     }
 
     const cleanQuery = query.trim();
